@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.is4103.backend.dto.AuthToken;
 import com.is4103.backend.model.User;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -44,12 +45,14 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
             Authentication auth) throws IOException {
-        String token = JWT.create().withSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
+        String token = JWT.create()
+                .withSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(SecurityConstants.SECRET.getBytes()));
 
-        String body = ((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername() + " " + token;
+        String body = new ObjectMapper().writeValueAsString(new AuthToken(token));
 
+        res.setContentType("application/json");
         res.getWriter().write(body);
         res.getWriter().flush();
     }
