@@ -2,35 +2,38 @@ package com.is4103.backend.model;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 import lombok.Data;
 
 @Entity
-@Data// This plugin automatically generates constructors, getters/setters
+@Data // This plugin automatically generates constructors, getters/setters
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+        @Id
+        @GeneratedValue
+        private Long id;
 
-    private String name;
-    
-    @Column(nullable = false, unique = true)
-    private String email;
+        private String name;
 
-    @Column(nullable = false)
-    private String password;
+        @Column(nullable = false, unique = true)
+        private String email;
 
-    @ElementCollection
-    @JoinTable(name = "authorities", joinColumns = { @JoinColumn(name = "email") })
-    @Column(name = "authority")
-    private Set<String> roles;
+        @Column(nullable = false)
+        private String password;
+
+        @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+        @JoinTable(name = "USER_ROLES", joinColumns = {
+                        @JoinColumn(name = "USER_ID")
+        }, inverseJoinColumns = {
+                        @JoinColumn(name = "ROLE_ID") })
+        private Set<Role> roles;
 }

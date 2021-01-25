@@ -1,11 +1,13 @@
 package com.is4103.backend.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.transaction.Transactional;
 
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.model.Role;
 import com.is4103.backend.model.User;
 import com.is4103.backend.repository.UserRepository;
 import com.is4103.backend.util.validation.errors.UserAlreadyExistsException;
@@ -21,6 +23,9 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private RoleService roleService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public List<User> getAllUsers() {
@@ -28,7 +33,7 @@ public class UserService {
     }
 
     @Transactional
-    public User registerNewUser(SignupRequest signupRequest) throws UserAlreadyExistsException {
+    public User registerNewUser(SignupRequest signupRequest, String roleStr) throws UserAlreadyExistsException {
         if (emailExists(signupRequest.getEmail())) {
             throw new UserAlreadyExistsException("Account with email " + signupRequest.getEmail() + " already exists");
         }
@@ -38,7 +43,11 @@ public class UserService {
         newUser.setEmail(signupRequest.getEmail());
 
         newUser.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-        newUser.setRoles(Set.of("ROLE_ADMIN"));
+        Role role = roleService.findByName(roleStr);
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        newUser.setRoles(roles);
+
         return userRepository.save(newUser);
     }
 
