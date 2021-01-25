@@ -1,2 +1,2 @@
-INSERT INTO role (id, description, name) VALUES (1, 'Admin role', 'ADMIN');
-INSERT INTO role (id, description, name) VALUES (2, 'User role', 'USER');
+INSERT INTO role (description, name) VALUES ('Admin role', 'ADMIN');
+INSERT INTO role (description, name) VALUES ('User role', 'USER');
