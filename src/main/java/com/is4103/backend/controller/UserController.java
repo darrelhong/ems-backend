@@ -63,6 +63,7 @@ public class UserController {
         return userService.registerNewUser(signupRequest, "ADMIN");
     }
 
+    // used to protect routes
     @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = "/userping")
     public String userPing() {
