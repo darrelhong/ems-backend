@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Entity
@@ -27,6 +29,7 @@ public class User {
         @Column(nullable = false, unique = true)
         private String email;
 
+        @JsonIgnore
         @Column(nullable = false)
         private String password;
 
