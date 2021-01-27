@@ -1,5 +1,10 @@
 package com.is4103.backend.util.validation.errors;
 
+import org.springframework.http.HttpStatus;
+
+import me.alidg.errors.annotation.ExceptionMapping;
+
+@ExceptionMapping(statusCode = HttpStatus.BAD_REQUEST, errorCode = "user.already_exists")
 public final class UserAlreadyExistsException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
