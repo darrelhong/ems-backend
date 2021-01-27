@@ -1,5 +1,6 @@
 package com.is4103.backend.controller;
 
+import java.net.URI;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -10,8 +11,10 @@ import com.is4103.backend.dto.LoginRequest;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.model.User;
 import com.is4103.backend.service.UserService;
+import com.is4103.backend.util.validation.registration.OnRegistrationCompleteEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,7 +24,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -31,6 +37,9 @@ public class UserController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    ApplicationEventPublisher eventPublisher;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -53,14 +62,37 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @PostMapping(value = "/register/user")
-    public User registerNewUser(@RequestBody @Valid SignupRequest signupRequest) {
+    @PostMapping(value = "/register/user/noverify")
+    public User registerNewUserNoVerify(@RequestBody @Valid SignupRequest signupRequest) {
         return userService.registerNewUser(signupRequest, "USER");
     }
 
-    @PostMapping(value = "/register/admin")
-    public User registerNewAdmin(@RequestBody @Valid SignupRequest signupRequest) {
+    @PostMapping(value = "/register/admin/noverify")
+    public User registerNewAdminNoVerify(@RequestBody @Valid SignupRequest signupRequest) {
         return userService.registerNewUser(signupRequest, "ADMIN");
+    }
+
+    @PostMapping("/register/user")
+    public User registerNewUser(@RequestBody @Valid SignupRequest signupRequest) {
+        User user = userService.registerNewUser(signupRequest, "USER");
+
+        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user));
+        return user;
+    }
+
+    @GetMapping("/confirm-registration")
+    public ModelAndView confirmRegistration(@RequestParam("token") String token) {
+
+        String result = userService.validateVerificationToken(token);
+        if (result.equals("Valid Token")) {
+            // redirect to login page
+            return new ModelAndView("redirect:" + "http://localhost:3000/login?status=success");
+        }
+        return new ModelAndView("redirect:" + "http://localhost:3000/login?status=failed");
+    }
+
+    private ModelAndView ModelAndView(String string) {
+        return null;
     }
 
     // used to protect routes

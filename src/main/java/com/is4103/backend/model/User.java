@@ -33,6 +33,10 @@ public class User {
         @Column(nullable = false)
         private String password;
 
+        // currently used to check if user email is verified, can be used to lock/disable account in the future
+        @Column(nullable = false)
+        private boolean enabled = false;
+
         @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
         @JoinTable(name = "USER_ROLES", joinColumns = {
                         @JoinColumn(name = "USER_ID")
