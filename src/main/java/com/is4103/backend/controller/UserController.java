@@ -15,6 +15,8 @@ import com.is4103.backend.util.validation.registration.OnRegistrationCompleteEve
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -54,7 +56,14 @@ public class UserController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final String token = jwtTokenUtil.generateToken(authentication);
-        return ResponseEntity.ok(new AuthToken(token));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Set-Cookie", ResponseCookie.from("token", token)
+                .maxAge(3600)
+                .httpOnly(true)
+                .path("/")
+                .build()
+                .toString());
+        return ResponseEntity.ok().headers(headers).body(new AuthToken(token));
     }
 
     @GetMapping(path = "/all")
