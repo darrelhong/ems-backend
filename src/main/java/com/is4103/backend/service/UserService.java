@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -16,11 +17,28 @@ import com.is4103.backend.repository.VerificationTokenRepository;
 import com.is4103.backend.util.validation.errors.UserAlreadyExistsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+
+    @Value("${backend.base.url}")
+    private String baseUrl;
+
+    @Value("${backend.from.email}")
+    private String fromEmail;
+
+    @Autowired
+    private MessageSource messageSource;
+
+    @Autowired
+    private JavaMailSender javaMailSender;
 
     @Autowired
     private UserRepository userRepository;
@@ -82,5 +100,27 @@ public class UserService {
         user.setEnabled(true);
         userRepository.save(user);
         return "Valid Token";
+    }
+    
+    public User resendToken(String token) {
+        VerificationToken vt = vtRepository.findByToken(token);
+        vt.updateToken(UUID.randomUUID().toString());
+        vt = vtRepository.save(vt);
+
+        User user = vt.getUser();
+
+        String recipientAddress = user.getEmail();
+        String subject = messageSource.getMessage("message.confirmEmailSubject", null, LocaleContextHolder.getLocale());
+        String confirmationUrl = "http://" + baseUrl + "/user/register/confirm?token=" + vt.getToken();
+        String message = messageSource.getMessage("message.regSuccPrompt", null, LocaleContextHolder.getLocale());
+
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setFrom(fromEmail);
+        email.setTo(recipientAddress);
+        email.setSubject(subject);
+        email.setText(message + "\r\n\r\n" + confirmationUrl);
+        javaMailSender.send(email);
+
+        return user;
     }
 }

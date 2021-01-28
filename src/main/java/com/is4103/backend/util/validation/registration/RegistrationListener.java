@@ -20,6 +20,9 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     @Value("${backend.base.url}")
     private String baseUrl;
 
+    @Value("${backend.from.email}")
+    private String fromEmail;
+
     @Autowired
     private MessageSource messageSource;
 
@@ -40,12 +43,12 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         userService.createVerificationToken(user, token);
 
         String recipientAddress = user.getEmail();
-        String subject = "Confirm your email address (Event Management System)";
-        String confirmationUrl = "http://" + baseUrl + "/user/confirm-registration?token=" + token;
+        String subject = messageSource.getMessage("message.confirmEmailSubject", null, LocaleContextHolder.getLocale());
+        String confirmationUrl = "http://" + baseUrl + "/user/register/confirm?token=" + token;
         String message = messageSource.getMessage("message.regSuccPrompt", null, LocaleContextHolder.getLocale());
 
         SimpleMailMessage email = new SimpleMailMessage();
-        email.setFrom("darrel.hong@gmail.com");
+        email.setFrom(fromEmail);
         email.setTo(recipientAddress);
         email.setSubject(subject);
         email.setText(message + "\r\n\r\n" + confirmationUrl);

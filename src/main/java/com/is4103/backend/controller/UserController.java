@@ -87,19 +87,19 @@ public class UserController {
         return user;
     }
 
-    @GetMapping("/confirm-registration")
+    @GetMapping("/register/confirm")
     public ModelAndView confirmRegistration(@RequestParam("token") String token) {
-
         String result = userService.validateVerificationToken(token);
         if (result.equals("Valid Token")) {
             // redirect to login page
             return new ModelAndView("redirect:" + "http://localhost:3000/login?status=success");
         }
-        return new ModelAndView("redirect:" + "http://localhost:3000/login?status=failed");
+        return new ModelAndView("redirect:" + "http://localhost:3000/login?status=failed&token=" + token);
     }
 
-    private ModelAndView ModelAndView(String string) {
-        return null;
+    @GetMapping("/register/resend")
+    public User resendRegistrationToken(@RequestParam("token") String token) {
+        return userService.resendToken(token);
     }
 
     // used to protect routes
