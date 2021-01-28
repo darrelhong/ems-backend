@@ -42,8 +42,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             headerToken = header.replace(SecurityConstants.TOKEN_PREFIX, "");
         }
         // check for cookie token
-        String cookieToken = Arrays.stream(req.getCookies()).filter(c -> c.getName().equals("token")).findFirst()
-                .map(Cookie::getValue).orElse(null);
+        String cookieToken = null;
+        if (req.getCookies() != null) {
+            cookieToken = Arrays.stream(req.getCookies()).filter(c -> c.getName().equals("token")).findFirst()
+                    .map(Cookie::getValue).orElse(null);
+        }
 
         String authToken = cookieToken == null ? headerToken : cookieToken;
 
