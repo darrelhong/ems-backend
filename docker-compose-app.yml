@@ -16,7 +16,7 @@ services:
     - is4103-data:/var/lib/mysql
 
   is4103-backend:
-    image: is4103/backend
+    image: backend:0.0.1-SNAPSHOT
     depends_on: 
       - is4103-db
     ports:
