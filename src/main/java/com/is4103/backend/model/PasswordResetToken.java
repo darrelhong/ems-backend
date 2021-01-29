@@ -8,17 +8,17 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class VerificationToken extends Token {
+public class PasswordResetToken extends Token {
 
-    public VerificationToken() {
+    public PasswordResetToken() {
         super();
     }
 
-    public VerificationToken(final String token) {
+    public PasswordResetToken(final String token) {
         super(token);
     }
 
-    public VerificationToken(final String token, final User user) {
+    public PasswordResetToken(final String token, final User user) {
         super(token, user);
     }
 }
