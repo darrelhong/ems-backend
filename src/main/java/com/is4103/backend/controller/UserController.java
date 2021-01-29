@@ -8,9 +8,12 @@ import com.is4103.backend.config.JwtTokenUtil;
 import com.is4103.backend.dto.AuthToken;
 import com.is4103.backend.dto.ChangePasswordRequest;
 import com.is4103.backend.dto.LoginRequest;
+import com.is4103.backend.dto.ResetPasswordDto;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.model.User;
 import com.is4103.backend.service.UserService;
+import com.is4103.backend.util.validation.errors.InvalidTokenException;
+import com.is4103.backend.util.validation.errors.UserNotFoundException;
 import com.is4103.backend.util.validation.registration.OnRegistrationCompleteEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +118,26 @@ public class UserController {
 
         userService.changePassword(user, changePasswordRequest.getNewPassword());
         return ResponseEntity.ok("Success");
+    }
+
+    @PostMapping("/reset-password/request")
+    public ResponseEntity<String> resetPasswordRequest(@RequestParam("email") String email) {
+        User user = userService.findUserByEmail(email);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        userService.resetPasswordRequest(user);
+        return ResponseEntity.ok("Success");
+    }
+
+    @PostMapping("/reset-password")
+    public User resetPassword(@RequestBody @Valid ResetPasswordDto resetPasswordDto) {
+        String result = userService.validatePasswordResetToken(resetPasswordDto.getToken());
+
+        if (result != "Valid Token") {
+            throw new InvalidTokenException(result);
+        }
+        return userService.savePassword(resetPasswordDto.getToken(), resetPasswordDto.getNewPassword());
     }
 
     // used to protect routes

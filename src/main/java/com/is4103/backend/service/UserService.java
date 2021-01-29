@@ -9,9 +9,11 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.model.PasswordResetToken;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.User;
 import com.is4103.backend.model.VerificationToken;
+import com.is4103.backend.repository.PasswordResetTokenRepository;
 import com.is4103.backend.repository.UserRepository;
 import com.is4103.backend.repository.VerificationTokenRepository;
 import com.is4103.backend.util.validation.errors.UserAlreadyExistsException;
@@ -45,6 +47,9 @@ public class UserService {
 
     @Autowired
     private VerificationTokenRepository vtRepository;
+
+    @Autowired
+    private PasswordResetTokenRepository prtRepository;
 
     @Autowired
     private RoleService roleService;
@@ -115,7 +120,7 @@ public class UserService {
 
         String recipientAddress = user.getEmail();
         String subject = messageSource.getMessage("message.confirmEmailSubject", null, LocaleContextHolder.getLocale());
-        String confirmationUrl = "http://" + baseUrl + "/user/register/confirm?token=" + vt.getToken();
+        String confirmationUrl = baseUrl + "/user/register/confirm?token=" + vt.getToken();
         String message = messageSource.getMessage("message.regSuccPrompt", null, LocaleContextHolder.getLocale());
 
         SimpleMailMessage email = new SimpleMailMessage();
@@ -135,5 +140,46 @@ public class UserService {
     public void changePassword(User user, String password) {
         user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
+    }
+
+    public void resetPasswordRequest(User user) {
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken prt = new PasswordResetToken(token, user);
+        prtRepository.save(prt);
+
+        String recipientAddress = user.getEmail();
+        String subject = messageSource.getMessage("message.resetPasswordEmailSubject", null,
+                LocaleContextHolder.getLocale());
+        String confirmationUrl = "http://localhost:3000/reset-password/verify?token=" + prt.getToken();
+        String message = messageSource.getMessage("message.resetPasswordPrompt", null, LocaleContextHolder.getLocale());
+
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setFrom(fromEmail);
+        email.setTo(recipientAddress);
+        email.setSubject(subject);
+        email.setText(message + "\r\n\r\n" + confirmationUrl);
+        javaMailSender.send(email);
+    }
+
+    public User savePassword(String token, String newPassword) {
+        User user = prtRepository.findByToken(token).getUser();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        return user;
+    }
+
+    public String validatePasswordResetToken(String token) {
+        PasswordResetToken prt = prtRepository.findByToken(token);
+
+        if (prt == null) {
+            return "Invalid Token";
+        }
+        Calendar cal = Calendar.getInstance();
+        if ((prt.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            prtRepository.delete(prt);
+            return "Token Expired";
+        }
+        return "Valid Token";
     }
 }
