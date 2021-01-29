@@ -56,6 +56,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     @Transactional
     public User registerNewUser(SignupRequest signupRequest, String roleStr) throws UserAlreadyExistsException {
         if (emailExists(signupRequest.getEmail())) {
@@ -101,7 +105,7 @@ public class UserService {
         userRepository.save(user);
         return "Valid Token";
     }
-    
+
     public User resendToken(String token) {
         VerificationToken vt = vtRepository.findByToken(token);
         vt.updateToken(UUID.randomUUID().toString());
@@ -122,5 +126,14 @@ public class UserService {
         javaMailSender.send(email);
 
         return user;
+    }
+
+    public boolean checkOldPasswordValid(User user, String password) {
+        return passwordEncoder.matches(password, user.getPassword());
+    }
+
+    public void changePassword(User user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
     }
 }

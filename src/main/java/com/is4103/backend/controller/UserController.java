@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import com.is4103.backend.config.JwtTokenUtil;
 import com.is4103.backend.dto.AuthToken;
+import com.is4103.backend.dto.ChangePasswordRequest;
 import com.is4103.backend.dto.LoginRequest;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.model.User;
@@ -15,6 +16,7 @@ import com.is4103.backend.util.validation.registration.OnRegistrationCompleteEve
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,6 +49,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @GetMapping(path = "/all")
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
     @PostMapping(value = "/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) throws AuthenticationException {
         final Authentication authentication = authenticationManager.authenticate(
@@ -62,11 +69,6 @@ public class UserController {
                 .build()
                 .toString());
         return ResponseEntity.ok().headers(headers).body(new AuthToken(token));
-    }
-
-    @GetMapping(path = "/all")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
     }
 
     @PostMapping(value = "/register/user/noverify")
@@ -100,6 +102,19 @@ public class UserController {
     @GetMapping("/register/resend")
     public User resendRegistrationToken(@RequestParam("token") String token) {
         return userService.resendToken(token);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
+        User user = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        if (!userService.checkOldPasswordValid(user, changePasswordRequest.getOldPassword())) {
+            return new ResponseEntity<String>("Invalid old password", HttpStatus.UNAUTHORIZED);
+        }
+
+        userService.changePassword(user, changePasswordRequest.getNewPassword());
+        return ResponseEntity.ok("Success");
     }
 
     // used to protect routes
