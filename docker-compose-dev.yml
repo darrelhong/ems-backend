@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  is4103-db:
+    image: "mysql:8.0"
+    container_name: is4103-db
+    command: --default-authentication-plugin=mysql_native_password
+    environment: 
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: is4103db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - 3307:3306
+    volumes: 
+    - is4103-data:/var/lib/mysql
+
+  is4103-backend:
+    image: maven:3.6.3-jdk-11
+    command: mvn spring-boot:run
+    depends_on: 
+      - is4103-db
+    ports:
+      - 8081:8080
+    environment: 
+      - SPRING_DATASOURCE_URL=jdbc:mysql://is4103-db:3306/is4103db
+    volumes:
+      - .:/usr/src/mymaven:rw
+    working_dir: 
+      /usr/src/mymaven
+
+volumes:
+  is4103-data:
