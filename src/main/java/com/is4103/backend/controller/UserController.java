@@ -1,6 +1,7 @@
 package com.is4103.backend.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -8,9 +9,12 @@ import com.is4103.backend.config.JwtTokenUtil;
 import com.is4103.backend.dto.AuthToken;
 import com.is4103.backend.dto.ChangePasswordRequest;
 import com.is4103.backend.dto.LoginRequest;
+import com.is4103.backend.dto.LoginResponse;
 import com.is4103.backend.dto.ResetPasswordDto;
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.model.Role;
 import com.is4103.backend.model.User;
+import com.is4103.backend.service.RoleService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.validation.errors.InvalidTokenException;
 import com.is4103.backend.util.validation.errors.UserNotFoundException;
@@ -29,6 +33,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,17 +57,31 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RoleService roleService;
+
     @GetMapping(path = "/all")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @PostMapping(value = "/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) throws AuthenticationException {
+    @PostMapping(value = "/login/{role}")
+    public ResponseEntity<?> login(@PathVariable String role, @RequestBody LoginRequest loginRequest)
+            throws AuthenticationException {
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // verify user has requested role
+        User user = userService.findUserByEmail(authentication.getName());
+        Role loginRole = roleService.findByName(role.toUpperCase());
+        Set<Role> userRoles = user.getRoles();
+
+        if (!userRoles.contains(loginRole)) {
+            throw new UserNotFoundException();
+        }
+
         final String token = jwtTokenUtil.generateToken(authentication);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Set-Cookie", ResponseCookie.from("token", token)
@@ -71,7 +90,7 @@ public class UserController {
                 .path("/")
                 .build()
                 .toString());
-        return ResponseEntity.ok().headers(headers).body(new AuthToken(token));
+        return ResponseEntity.ok().headers(headers).body(new LoginResponse(new AuthToken(token), user));
     }
 
     @PostMapping(value = "/register/user/noverify")
