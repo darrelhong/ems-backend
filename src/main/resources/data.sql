@@ -1,2 +1,9 @@
-INSERT INTO role (description, name) VALUES ('Admin role', 'ADMIN');
-INSERT INTO role (description, name) VALUES ('User role', 'USER');
+-- use DataInitRunner class instead
+-- INSERT INTO role (description, name)
+-- VALUES ('System admin', 'ADMIN');
+-- INSERT INTO role (description, name)
+-- VALUES ('Event Organiser', 'EVNTORG');
+-- INSERT INTO role (description, name)
+-- VALUES ('Business Partner ', 'BIZPTNR');
+-- INSERT INTO role (description, name)
+-- VALUES ('Attendee', 'ATND');

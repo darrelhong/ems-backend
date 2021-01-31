@@ -33,7 +33,8 @@ public class User {
         @Column(nullable = false)
         private String password;
 
-        // currently used to check if user email is verified, can be used to lock/disable account in the future
+        // currently used to check if user email is verified, can be used to
+        // lock/disable account in the future
         @Column(nullable = false)
         private boolean enabled = false;
 
