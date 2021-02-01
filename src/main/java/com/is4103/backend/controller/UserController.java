@@ -141,7 +141,7 @@ public class UserController {
         return userService.resendToken(token);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/change-password")
     public ResponseEntity<String> changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
         User user = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
