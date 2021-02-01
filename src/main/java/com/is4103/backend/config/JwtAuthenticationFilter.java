@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.is4103.backend.service.UserDetailsServiceImpl;
+import com.is4103.backend.util.validation.errors.CustomExpiredJwtException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -30,6 +32,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    HandlerExceptionResolver handlerExceptionResolver;
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
@@ -57,6 +62,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 logger.error("An error occurred while fetching Username from Token", e);
             } catch (ExpiredJwtException e) {
                 logger.warn("The token has expired", e);
+                handlerExceptionResolver.resolveException(req, res, null, new CustomExpiredJwtException());
+                return;
             } catch (SignatureException e) {
                 logger.error("Authentication Failed. Username or Password not valid.");
             }

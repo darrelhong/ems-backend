@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -86,11 +87,25 @@ public class UserController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Set-Cookie", ResponseCookie.from("token", token)
                 .maxAge(3600)
-                .httpOnly(true)
+                // .httpOnly(true)
                 .path("/")
                 .build()
                 .toString());
         return ResponseEntity.ok().headers(headers).body(new LoginResponse(new AuthToken(token), user));
+    }
+
+    @GetMapping(value = "/refreshtoken")
+    public ResponseEntity<?> refreshToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final String token = jwtTokenUtil.generateToken(authentication);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Set-Cookie", ResponseCookie.from("token", token)
+                .maxAge(3600)
+                // .httpOnly(true)
+                .path("/")
+                .build()
+                .toString());
+        return ResponseEntity.ok().headers(headers).body(new AuthToken(token));
     }
 
     @PostMapping(value = "/register/user/noverify")
