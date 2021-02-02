@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.model.PasswordResetToken;
 import com.is4103.backend.model.Role;
+import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
 import com.is4103.backend.model.VerificationToken;
 import com.is4103.backend.repository.PasswordResetTokenRepository;
@@ -76,7 +77,7 @@ public class UserService {
         newUser.setEmail(signupRequest.getEmail());
 
         newUser.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-        Role role = roleService.findByName(roleStr);
+        Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr));
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         newUser.setRoles(roles);

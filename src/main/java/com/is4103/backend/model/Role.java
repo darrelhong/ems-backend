@@ -21,12 +21,12 @@ public class Role {
     private long id;
 
     @Column(unique = true)
-    private String name;
+    private RoleEnum roleEnum;
 
     private String description;
 
-    public Role(String name, String description) {
-        this.name = name;
+    public Role(RoleEnum roleEnum, String description) {
+        this.roleEnum = roleEnum;
         this.description = description;
     }
 }
