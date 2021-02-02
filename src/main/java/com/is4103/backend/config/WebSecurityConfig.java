@@ -38,18 +38,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // Enable CORS disable CSRF
-        http.cors().and().csrf().disable()
-                .authorizeRequests()
+        http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers("/test/**", "/greeting", "/user/register/**", "/user/login/**", "/user/reset-password/**")
                 .permitAll()
                 // can also be used to protected routes
-                .antMatchers("/user/userping").hasRole("USER")
-                .antMatchers("/user/adminping").hasRole("ADMIN")
-                .anyRequest().authenticated()
-                .and()
+                .antMatchers("/user/userping").hasRole("USER").antMatchers("/user/adminping").hasRole("ADMIN")
+                .anyRequest().authenticated().and()
                 // handle unanthenticated requests
-                .exceptionHandling().authenticationEntryPoint(unauthorisedEntryPoint)
-                .and()
+                .exceptionHandling().authenticationEntryPoint(unauthorisedEntryPoint).and()
                 // stateless session management
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

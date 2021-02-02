@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -18,12 +20,12 @@ import lombok.Data;
 
 @Entity
 @Data // This plugin automatically generates constructors, getters/setters
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class User {
 
         @Id
         @GeneratedValue
         private Long id;
-
         private String name;
 
         @Column(nullable = false, unique = true)
@@ -38,10 +40,14 @@ public class User {
         @Column(nullable = false)
         private boolean enabled = false;
 
-        @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-        @JoinTable(name = "USER_ROLES", joinColumns = {
-                        @JoinColumn(name = "USER_ID")
-        }, inverseJoinColumns = {
+        @Column(nullable = true)
+        private String phonenumber;
+
+        @Column(nullable = true)
+        private String address;
+
+        @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+        @JoinTable(name = "USER_ROLES", joinColumns = { @JoinColumn(name = "USER_ID") }, inverseJoinColumns = {
                         @JoinColumn(name = "ROLE_ID") })
         private Set<Role> roles;
 }
