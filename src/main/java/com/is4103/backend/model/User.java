@@ -38,7 +38,7 @@ public class User {
         @Column(nullable = false)
         private boolean enabled = false;
 
-        @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+        @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE })
         @JoinTable(name = "USER_ROLES", joinColumns = {
                         @JoinColumn(name = "USER_ID")
         }, inverseJoinColumns = {

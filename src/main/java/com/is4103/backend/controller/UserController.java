@@ -13,6 +13,7 @@ import com.is4103.backend.dto.LoginResponse;
 import com.is4103.backend.dto.ResetPasswordDto;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.model.Role;
+import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
 import com.is4103.backend.service.RoleService;
 import com.is4103.backend.service.UserService;
@@ -76,7 +77,7 @@ public class UserController {
 
         // verify user has requested role
         User user = userService.findUserByEmail(authentication.getName());
-        Role loginRole = roleService.findByName(role.toUpperCase());
+        Role loginRole = roleService.findByRoleEnum(RoleEnum.valueOf(role.toUpperCase()));
         Set<Role> userRoles = user.getRoles();
 
         if (!userRoles.contains(loginRole)) {
