@@ -19,11 +19,15 @@ public class Attendee extends User {
     @Column(nullable = true)
     @ElementCollection(targetClass = EventOrganiser.class)
     @ManyToMany (mappedBy="attendeeFollowers")
-    private List<EventOrganiser> followedEventOrgs;
+    private List<EventOrganiser> followedEventOrganisers;
 
     @OneToMany(mappedBy = "attendee")
     @ElementCollection(targetClass = TicketTransaction.class)
     private List<TicketTransaction> ticketTransactions;
+
+    @ManyToMany
+    @ElementCollection(targetClass = BusinessPartner.class)
+    private List<BusinessPartner> followedBusinessPartners;
 
     public Attendee(){
 
@@ -32,7 +36,7 @@ public class Attendee extends User {
     public Attendee(List<String> categoryPreferences, List<EventOrganiser> followedEventOrgs) {
         super();
         this.categoryPreferences = categoryPreferences;
-        this.followedEventOrgs = followedEventOrgs;
+        this.followedEventOrganisers = followedEventOrgs;
     }
 
     public List<String> getCategoryPreferences() {
@@ -44,11 +48,11 @@ public class Attendee extends User {
     }
 
     public List<EventOrganiser> getFollowedEventOrgs() {
-        return followedEventOrgs;
+        return followedEventOrganisers;
     }
 
     public void setFollowedEventOrgs(List<EventOrganiser> followedEventOrgs) {
-        this.followedEventOrgs = followedEventOrgs;
+        this.followedEventOrganisers = followedEventOrgs;
     }
 
 }
