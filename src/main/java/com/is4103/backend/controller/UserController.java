@@ -67,6 +67,12 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping(path = "/{id}")
+    public User getUserById(@PathVariable Long id) {
+        System.out.println(id);
+        return userService.findUserById(id).orElseThrow(() -> new UserNotFoundException());
+    }
+
     @PostMapping(value = "/login/{role}")
     public ResponseEntity<?> login(@PathVariable String role, @RequestBody LoginRequest loginRequest)
             throws AuthenticationException {
