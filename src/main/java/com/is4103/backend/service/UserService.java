@@ -73,7 +73,8 @@ public class UserService {
     }
 
     @Transactional
-    public User registerNewUser(SignupRequest signupRequest, String roleStr) throws UserAlreadyExistsException {
+    public User registerNewUser(SignupRequest signupRequest, String roleStr, boolean enabled)
+            throws UserAlreadyExistsException {
         if (emailExists(signupRequest.getEmail())) {
             throw new UserAlreadyExistsException("Account with email " + signupRequest.getEmail() + " already exists");
         }
@@ -83,10 +84,14 @@ public class UserService {
         newUser.setEmail(signupRequest.getEmail());
 
         newUser.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-        Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr));
+        Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         newUser.setRoles(roles);
+
+        if (enabled) {
+            newUser.setEnabled(true);
+        }
 
         return userRepository.save(newUser);
     }
