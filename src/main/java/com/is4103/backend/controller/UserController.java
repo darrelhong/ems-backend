@@ -118,7 +118,8 @@ public class UserController {
 
     @PostMapping("/register/{role}")
     public User registerNewUser(@PathVariable String role, @RequestBody @Valid SignupRequest signupRequest) {
-        User user = userService.registerNewUser(signupRequest, role, false);
+        //changed enabled-false to true. check again
+        User user = userService.registerNewUser(signupRequest, role, true);
 
         eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user));
         return user;
