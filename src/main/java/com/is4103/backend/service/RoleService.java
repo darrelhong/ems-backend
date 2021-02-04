@@ -16,4 +16,9 @@ public class RoleService {
         Role role = roleRepository.findByRoleEnum(roleEnum);
         return role;
     }
+
+    public Role findByRoleString(String roleStr) {
+        Role role = roleRepository.findByRoleEnum(RoleEnum.valueOf(roleStr));
+        return role;
+    }
 }
