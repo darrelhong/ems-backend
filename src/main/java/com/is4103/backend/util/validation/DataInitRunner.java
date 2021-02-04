@@ -4,7 +4,6 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
-import com.is4103.backend.model.AccountStatus;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
@@ -60,7 +59,6 @@ public class DataInitRunner implements ApplicationRunner {
         admin.setEmail("admin@abc.com");
         admin.setName("Default Admin");
         admin.setPassword(passwordEncoder.encode("password"));
-        admin.setAccountStatus(AccountStatus.ACTIVE);
         admin.setEnabled(true);
         admin.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.ADMIN)));
         userRepository.save(admin);
@@ -72,7 +70,6 @@ public class DataInitRunner implements ApplicationRunner {
         admin.setEmail("organiser@abc.com");
         admin.setName("First Organiser");
         admin.setPassword(passwordEncoder.encode("password"));
-        admin.setAccountStatus(AccountStatus.ACTIVE);
         admin.setEnabled(true);
         admin.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
         userRepository.save(admin);
