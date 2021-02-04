@@ -3,12 +3,14 @@ package com.is4103.backend.service;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
 
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.model.PasswordResetToken;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
@@ -62,12 +64,17 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public Optional<User> findUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
     @Transactional
-    public User registerNewUser(SignupRequest signupRequest, String roleStr) throws UserAlreadyExistsException {
+    public User registerNewUser(SignupRequest signupRequest, String roleStr, boolean enabled)
+            throws UserAlreadyExistsException {
         if (emailExists(signupRequest.getEmail())) {
             throw new UserAlreadyExistsException("Account with email " + signupRequest.getEmail() + " already exists");
         }
@@ -77,16 +84,26 @@ public class UserService {
         newUser.setEmail(signupRequest.getEmail());
 
         newUser.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-        Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr));
+        Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         newUser.setRoles(roles);
+
+        if (enabled) {
+            newUser.setEnabled(true);
+        }
 
         return userRepository.save(newUser);
     }
 
     private boolean emailExists(String email) {
         return userRepository.findByEmail(email) != null;
+    }
+
+    @Transactional
+    public User updateUser(User user, UpdateUserRequest updateUserRequest) {
+        user.setName(updateUserRequest.getName());
+        return userRepository.save(user);
     }
 
     public void createVerificationToken(User user, String token) {
@@ -104,9 +121,10 @@ public class UserService {
         User user = vt.getUser();
         Calendar cal = Calendar.getInstance();
         if ((vt.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-            vtRepository.delete(vt);
             return "Token Expired";
         }
+
+        vtRepository.delete(vt);
         user.setEnabled(true);
         userRepository.save(user);
         return "Valid Token";
@@ -121,7 +139,7 @@ public class UserService {
 
         String recipientAddress = user.getEmail();
         String subject = messageSource.getMessage("message.confirmEmailSubject", null, LocaleContextHolder.getLocale());
-        String confirmationUrl = baseUrl + "/user/register/confirm?token=" + vt.getToken();
+        String confirmationUrl = baseUrl + "/api/user/register/confirm?token=" + vt.getToken();
         String message = messageSource.getMessage("message.regSuccPrompt", null, LocaleContextHolder.getLocale());
 
         SimpleMailMessage email = new SimpleMailMessage();
