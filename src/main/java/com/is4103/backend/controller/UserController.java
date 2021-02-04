@@ -93,12 +93,9 @@ public class UserController {
 
         final String token = jwtTokenUtil.generateToken(authentication);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Set-Cookie", ResponseCookie.from("token", token)
-                .maxAge(3600)
+        headers.add("Set-Cookie", ResponseCookie.from("token", token).maxAge(3600)
                 // .httpOnly(true)
-                .path("/")
-                .build()
-                .toString());
+                .path("/").build().toString());
         return ResponseEntity.ok().headers(headers).body(new LoginResponse(new AuthToken(token), user));
     }
 
@@ -107,12 +104,9 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final String token = jwtTokenUtil.generateToken(authentication);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Set-Cookie", ResponseCookie.from("token", token)
-                .maxAge(3600)
+        headers.add("Set-Cookie", ResponseCookie.from("token", token).maxAge(3600)
                 // .httpOnly(true)
-                .path("/")
-                .build()
-                .toString());
+                .path("/").build().toString());
         return ResponseEntity.ok().headers(headers).body(new AuthToken(token));
     }
 
