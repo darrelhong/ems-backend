@@ -1,16 +1,21 @@
 package com.is4103.backend.model;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
@@ -50,4 +55,12 @@ public class User {
         @JoinTable(name = "USER_ROLES", joinColumns = { @JoinColumn(name = "USER_ID") }, inverseJoinColumns = {
                         @JoinColumn(name = "ROLE_ID") })
         private Set<Role> roles;
+
+        @Column(nullable = true)
+        @Enumerated(EnumType.STRING)
+        private AccountStatus accountStatus;
+
+        @OneToMany
+        @ElementCollection(targetClass = Notification.class)
+        private List<Notification> notifications; 
 }

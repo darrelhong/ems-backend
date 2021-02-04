@@ -5,8 +5,11 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 @Entity
+
 public class Attendee extends User {
 
     @Column(nullable = true)
@@ -15,7 +18,16 @@ public class Attendee extends User {
 
     @Column(nullable = true)
     @ElementCollection(targetClass = EventOrganiser.class)
+    @ManyToMany (mappedBy="attendeeFollowers")
     private List<EventOrganiser> followedEventOrgs;
+
+    @OneToMany(mappedBy = "attendee")
+    @ElementCollection(targetClass = TicketTransaction.class)
+    private List<TicketTransaction> ticketTransactions;
+
+    public Attendee(){
+
+    }
 
     public Attendee(List<String> categoryPreferences, List<EventOrganiser> followedEventOrgs) {
         super();
