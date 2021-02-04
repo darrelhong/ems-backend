@@ -12,6 +12,7 @@ import com.is4103.backend.dto.LoginRequest;
 import com.is4103.backend.dto.LoginResponse;
 import com.is4103.backend.dto.ResetPasswordDto;
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
@@ -29,6 +30,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -149,8 +151,23 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
+    @PostMapping("/update")
+    public ResponseEntity<User> updateUser(@RequestBody @Valid UpdateUserRequest updateUserRequest) {
+        User user = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        // verify user id
+        if (updateUserRequest.getId() != user.getId()) {
+            throw new AuthenticationServiceException("An error has occured");
+        }
+
+        user = userService.updateUser(user, updateUserRequest);
+        return ResponseEntity.ok(user);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/change-password")
-    public ResponseEntity<String> changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
+    public ResponseEntity<String> changePassword(
+            @RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
         User user = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
         if (!userService.checkOldPasswordValid(user, changePasswordRequest.getOldPassword())) {

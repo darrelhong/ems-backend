@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.model.PasswordResetToken;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
@@ -92,6 +93,12 @@ public class UserService {
 
     private boolean emailExists(String email) {
         return userRepository.findByEmail(email) != null;
+    }
+
+    @Transactional
+    public User updateUser(User user, UpdateUserRequest updateUserRequest) {
+        user.setName(updateUserRequest.getName());
+        return userRepository.save(user);
     }
 
     public void createVerificationToken(User user, String token) {
