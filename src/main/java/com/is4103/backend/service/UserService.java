@@ -121,9 +121,10 @@ public class UserService {
         User user = vt.getUser();
         Calendar cal = Calendar.getInstance();
         if ((vt.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-            vtRepository.delete(vt);
             return "Token Expired";
         }
+
+        vtRepository.delete(vt);
         user.setEnabled(true);
         userRepository.save(user);
         return "Valid Token";
@@ -138,7 +139,7 @@ public class UserService {
 
         String recipientAddress = user.getEmail();
         String subject = messageSource.getMessage("message.confirmEmailSubject", null, LocaleContextHolder.getLocale());
-        String confirmationUrl = baseUrl + "/user/register/confirm?token=" + vt.getToken();
+        String confirmationUrl = baseUrl + "/api/user/register/confirm?token=" + vt.getToken();
         String message = messageSource.getMessage("message.regSuccPrompt", null, LocaleContextHolder.getLocale());
 
         SimpleMailMessage email = new SimpleMailMessage();

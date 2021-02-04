@@ -135,9 +135,9 @@ public class UserController {
         String result = userService.validateVerificationToken(token);
         if (result.equals("Valid Token")) {
             // redirect to login page
-            return new ModelAndView("redirect:" + "http://localhost:3000/login?status=success");
+            return new ModelAndView("redirect:" + "http://localhost:3000/register/verified");
         }
-        return new ModelAndView("redirect:" + "http://localhost:3000/login?status=failed&token=" + token);
+        return new ModelAndView("redirect:" + "http://localhost:3000/register/error?&token=" + token);
     }
 
     @GetMapping("/register/resend")
