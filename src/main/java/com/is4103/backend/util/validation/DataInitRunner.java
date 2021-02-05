@@ -51,6 +51,10 @@ public class DataInitRunner implements ApplicationRunner {
         if (userRepository.findByEmail("organiser@abc.com") == null) {
             createEventOrganiser();
         }
+
+        if (userRepository.findByEmail("partner@abc.com") == null) {
+            createBizPartner();
+        }
     }
 
     @Transactional
@@ -72,6 +76,17 @@ public class DataInitRunner implements ApplicationRunner {
         admin.setPassword(passwordEncoder.encode("password"));
         admin.setEnabled(true);
         admin.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
+        userRepository.save(admin);
+    }
+
+    @Transactional
+    private void createBizPartner() {
+        User admin = new User();
+        admin.setEmail("partner@abc.com");
+        admin.setName("First Business Partner");
+        admin.setPassword(passwordEncoder.encode("password"));
+        admin.setEnabled(true);
+        admin.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
         userRepository.save(admin);
     }
 }
