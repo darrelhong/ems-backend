@@ -4,6 +4,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
@@ -15,6 +16,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import antlr.debug.Event;
 
 @Component
 public class DataInitRunner implements ApplicationRunner {
@@ -70,13 +73,13 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Transactional
     private void createEventOrganiser() {
-        User admin = new User();
-        admin.setEmail("organiser@abc.com");
-        admin.setName("First Organiser");
-        admin.setPassword(passwordEncoder.encode("password"));
-        admin.setEnabled(true);
-        admin.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
-        userRepository.save(admin);
+        EventOrganiser eo = new EventOrganiser();
+        eo.setEmail("organiser@abc.com");
+        eo.setName("First Organiser");
+        eo.setPassword(passwordEncoder.encode("password"));
+        eo.setEnabled(true);
+        eo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
+        userRepository.save(eo);
     }
 
     @Transactional

@@ -6,11 +6,18 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.util.List;
 
 @Entity
-
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class EventOrganiser extends User {
+
+    @Column(nullable = false)
+    private boolean approved = false;
 
     @Column(nullable = true)
     @ElementCollection(targetClass = Attendee.class)
