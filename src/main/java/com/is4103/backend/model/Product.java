@@ -18,6 +18,6 @@ public class Product {
 
     @Column(nullable = false)
     @ManyToMany(mappedBy = "products")
-    private List <Booth> booths;
+    private List<Booth> booths;
 
 }

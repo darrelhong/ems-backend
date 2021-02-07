@@ -10,24 +10,22 @@ import javax.persistence.Id;
 
 import lombok.Data;
 
-
 @Entity
 @Data
 
 public class Notification {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long nid;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String title;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String content;
 
-    @Column(nullable=false)
-    private LocalDateTime dateCreated; 
-
+    @Column(nullable = false)
+    private LocalDateTime dateCreated;
 
 }

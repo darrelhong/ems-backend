@@ -18,7 +18,7 @@ public class Attendee extends User {
 
     @Column(nullable = true)
     @ElementCollection(targetClass = EventOrganiser.class)
-    @ManyToMany (mappedBy="attendeeFollowers")
+    @ManyToMany(mappedBy = "attendeeFollowers")
     private List<EventOrganiser> followedEventOrganisers;
 
     @OneToMany(mappedBy = "attendee")
@@ -29,7 +29,7 @@ public class Attendee extends User {
     @ElementCollection(targetClass = BusinessPartner.class)
     private List<BusinessPartner> followedBusinessPartners;
 
-    public Attendee(){
+    public Attendee() {
 
     }
 

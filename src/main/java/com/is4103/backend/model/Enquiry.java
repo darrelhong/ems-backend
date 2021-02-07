@@ -12,18 +12,18 @@ import lombok.Data;
 @Data
 
 public class Enquiry {
-    
+
     @Id
     @GeneratedValue
     private Long eid;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String title;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String content;
 
-    @Column(nullable=true)
+    @Column(nullable = true)
     private String contactNumber;
 
     @ManyToOne
@@ -31,6 +31,5 @@ public class Enquiry {
 
     @ManyToOne
     private BusinessPartner businessPartner;
-
 
 }

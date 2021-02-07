@@ -26,36 +26,35 @@ import lombok.Data;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class User {
 
-        @Id
-        @GeneratedValue
-        private Long id;
-        private String name;
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String name;
 
-        @Column(nullable = false, unique = true)
-        private String email;
+    @Column(nullable = false, unique = true)
+    private String email;
 
-        @JsonIgnore
-        @Column(nullable = false)
-        private String password;
+    @JsonIgnore
+    @Column(nullable = false)
+    private String password;
 
-        // currently used to check if user email is verified, can be used to
-        // lock/disable account in the future
-        @Column(nullable = false)
-        private boolean enabled = false;
+    // currently used to check if user email is verified, can be used to
+    // lock/disable account in the future
+    @Column(nullable = false)
+    private boolean enabled = false;
 
-        @Column(nullable = true)
-        private String phonenumber;
+    @Column(nullable = true)
+    private String phonenumber;
 
-        @Column(nullable = true)
-        private String address;
+    @Column(nullable = true)
+    private String address;
 
-        @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-        @JoinTable(name = "USER_ROLES", joinColumns = { @JoinColumn(name = "USER_ID") }, inverseJoinColumns = {
-                        @JoinColumn(name = "ROLE_ID") })
-        private Set<Role> roles;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(name = "USER_ROLES", joinColumns = { @JoinColumn(name = "USER_ID") }, inverseJoinColumns = {
+            @JoinColumn(name = "ROLE_ID") })
+    private Set<Role> roles;
 
-
-        @OneToMany
-        @ElementCollection(targetClass = Notification.class)
-        private List<Notification> notifications; 
+    @OneToMany
+    @ElementCollection(targetClass = Notification.class)
+    private List<Notification> notifications;
 }

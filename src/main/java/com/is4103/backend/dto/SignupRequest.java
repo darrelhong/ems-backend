@@ -27,5 +27,5 @@ public class SignupRequest {
     @NotNull
     @NotEmpty
     private String name;
-    
+
 }

@@ -25,5 +25,5 @@ public class EventBoothTransaction {
 
     @ManyToOne
     private Event event;
-    
+
 }
