@@ -25,6 +25,14 @@ public class EventOrganiserService {
     public EventOrganiser approveEventOrganiser(Long eoId) {
         EventOrganiser toApprove = getEventOrganiserById(eoId);
         toApprove.setApproved(true);
+        toApprove.setApprovalMessage(null);
         return eoRepository.save(toApprove);
+    }
+
+    public EventOrganiser rejectEventOrganiser(Long eoId, String message) {
+        EventOrganiser toReject = getEventOrganiserById(eoId);
+        toReject.setApproved(false);
+        toReject.setApprovalMessage(message);
+        return eoRepository.save(toReject);
     }
 }

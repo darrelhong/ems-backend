@@ -19,6 +19,8 @@ public class EventOrganiser extends User {
     @Column(nullable = false)
     private boolean approved = false;
 
+    private String approvalMessage;
+
     @Column(nullable = true)
     @ElementCollection(targetClass = Attendee.class)
     @ManyToMany
