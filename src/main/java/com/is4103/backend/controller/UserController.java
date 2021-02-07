@@ -18,9 +18,9 @@ import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
 import com.is4103.backend.service.RoleService;
 import com.is4103.backend.service.UserService;
-import com.is4103.backend.util.validation.errors.InvalidTokenException;
-import com.is4103.backend.util.validation.errors.UserNotFoundException;
-import com.is4103.backend.util.validation.registration.OnRegistrationCompleteEvent;
+import com.is4103.backend.util.errors.InvalidTokenException;
+import com.is4103.backend.util.errors.UserNotFoundException;
+import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;

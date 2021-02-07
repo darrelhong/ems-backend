@@ -1,4 +1,4 @@
-package com.is4103.backend.util.validation.errors;
+package com.is4103.backend.util.errors;
 
 import org.springframework.http.HttpStatus;
 

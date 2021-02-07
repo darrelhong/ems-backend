@@ -19,7 +19,7 @@ import com.is4103.backend.model.VerificationToken;
 import com.is4103.backend.repository.PasswordResetTokenRepository;
 import com.is4103.backend.repository.UserRepository;
 import com.is4103.backend.repository.VerificationTokenRepository;
-import com.is4103.backend.util.validation.errors.UserAlreadyExistsException;
+import com.is4103.backend.util.errors.UserAlreadyExistsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

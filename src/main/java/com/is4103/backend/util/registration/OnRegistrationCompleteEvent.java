@@ -1,4 +1,4 @@
-package com.is4103.backend.util.validation.registration;
+package com.is4103.backend.util.registration;
 
 import com.is4103.backend.model.User;
 

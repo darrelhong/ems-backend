@@ -1,4 +1,4 @@
-package com.is4103.backend.util.validation;
+package com.is4103.backend.util;
 
 import java.util.Set;
 
