@@ -7,15 +7,11 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
-import org.springframework.lang.Nullable;
-
 import lombok.Data;
 
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
 
 @Entity
 @Data

@@ -17,8 +17,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import antlr.debug.Event;
-
 @Component
 public class DataInitRunner implements ApplicationRunner {
 
