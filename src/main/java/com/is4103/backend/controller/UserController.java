@@ -71,7 +71,7 @@ public class UserController {
 
     @GetMapping(path = "/{id}")
     public User getUserById(@PathVariable Long id) {
-        return userService.findUserById(id).orElseThrow(() -> new UserNotFoundException());
+        return userService.getUserById(id);
     }
 
     @PostMapping(value = "/login/{role}")
@@ -83,7 +83,7 @@ public class UserController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // verify user has requested role
-        User user = userService.findUserByEmail(authentication.getName());
+        User user = userService.getUserByEmail(authentication.getName());
         Role loginRole = roleService.findByRoleEnum(RoleEnum.valueOf(role.toUpperCase()));
         Set<Role> userRoles = user.getRoles();
 
@@ -147,7 +147,7 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/update")
     public ResponseEntity<User> updateUser(@RequestBody @Valid UpdateUserRequest updateUserRequest) {
-        User user = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
         // verify user id
         if (updateUserRequest.getId() != user.getId()) {
@@ -162,7 +162,7 @@ public class UserController {
     @PostMapping("/change-password")
     public ResponseEntity<String> changePassword(
             @RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
-        User user = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
         if (!userService.checkOldPasswordValid(user, changePasswordRequest.getOldPassword())) {
             return new ResponseEntity<String>("Invalid old password", HttpStatus.UNAUTHORIZED);
@@ -174,7 +174,7 @@ public class UserController {
 
     @PostMapping("/reset-password/request")
     public ResponseEntity<String> resetPasswordRequest(@RequestParam("email") String email) {
-        User user = userService.findUserByEmail(email);
+        User user = userService.getUserByEmail(email);
         if (user == null) {
             throw new UserNotFoundException();
         }

@@ -20,6 +20,7 @@ import com.is4103.backend.repository.PasswordResetTokenRepository;
 import com.is4103.backend.repository.UserRepository;
 import com.is4103.backend.repository.VerificationTokenRepository;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
+import com.is4103.backend.util.errors.UserNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,11 +66,11 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> findUserById(Long id) {
-        return userRepository.findById(id);
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
     }
 
-    public User findUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
@@ -204,6 +205,6 @@ public class UserService {
     }
 
     public Long getCurrentUserId() {
-        return findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getId();
+        return getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getId();
     }
 }
