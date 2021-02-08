@@ -61,4 +61,9 @@ public class EventOrganiserService {
         eoRepository.save(eo);
         return eo.getVipList();
     }
+
+    public List<BusinessPartner> getAllVips(Long eoId) {
+        EventOrganiser eo = getEventOrganiserById(eoId);
+        return eo.getVipList();
+    }
 }

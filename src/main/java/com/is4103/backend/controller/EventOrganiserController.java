@@ -52,6 +52,12 @@ public class EventOrganiserController {
         return eoService.rejectEventOrganiser(eoId, message);
     }
 
+    @GetMapping(value = "/vip/all")
+    public List<BusinessPartner> getAllVips() {
+        Long currentUserId = userService.getCurrentUserId();
+        return eoService.getAllVips(currentUserId);
+    }
+
     @PostMapping(value = "/vip/add/{bpId}")
     public List<BusinessPartner> addToVipList(@PathVariable Long bpId) {
         Long currentUserId = userService.getCurrentUserId();
