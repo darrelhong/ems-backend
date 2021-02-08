@@ -52,9 +52,15 @@ public class EventOrganiserController {
         return eoService.rejectEventOrganiser(eoId, message);
     }
 
-    @PostMapping(value = "/add-vip/{bpId}")
+    @PostMapping(value = "/vip/add/{bpId}")
     public List<BusinessPartner> addToVipList(@PathVariable Long bpId) {
         Long currentUserId = userService.getCurrentUserId();
         return eoService.addToVipList(currentUserId, bpId);
+    }
+
+    @PostMapping(value = "/vip/remove/{bpId}")
+    public List<BusinessPartner> removeFromVipList(@PathVariable Long bpId) {
+        Long currentUserId = userService.getCurrentUserId();
+        return eoService.removeFromVipList(currentUserId, bpId);
     }
 }

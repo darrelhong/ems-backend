@@ -50,4 +50,15 @@ public class EventOrganiserService {
         eoRepository.save(eo);
         return eo.getVipList();
     }
+
+    public List<BusinessPartner> removeFromVipList(Long eoId, Long bpId) {
+        EventOrganiser eo = getEventOrganiserById(eoId);
+        BusinessPartner bp = bpService.getBusinessPartnerById(bpId);
+
+        List<BusinessPartner> current = eo.getVipList();
+        current.remove(bp);
+        eo.setVipList(current);
+        eoRepository.save(eo);
+        return eo.getVipList();
+    }
 }
