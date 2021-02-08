@@ -207,4 +207,16 @@ public class UserService {
     public Long getCurrentUserId() {
         return getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getId();
     }
+
+    public User enableUser(Long id) {
+        User user = getUserById(id);
+        user.setEnabled(true);
+        return userRepository.save(user);
+    }
+
+    public User disableUser(Long id) {
+        User user = getUserById(id);
+        user.setEnabled(false);
+        return userRepository.save(user);
+    }
 }

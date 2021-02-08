@@ -192,6 +192,18 @@ public class UserController {
         return userService.savePassword(resetPasswordDto.getToken(), resetPasswordDto.getNewPassword());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(value = "/enable/{userId}")
+    public User enableUser(@PathVariable Long userId) {
+        return userService.enableUser(userId);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(value = "/disable/{userId}")
+    public User disable(@PathVariable Long userId) {
+        return userService.disableUser(userId);
+    }
+
     // used to protect routes
     @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = "/userping")
