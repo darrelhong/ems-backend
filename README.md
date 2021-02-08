@@ -5,6 +5,12 @@ View `WebSecurityConfig.java` for security configuration. All endpoints are prot
 
 On frontend, page routes are protected by checking if there is a `token` cookie (super hacky).Since issued cookies expire after one hour, user will automatically be logged out after one hour. Probably need to add a way to refresh tokens.
 
+
+## Documentation
+
+View API docs at http://localhost:8080/api/swagger-ui/index.html?configUrl=/api/v3/api-docs/swagger-config
+
+
 ## Run database
 
 Install `docker` and `docker-compose`

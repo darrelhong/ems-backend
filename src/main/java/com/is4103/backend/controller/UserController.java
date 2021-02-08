@@ -206,13 +206,13 @@ public class UserController {
 
     // used to protect routes
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "/userping")
+    @GetMapping(value = "/userping")
     public String userPing() {
         return "Pong User";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/adminping")
+    @GetMapping(value = "/adminping")
     public String adminPing() {
         return "Pong Admin";
     }
