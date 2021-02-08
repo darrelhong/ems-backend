@@ -71,7 +71,6 @@ public class UserController {
 
     @GetMapping(path = "/{id}")
     public User getUserById(@PathVariable Long id) {
-        System.out.println(id);
         return userService.findUserById(id).orElseThrow(() -> new UserNotFoundException());
     }
 

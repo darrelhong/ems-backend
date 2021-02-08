@@ -28,6 +28,12 @@ public class EventOrganiserController {
         return eoService.getAllEventOrganisers();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG')")
+    @GetMapping(path = "/{id}")
+    public EventOrganiser getEventOrganiserById(@PathVariable Long id) {
+        return eoService.getEventOrganiserById(id);
+    }
+
     @PostMapping(value = "/approve/{eoId}")
     public EventOrganiser approveEventOrganiser(@PathVariable Long eoId) {
         return eoService.approveEventOrganiser(eoId);
