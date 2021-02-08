@@ -8,6 +8,8 @@ import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.util.errors.UserNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +22,11 @@ public class EventOrganiserService {
 
     public List<EventOrganiser> getAllEventOrganisers() {
         return eoRepository.findAll();
+    }
+
+    public Page<EventOrganiser> getEventOrganisersPage(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return eoRepository.findAll(pageRequest);
     }
 
     public EventOrganiser getEventOrganiserById(Long eoId) {
