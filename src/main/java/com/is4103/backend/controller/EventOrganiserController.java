@@ -3,8 +3,10 @@ package com.is4103.backend.controller;
 import java.util.List;
 
 import com.is4103.backend.dto.RejectEventOrganiserDto;
+import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.service.EventOrganiserService;
+import com.is4103.backend.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,11 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/organiser")
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('EVNTORG')")
 public class EventOrganiserController {
 
     @Autowired
-    EventOrganiserService eoService;
+    private EventOrganiserService eoService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping(path = "/all")
     public List<EventOrganiser> getAllEventOrganisers() {
@@ -34,14 +39,22 @@ public class EventOrganiserController {
         return eoService.getEventOrganiserById(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/approve/{eoId}")
     public EventOrganiser approveEventOrganiser(@PathVariable Long eoId) {
         return eoService.approveEventOrganiser(eoId);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/reject/{eoId}")
     public EventOrganiser rejectEventOrganiser(@PathVariable Long eoId, @RequestBody RejectEventOrganiserDto data) {
         String message = data.getMessage();
         return eoService.rejectEventOrganiser(eoId, message);
+    }
+
+    @PostMapping(value = "/add-vip/{bpId}")
+    public List<BusinessPartner> addToVipList(@PathVariable Long bpId) {
+        Long currentUserId = userService.getCurrentUserId();
+        return eoService.addToVipList(currentUserId, bpId);
     }
 }

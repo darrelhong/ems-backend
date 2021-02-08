@@ -4,6 +4,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
@@ -82,12 +83,13 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Transactional
     private void createBizPartner() {
-        User admin = new User();
-        admin.setEmail("partner@abc.com");
-        admin.setName("First Business Partner");
-        admin.setPassword(passwordEncoder.encode("password"));
-        admin.setEnabled(true);
-        admin.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
-        userRepository.save(admin);
+        BusinessPartner bp = new BusinessPartner();
+        bp.setEmail("partner@abc.com");
+        bp.setName("First Business Partner");
+        bp.setPassword(passwordEncoder.encode("password"));
+        bp.setEnabled(true);
+        bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
+        bp.setBusinessCategory("Travel");
+        userRepository.save(bp);
     }
 }

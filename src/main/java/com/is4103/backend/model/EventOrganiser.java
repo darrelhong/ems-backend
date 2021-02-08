@@ -21,6 +21,9 @@ public class EventOrganiser extends User {
 
     private String approvalMessage;
 
+    @OneToMany
+    private List<BusinessPartner> vipList;
+
     @Column(nullable = true)
     @ElementCollection(targetClass = Attendee.class)
     @ManyToMany

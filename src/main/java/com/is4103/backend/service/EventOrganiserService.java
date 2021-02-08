@@ -2,6 +2,7 @@ package com.is4103.backend.service;
 
 import java.util.List;
 
+import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.util.errors.UserNotFoundException;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Service;
 public class EventOrganiserService {
     @Autowired
     private EventOrganiserRepository eoRepository;
+
+    @Autowired
+    private BusinessPartnerService bpService;
 
     public List<EventOrganiser> getAllEventOrganisers() {
         return eoRepository.findAll();
@@ -34,5 +38,16 @@ public class EventOrganiserService {
         toReject.setApproved(false);
         toReject.setApprovalMessage(message);
         return eoRepository.save(toReject);
+    }
+
+    public List<BusinessPartner> addToVipList(Long eoId, Long bpId) {
+        EventOrganiser eo = getEventOrganiserById(eoId);
+        BusinessPartner bp = bpService.getBusinessPartnerById(bpId);
+
+        List<BusinessPartner> current = eo.getVipList();
+        current.add(bp);
+        eo.setVipList(current);
+        eoRepository.save(eo);
+        return eo.getVipList();
     }
 }
