@@ -16,6 +16,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.CascadeType;
 
 import lombok.Data;
@@ -28,6 +30,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long eid;
 
+    @JsonIgnoreProperties("events")
     @ManyToOne
     private EventOrganiser eventOrganiser;
 
