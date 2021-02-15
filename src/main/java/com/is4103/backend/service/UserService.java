@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import com.is4103.backend.dto.DisabledAccountRequest;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.model.PasswordResetToken;
@@ -107,7 +108,14 @@ public class UserService {
         user.setDescription(updateUserRequest.getDescription());
         user.setAddress(updateUserRequest.getAddress());
         user.setPhonenumber(updateUserRequest.getPhonenumber());
-        //user.setEmail(updateUserRequest.getEmail());
+     
+        return userRepository.save(user);
+    }
+
+    public User updateAccountStatus(User user, DisabledAccountRequest updateUserRequest) {
+     
+        user.setEnabled(false);
+    
         return userRepository.save(user);
     }
 
