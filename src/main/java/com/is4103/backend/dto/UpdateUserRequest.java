@@ -22,9 +22,8 @@ public class UpdateUserRequest {
     @NotNull
     @NotEmpty
     private String phonenumber;
-    @NotNull
-    @NotEmpty
-    private String email;
+
+    private String description;
 
 
 }
