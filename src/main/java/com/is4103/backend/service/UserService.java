@@ -104,9 +104,10 @@ public class UserService {
     @Transactional
     public User updateUser(User user, UpdateUserRequest updateUserRequest) {
         user.setName(updateUserRequest.getName());
+        user.setDescription(updateUserRequest.getDescription());
         user.setAddress(updateUserRequest.getAddress());
         user.setPhonenumber(updateUserRequest.getPhonenumber());
-        user.setEmail(updateUserRequest.getEmail());
+        //user.setEmail(updateUserRequest.getEmail());
         return userRepository.save(user);
     }
 

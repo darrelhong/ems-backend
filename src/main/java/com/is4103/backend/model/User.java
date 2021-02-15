@@ -31,6 +31,10 @@ public class User {
     private Long id;
     private String name;
 
+
+    @Column(nullable = true)
+    private String description;
+
     @Column(nullable = false, unique = true)
     private String email;
 
