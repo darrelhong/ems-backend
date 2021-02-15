@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import com.is4103.backend.config.JwtTokenUtil;
 import com.is4103.backend.dto.AuthToken;
 import com.is4103.backend.dto.ChangePasswordRequest;
+import com.is4103.backend.dto.DisabledAccountRequest;
 import com.is4103.backend.dto.LoginRequest;
 import com.is4103.backend.dto.LoginResponse;
 import com.is4103.backend.dto.ResetPasswordDto;
@@ -151,6 +152,22 @@ public class UserController {
         user = userService.updateUser(user, updateUserRequest);
         return ResponseEntity.ok(user);
     }
+    
+    @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
+    @PostMapping("/update-account-status")
+    public ResponseEntity<User> updateAccountStatus(@RequestBody @Valid DisabledAccountRequest updateUserRequest) {
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        // verify user id
+        if (updateUserRequest.getId() != user.getId()) {
+            throw new AuthenticationServiceException("An error has occured");
+        }
+
+        user = userService.updateAccountStatus(user, updateUserRequest);
+        return ResponseEntity.ok(user);
+    }
+
+
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/change-password")
