@@ -29,8 +29,7 @@ public class BusinessPartner extends User {
     @ElementCollection(targetClass = EventOrganiser.class)
     private List<EventOrganiser> followEventOrganisers;
 
-    
-    @OneToMany (mappedBy = "businessPartner")
+    @OneToMany(mappedBy = "businessPartner")
     @ElementCollection(targetClass = EventBoothTransaction.class)
     private List<EventBoothTransaction> eventBoothTransactions;
 
@@ -38,8 +37,8 @@ public class BusinessPartner extends User {
     @ElementCollection(targetClass = Enquiry.class)
     private List<Enquiry> enquiries;
 
-    public BusinessPartner(){
-        
+    public BusinessPartner() {
+
     }
 
     public BusinessPartner(String businessCategory, List<Event> favouriteEventList) {

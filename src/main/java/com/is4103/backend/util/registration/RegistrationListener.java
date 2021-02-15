@@ -1,4 +1,4 @@
-package com.is4103.backend.util.validation.registration;
+package com.is4103.backend.util.registration;
 
 import java.util.UUID;
 

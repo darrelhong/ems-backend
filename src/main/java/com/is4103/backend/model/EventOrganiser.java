@@ -6,17 +6,27 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 @Entity
-
-
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class EventOrganiser extends User {
+
+    @Column(nullable = false)
+    private boolean approved = false;
+
+    private String approvalMessage;
+
+    @OneToMany
+    private List<BusinessPartner> vipList;
 
     @Column(nullable = true)
     @ElementCollection(targetClass = Attendee.class)
-    @ManyToMany 
+    @ManyToMany
     private List<Attendee> attendeeFollowers;
 
     @Column(nullable = true)
@@ -24,17 +34,17 @@ public class EventOrganiser extends User {
     @ManyToMany
     private List<BusinessPartner> businessPartnerFollowers;
 
-    @Column(nullable=true)
+    @Column(nullable = true)
     @ElementCollection(targetClass = Event.class)
-    @OneToMany(mappedBy="eventOrganiser")
+    @OneToMany(mappedBy = "eventOrganiser")
     private List<Event> events;
 
-    @OneToMany(mappedBy="eventOrganiser")
+    @OneToMany(mappedBy = "eventOrganiser")
     @ElementCollection(targetClass = Enquiry.class)
     private List<Enquiry> enquiries;
 
-    public EventOrganiser(){
-        
+    public EventOrganiser() {
+
     }
 
     public EventOrganiser(List<Attendee> attendeeFollowers, List<BusinessPartner> businessPartnerFollowers) {
@@ -43,7 +53,7 @@ public class EventOrganiser extends User {
         this.businessPartnerFollowers = businessPartnerFollowers;
 
     }
-    
+
     public List<Attendee> getAttendeeFollowers() {
         return attendeeFollowers;
     }

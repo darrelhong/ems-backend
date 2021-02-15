@@ -1,9 +1,11 @@
-package com.is4103.backend.util.validation;
+package com.is4103.backend.util;
 
 import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import com.is4103.backend.model.BusinessPartner;
+import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
@@ -51,6 +53,10 @@ public class DataInitRunner implements ApplicationRunner {
         if (userRepository.findByEmail("organiser@abc.com") == null) {
             createEventOrganiser();
         }
+
+        if (userRepository.findByEmail("partner@abc.com") == null) {
+            createBizPartner();
+        }
     }
 
     @Transactional
@@ -66,12 +72,24 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Transactional
     private void createEventOrganiser() {
-        User admin = new User();
-        admin.setEmail("organiser@abc.com");
-        admin.setName("First Organiser");
-        admin.setPassword(passwordEncoder.encode("password"));
-        admin.setEnabled(true);
-        admin.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
-        userRepository.save(admin);
+        EventOrganiser eo = new EventOrganiser();
+        eo.setEmail("organiser@abc.com");
+        eo.setName("First Organiser");
+        eo.setPassword(passwordEncoder.encode("password"));
+        eo.setEnabled(true);
+        eo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
+        userRepository.save(eo);
+    }
+
+    @Transactional
+    private void createBizPartner() {
+        BusinessPartner bp = new BusinessPartner();
+        bp.setEmail("partner@abc.com");
+        bp.setName("First Business Partner");
+        bp.setPassword(passwordEncoder.encode("password"));
+        bp.setEnabled(true);
+        bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
+        bp.setBusinessCategory("Travel");
+        userRepository.save(bp);
     }
 }

@@ -3,7 +3,6 @@ package com.is4103.backend.service;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -19,7 +18,8 @@ import com.is4103.backend.model.VerificationToken;
 import com.is4103.backend.repository.PasswordResetTokenRepository;
 import com.is4103.backend.repository.UserRepository;
 import com.is4103.backend.repository.VerificationTokenRepository;
-import com.is4103.backend.util.validation.errors.UserAlreadyExistsException;
+import com.is4103.backend.util.errors.UserAlreadyExistsException;
+import com.is4103.backend.util.errors.UserNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +27,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -64,11 +65,11 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> findUserById(Long id) {
-        return userRepository.findById(id);
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
     }
 
-    public User findUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
@@ -169,7 +170,7 @@ public class UserService {
         String recipientAddress = user.getEmail();
         String subject = messageSource.getMessage("message.resetPasswordEmailSubject", null,
                 LocaleContextHolder.getLocale());
-        String confirmationUrl = "http://localhost:3000/reset-password/verify?token=" + prt.getToken();
+        String confirmationUrl = "http://localhost:3000/register/reset-password/verify?token=" + prt.getToken();
         String message = messageSource.getMessage("message.resetPasswordPrompt", null, LocaleContextHolder.getLocale());
 
         SimpleMailMessage email = new SimpleMailMessage();
@@ -200,5 +201,21 @@ public class UserService {
             return "Token Expired";
         }
         return "Valid Token";
+    }
+
+    public Long getCurrentUserId() {
+        return getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getId();
+    }
+
+    public User enableUser(Long id) {
+        User user = getUserById(id);
+        user.setEnabled(true);
+        return userRepository.save(user);
+    }
+
+    public User disableUser(Long id) {
+        User user = getUserById(id);
+        user.setEnabled(false);
+        return userRepository.save(user);
     }
 }

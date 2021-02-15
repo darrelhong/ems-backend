@@ -18,9 +18,9 @@ import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
 import com.is4103.backend.service.RoleService;
 import com.is4103.backend.service.UserService;
-import com.is4103.backend.util.validation.errors.InvalidTokenException;
-import com.is4103.backend.util.validation.errors.UserNotFoundException;
-import com.is4103.backend.util.validation.registration.OnRegistrationCompleteEvent;
+import com.is4103.backend.util.errors.InvalidTokenException;
+import com.is4103.backend.util.errors.UserNotFoundException;
+import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -71,8 +71,7 @@ public class UserController {
 
     @GetMapping(path = "/{id}")
     public User getUserById(@PathVariable Long id) {
-        System.out.println(id);
-        return userService.findUserById(id).orElseThrow(() -> new UserNotFoundException());
+        return userService.getUserById(id);
     }
 
     @PostMapping(value = "/login/{role}")
@@ -84,7 +83,7 @@ public class UserController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // verify user has requested role
-        User user = userService.findUserByEmail(authentication.getName());
+        User user = userService.getUserByEmail(authentication.getName());
         Role loginRole = roleService.findByRoleEnum(RoleEnum.valueOf(role.toUpperCase()));
         Set<Role> userRoles = user.getRoles();
 
@@ -118,8 +117,7 @@ public class UserController {
 
     @PostMapping("/register/{role}")
     public User registerNewUser(@PathVariable String role, @RequestBody @Valid SignupRequest signupRequest) {
-        //changed enabled-false to true. check again
-        User user = userService.registerNewUser(signupRequest, role, true);
+        User user = userService.registerNewUser(signupRequest, role, false);
 
         eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user));
         return user;
@@ -143,7 +141,7 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/update")
     public ResponseEntity<User> updateUser(@RequestBody @Valid UpdateUserRequest updateUserRequest) {
-        User user = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
         // verify user id
         if (updateUserRequest.getId() != user.getId()) {
@@ -156,8 +154,9 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/change-password")
-    public ResponseEntity<String> changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
-        User user = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    public ResponseEntity<String> changePassword(
+            @RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
         if (!userService.checkOldPasswordValid(user, changePasswordRequest.getOldPassword())) {
             return new ResponseEntity<String>("Invalid old password", HttpStatus.UNAUTHORIZED);
@@ -169,7 +168,7 @@ public class UserController {
 
     @PostMapping("/reset-password/request")
     public ResponseEntity<String> resetPasswordRequest(@RequestParam("email") String email) {
-        User user = userService.findUserByEmail(email);
+        User user = userService.getUserByEmail(email);
         if (user == null) {
             throw new UserNotFoundException();
         }
@@ -187,15 +186,27 @@ public class UserController {
         return userService.savePassword(resetPasswordDto.getToken(), resetPasswordDto.getNewPassword());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(value = "/enable/{userId}")
+    public User enableUser(@PathVariable Long userId) {
+        return userService.enableUser(userId);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(value = "/disable/{userId}")
+    public User disable(@PathVariable Long userId) {
+        return userService.disableUser(userId);
+    }
+
     // used to protect routes
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = "/userping")
+    @GetMapping(value = "/userping")
     public String userPing() {
         return "Pong User";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/adminping")
+    @GetMapping(value = "/adminping")
     public String adminPing() {
         return "Pong Admin";
     }

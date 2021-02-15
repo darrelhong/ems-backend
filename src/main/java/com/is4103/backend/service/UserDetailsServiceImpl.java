@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.is4103.backend.model.User;
 import com.is4103.backend.repository.UserRepository;
-import com.is4103.backend.util.validation.errors.UserNotFoundException;
+import com.is4103.backend.util.errors.UserNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

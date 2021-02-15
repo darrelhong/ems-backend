@@ -25,7 +25,6 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long eid;
 
-   
     @ManyToOne
     private EventOrganiser eventOrganiser;
 
@@ -37,59 +36,57 @@ public class Event {
     @ElementCollection(targetClass = EventBoothTransaction.class)
     private List<EventBoothTransaction> eventBoothTransactions;
 
-    @OneToMany (mappedBy = "event")
+    @OneToMany(mappedBy = "event")
     @ElementCollection(targetClass = Booth.class)
     private List<Booth> booths;
 
-    @OneToMany (mappedBy="event")
+    @OneToMany(mappedBy = "event")
     @ElementCollection(targetClass = TicketTransaction.class)
     private List<TicketTransaction> ticketTransactions;
-
 
     @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
     private String address;
-    
+
     @Column(nullable = false)
     private String descriptions;
-    
+
     @Column(nullable = true)
     private String website;
-    
+
     @Column(nullable = true)
     private float ticketPrice;
 
-    @Column(nullable=true)
+    @Column(nullable = true)
     private int ticketCapacity;
-    
+
     @Column(nullable = false)
     private boolean isPhysical;
-    
+
     @Column(nullable = false)
     private LocalDateTime eventStartDate;
-    
+
     @Column(nullable = false)
     private LocalDateTime eventEndDate;
-    
+
     @Column(nullable = true)
     private LocalDateTime saleStartDate;
-    
+
     @Column(nullable = true)
     private LocalDateTime salesndDate;
-    
+
     @Column(nullable = false)
     @ElementCollection(targetClass = String.class)
     private List<String> images;
 
-    
     @Column(nullable = false)
     private int boothCapacity;
-    
+
     @Column(nullable = true)
     private int rating;
-    
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus;

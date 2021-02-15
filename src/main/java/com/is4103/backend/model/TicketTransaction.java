@@ -1,6 +1,5 @@
 package com.is4103.backend.model;
 
-
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;

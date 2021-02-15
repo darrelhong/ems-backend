@@ -1,6 +1,5 @@
 package com.is4103.backend.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -25,5 +24,5 @@ public class EventBoothTransaction {
 
     @ManyToOne
     private Event event;
-    
+
 }

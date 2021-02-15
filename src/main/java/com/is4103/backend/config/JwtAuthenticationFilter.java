@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.is4103.backend.service.UserDetailsServiceImpl;
-import com.is4103.backend.util.validation.errors.CustomExpiredJwtException;
+import com.is4103.backend.util.errors.CustomExpiredJwtException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
