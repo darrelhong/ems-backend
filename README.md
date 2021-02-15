@@ -10,6 +10,15 @@ On frontend, page routes are protected by checking if there is a `token` cookie 
 
 View API docs at http://localhost:8080/api/swagger-ui/index.html?configUrl=/api/v3/api-docs/swagger-config
 
+## Running the Database
+Port number: 3307
+`mysql -P 3307 --protocol=tcp -u root -p`
+Using this command on terminal, you can go into your `mysql` on terminal
+`use is4103db` - after this you can run sql queries straight to our mysql db
+`SELECT * FROM user;` - example query
+
+You can also run connect to it via mysql workbench or DataGrip to visually see all the tables and rows
+
 
 ## Setup
 

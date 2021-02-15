@@ -5,6 +5,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -37,6 +38,7 @@ public class EventOrganiser extends User {
     @Column(nullable = true)
     @ElementCollection(targetClass = Event.class)
     @OneToMany(mappedBy = "eventOrganiser")
+    @JsonIgnoreProperties("eventOrganiser")
     private List<Event> events;
 
     @OneToMany(mappedBy = "eventOrganiser")
