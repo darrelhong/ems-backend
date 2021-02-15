@@ -18,4 +18,13 @@ public class UpdateUserRequest {
     @NotNull
     @NotEmpty
     private String name;
+    private String address;
+    @NotNull
+    @NotEmpty
+    private String phonenumber;
+    @NotNull
+    @NotEmpty
+    private String email;
+
+
 }
