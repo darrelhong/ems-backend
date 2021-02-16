@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -32,6 +33,7 @@ public class Event {
 
     @JsonIgnoreProperties("events")
     @ManyToOne
+    @JsonIgnoreProperties("events")
     private EventOrganiser eventOrganiser;
 
     @ManyToMany(fetch = FetchType.LAZY)
