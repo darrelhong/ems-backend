@@ -60,7 +60,7 @@ public class DataInitRunner implements ApplicationRunner {
         }
 
         if (userRepository.findByEmail("organiser@abc.com") == null) {
-            createEventOrganiser();
+            createEventOrganisers();
         }
 
         if (userRepository.findByEmail("partner@abc.com") == null) {
@@ -84,7 +84,7 @@ public class DataInitRunner implements ApplicationRunner {
     }
 
     @Transactional
-    private void createEventOrganiser() {
+    private void createEventOrganisers() {
         EventOrganiser eo = new EventOrganiser();
         eo.setEmail("organiser@abc.com");
         eo.setName("First Organiser");
@@ -92,6 +92,15 @@ public class DataInitRunner implements ApplicationRunner {
         eo.setEnabled(true);
         eo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
         userRepository.save(eo);
+
+        for (int i = 2; i <= 11; i++) {
+            eo = new EventOrganiser();
+            eo.setEmail("organiser" + i + "@abc.com");
+            eo.setName("Organiser " + i);
+            eo.setPassword(passwordEncoder.encode("password"));
+            eo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
+            userRepository.save(eo);
+        }
     }
 
     @Transactional
