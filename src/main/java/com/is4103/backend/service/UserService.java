@@ -97,7 +97,7 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    private boolean emailExists(String email) {
+    public boolean emailExists(String email) {
         return userRepository.findByEmail(email) != null;
     }
 

@@ -2,7 +2,10 @@ package com.is4103.backend.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import com.is4103.backend.dto.RejectEventOrganiserDto;
+import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.service.EventOrganiserService;
@@ -47,6 +50,17 @@ public class EventOrganiserController {
     @GetMapping(path = "/{id}")
     public EventOrganiser getEventOrganiserById(@PathVariable Long id) {
         return eoService.getEventOrganiserById(id);
+    }
+
+    @PostMapping(value = "/register")
+    public EventOrganiser registerNewEventOrganiser(@RequestBody @Valid SignupRequest signupRequest) {
+        return eoService.registerNewEventOrganiser(signupRequest, false);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(value = "/register/noverify")
+    public EventOrganiser registerNewEventOrganiserNoVerify(@RequestBody @Valid SignupRequest signupRequest) {
+        return eoService.registerNewEventOrganiser(signupRequest, true);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
