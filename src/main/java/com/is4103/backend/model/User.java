@@ -35,6 +35,9 @@ public class User {
     @Column(nullable = true)
     private String description;
 
+    @Column(nullable = true)
+    private String profilePic;
+    
     @Column(nullable = false, unique = true)
     private String email;
 
