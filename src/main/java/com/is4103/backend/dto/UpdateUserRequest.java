@@ -22,7 +22,7 @@ public class UpdateUserRequest {
     @NotNull
     @NotEmpty
     private String phonenumber;
-
+    private String profilepic;
     private String description;
     private boolean enabled;
 

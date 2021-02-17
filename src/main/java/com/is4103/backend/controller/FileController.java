@@ -1,6 +1,7 @@
 package com.is4103.backend.controller;
 
 import com.is4103.backend.service.FileStorageService;
+import com.is4103.backend.service.UserService;
 import com.is4103.backend.dto.UploadFileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -17,6 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.is4103.backend.model.User;
 
 @RestController
 public class FileController {
@@ -26,13 +30,23 @@ public class FileController {
     @Autowired
     private FileStorageService fileStorageService;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/uploadFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
         String fileName = fileStorageService.storeFile(file);
 
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        long userId = user.getId();
+        
+
+        
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
                 .path(fileName).toUriString();
-
+        
+       user = userService.updateProfilePic(user,fileDownloadUri);
+       
         return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
     }
 
