@@ -119,6 +119,14 @@ public class UserService {
         return userRepository.save(user);
     }
 
+
+    public User updateProfilePic(User user, String profilePicUrl) {
+
+        user.setProfilePic(profilePicUrl);
+
+        return userRepository.save(user);
+    }
+
     public void createVerificationToken(User user, String token) {
         VerificationToken vt = new VerificationToken(token, user);
         vtRepository.save(vt);
