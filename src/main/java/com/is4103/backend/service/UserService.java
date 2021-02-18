@@ -84,7 +84,7 @@ public class UserService {
         User newUser = new User();
         newUser.setName(signupRequest.getName());
         newUser.setEmail(signupRequest.getEmail());
-
+        newUser.setEnabled(true);
         newUser.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
         Set<Role> roles = new HashSet<>();
