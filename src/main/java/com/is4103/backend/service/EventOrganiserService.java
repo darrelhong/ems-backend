@@ -14,8 +14,10 @@ import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 import com.is4103.backend.util.errors.UserNotFoundException;
+import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,6 +39,9 @@ public class EventOrganiserService {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     public List<EventOrganiser> getAllEventOrganisers() {
         return eoRepository.findAll();
@@ -72,7 +77,13 @@ public class EventOrganiserService {
             newEo.setEnabled(true);
         }
 
-        return eoRepository.save(newEo);
+        newEo = eoRepository.save(newEo);
+
+        if (!newEo.isEnabled()) {
+            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(newEo));
+        }
+
+        return newEo;
     }
 
     public EventOrganiser approveEventOrganiser(Long eoId) {

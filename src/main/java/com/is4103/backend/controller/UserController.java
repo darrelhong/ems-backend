@@ -53,7 +53,7 @@ public class UserController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    ApplicationEventPublisher eventPublisher;
+    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;

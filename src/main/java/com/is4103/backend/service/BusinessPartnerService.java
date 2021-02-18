@@ -13,8 +13,10 @@ import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.repository.BusinessPartnerRepository;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 import com.is4103.backend.util.errors.UserNotFoundException;
+import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,6 +36,9 @@ public class BusinessPartnerService {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     public List<BusinessPartner> getAllBusinessPartners() {
         return bpRepository.findAll();
@@ -69,6 +74,16 @@ public class BusinessPartnerService {
             newBp.setEnabled(true);
         }
 
-        return bpRepository.save(newBp);
+        if (enabled) {
+            newBp.setEnabled(true);
+        }
+
+        newBp = bpRepository.save(newBp);
+
+        if (!newBp.isEnabled()) {
+            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(newBp));
+        }
+
+        return newBp;
     }
 }
