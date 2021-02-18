@@ -39,14 +39,12 @@ public class FileController {
 
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         long userId = user.getId();
-        
 
-        
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
                 .path(fileName).toUriString();
-        
-       user = userService.updateProfilePic(user,fileDownloadUri);
-       
+
+        user = userService.updateProfilePic(user, fileDownloadUri);
+
         return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
     }
 

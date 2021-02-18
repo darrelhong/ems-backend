@@ -26,5 +26,4 @@ public class UpdateUserRequest {
     private String description;
     private boolean enabled;
 
-
 }

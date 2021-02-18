@@ -22,8 +22,6 @@ public class EventOrganiser extends User {
 
     private String approvalMessage;
 
-
-
     @OneToMany
     private List<BusinessPartner> vipList;
 
@@ -46,8 +44,6 @@ public class EventOrganiser extends User {
     @OneToMany(mappedBy = "eventOrganiser")
     @ElementCollection(targetClass = Enquiry.class)
     private List<Enquiry> enquiries;
-
-
 
     public EventOrganiser() {
 
