@@ -12,7 +12,7 @@ import java.util.List;
 
 public class BusinessPartner extends User {
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String businessCategory;
 
     @Column(nullable = true)
