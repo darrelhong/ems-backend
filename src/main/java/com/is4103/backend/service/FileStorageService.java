@@ -41,10 +41,10 @@ public class FileStorageService {
     }
 
     public String storeFile(MultipartFile file) {
-     
+
         // generate an unique uuid
-        //UUID uuid = UUID.randomUUID();  
-    
+        // UUID uuid = UUID.randomUUID();
+
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
@@ -56,13 +56,11 @@ public class FileStorageService {
             User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
             long userId = user.getId();
             String fileExtension = fileName.split("\\.")[1];
-            fileName = "user-id-" +userId+ "." + fileExtension;
-     
+            fileName = "user-id-" + userId + "." + fileExtension;
 
             // Copy file to the target location (Replacing existing file with the same name)
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-  
             return fileName;
         } catch (IOException ex) {
             throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);

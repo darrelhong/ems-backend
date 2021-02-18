@@ -98,7 +98,7 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    private boolean emailExists(String email) {
+    public boolean emailExists(String email) {
         return userRepository.findByEmail(email) != null;
     }
 
@@ -108,17 +108,16 @@ public class UserService {
         user.setDescription(updateUserRequest.getDescription());
         user.setAddress(updateUserRequest.getAddress());
         user.setPhonenumber(updateUserRequest.getPhonenumber());
-     
+
         return userRepository.save(user);
     }
 
     public User updateAccountStatus(User user, DisabledAccountRequest updateUserRequest) {
-     
+
         user.setEnabled(false);
-    
+
         return userRepository.save(user);
     }
-
 
     public User updateProfilePic(User user, String profilePicUrl) {
 

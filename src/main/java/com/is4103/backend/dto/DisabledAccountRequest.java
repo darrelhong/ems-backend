@@ -13,8 +13,13 @@ public class DisabledAccountRequest {
 
     @NotNull
     private Long id;
+<<<<<<< HEAD
     
     private boolean enabled;
 
+=======
+
+    private boolean enabled;
+>>>>>>> 1f0cc9a148eb094aba18f609a470931ee448c5bb
 
 }
