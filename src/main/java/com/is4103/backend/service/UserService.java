@@ -11,6 +11,10 @@ import javax.transaction.Transactional;
 import com.is4103.backend.dto.DisabledAccountRequest;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
+import com.is4103.backend.model.Admin;
+import com.is4103.backend.model.Attendee;
+import com.is4103.backend.model.BusinessPartner;
+import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.PasswordResetToken;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
@@ -77,26 +81,82 @@ public class UserService {
     @Transactional
     public User registerNewUser(SignupRequest signupRequest, String roleStr, boolean enabled)
             throws UserAlreadyExistsException {
+
+        System.out.println("new user role");
+        System.out.println(roleStr);
         if (emailExists(signupRequest.getEmail())) {
             throw new UserAlreadyExistsException("Account with email " + signupRequest.getEmail() + " already exists");
         }
 
-        User newUser = new User();
-        newUser.setName(signupRequest.getName());
-        newUser.setEmail(signupRequest.getEmail());
-
-        newUser.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+        if(roleStr.equals("bizptnr")){
+        BusinessPartner newbp = new BusinessPartner();
+        newbp.setEmail(signupRequest.getEmail());
+        newbp.setName(signupRequest.getName());
+       // newbp.setBusinessCategory(signupRequest.getBusinessCategory());
+        newbp.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
         Set<Role> roles = new HashSet<>();
         roles.add(role);
-        newUser.setRoles(roles);
-
+        newbp.setRoles(roles);
+ 
         if (enabled) {
-            newUser.setEnabled(true);
+            newbp.setEnabled(true);
+        }
+       return userRepository.save(newbp);
+
+    }else if(roleStr.equals("evntorg")){
+        EventOrganiser neweo = new EventOrganiser();
+        neweo.setEmail(signupRequest.getEmail());
+        neweo.setName(signupRequest.getName());
+        neweo.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+        Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        neweo.setRoles(roles);
+ 
+        if (enabled) {
+            neweo.setEnabled(true);
+        }
+       return userRepository.save(neweo);
+
+    }else if(roleStr.equals("atnd")){
+        Attendee newatt = new Attendee();
+        newatt.setEmail(signupRequest.getEmail());
+        newatt.setName(signupRequest.getName());
+        newatt.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+        Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        newatt.setRoles(roles);
+ 
+        if (enabled) {
+            newatt.setEnabled(true);
         }
 
-        return userRepository.save(newUser);
+       return userRepository.save(newatt);
     }
+    else if(roleStr.equals("admin")){
+        Admin newadmin = new Admin();
+        newadmin.setEmail(signupRequest.getEmail());
+        newadmin.setName(signupRequest.getName());
+        newadmin.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+        Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        newadmin.setRoles(roles);
+        if (enabled) {
+            newadmin.setEnabled(true);
+        }
+
+       return userRepository.save(newadmin);
+   
+    }else{
+        return null;
+    }
+    
+}
+
+       
 
     public boolean emailExists(String email) {
         return userRepository.findByEmail(email) != null;

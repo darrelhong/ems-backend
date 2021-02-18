@@ -153,20 +153,6 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
     
-    @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
-    @PostMapping("/update-account-status")
-    public ResponseEntity<User> updateAccountStatus(@RequestBody @Valid DisabledAccountRequest updateUserRequest) {
-        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-
-        // verify user id
-        if (updateUserRequest.getId() != user.getId()) {
-            throw new AuthenticationServiceException("An error has occured");
-        }
-
-        user = userService.updateAccountStatus(user, updateUserRequest);
-        return ResponseEntity.ok(user);
-    }
-
 
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
@@ -183,19 +169,6 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
-    @PostMapping("/update-account-status")
-    public ResponseEntity<User> updateAccountStatus(@RequestBody @Valid DisabledAccountRequest updateUserRequest) {
-        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-
-        // verify user id
-        if (updateUserRequest.getId() != user.getId()) {
-            throw new AuthenticationServiceException("An error has occured");
-        }
-
-        user = userService.updateAccountStatus(user, updateUserRequest);
-        return ResponseEntity.ok(user);
-    }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/change-password")
