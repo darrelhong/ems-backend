@@ -39,7 +39,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // Enable CORS disable CSRF
         http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers("/test/**", "/greeting", "/user/register/**", "/user/login/**", "/user/reset-password/**",
+                .antMatchers("/test/**", "/greeting",
+                        "/user/register/**", "/organiser/register/**", "/partner/register/**",
+                        "/user/login/**", "/user/reset-password/**",
                         "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                 .permitAll()
                 // can also be used to protected routes
