@@ -1,22 +1,28 @@
 package com.is4103.backend.util;
 
 import java.util.Set;
+import java.util.ArrayList;
 
 import javax.transaction.Transactional;
 
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
+import com.is4103.backend.model.EventStatus;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
+import com.is4103.backend.model.Event;
 import com.is4103.backend.repository.RoleRepository;
 import com.is4103.backend.repository.UserRepository;
+import com.is4103.backend.repository.EventRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Component
 public class DataInitRunner implements ApplicationRunner {
@@ -26,6 +32,9 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -51,12 +60,16 @@ public class DataInitRunner implements ApplicationRunner {
         }
 
         if (userRepository.findByEmail("organiser@abc.com") == null) {
-            createEventOrganiser();
+            createEventOrganisers();
         }
 
         if (userRepository.findByEmail("partner@abc.com") == null) {
             createBizPartner();
         }
+
+        // Testing Entities
+        if (eventRepository.findAll().isEmpty())
+            createEvent();
     }
 
     @Transactional
@@ -71,7 +84,7 @@ public class DataInitRunner implements ApplicationRunner {
     }
 
     @Transactional
-    private void createEventOrganiser() {
+    private void createEventOrganisers() {
         EventOrganiser eo = new EventOrganiser();
         eo.setEmail("organiser@abc.com");
         eo.setName("First Organiser");
@@ -79,6 +92,15 @@ public class DataInitRunner implements ApplicationRunner {
         eo.setEnabled(true);
         eo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
         userRepository.save(eo);
+
+        for (int i = 2; i <= 11; i++) {
+            eo = new EventOrganiser();
+            eo.setEmail("organiser" + i + "@abc.com");
+            eo.setName("Organiser " + i);
+            eo.setPassword(passwordEncoder.encode("password"));
+            eo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
+            userRepository.save(eo);
+        }
     }
 
     @Transactional
@@ -91,5 +113,24 @@ public class DataInitRunner implements ApplicationRunner {
         bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
         bp.setBusinessCategory("Travel");
         userRepository.save(bp);
+    }
+
+    // Testing Methods
+    @Transactional
+    private void createEvent() {
+        Event event = new Event();
+        event.setName("First Event");
+        event.setAddress("Woodlands");
+        event.setDescriptions("Some description");
+        event.setPhysical(false);
+        event.setEventStartDate(LocalDateTime.now());
+        event.setEventEndDate(LocalDateTime.now());
+        event.setSaleStartDate(LocalDateTime.now());
+        event.setSalesEndDate(LocalDateTime.now());
+        event.setImages(new ArrayList<>());
+        event.setBoothCapacity(305);
+        event.setRating(5);
+        event.setEventStatus(EventStatus.COMPLETED);
+        eventRepository.save(event);
     }
 }

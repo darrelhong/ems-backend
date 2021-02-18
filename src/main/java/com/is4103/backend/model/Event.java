@@ -8,12 +8,16 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.persistence.CascadeType;
 
 import lombok.Data;
 
@@ -26,21 +30,22 @@ public class Event {
     private long eid;
 
     @ManyToOne
+    @JsonIgnoreProperties("events")
     private EventOrganiser eventOrganiser;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @ElementCollection(targetClass = BusinessPartner.class)
     private List<BusinessPartner> favouriteBusinessPartners;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @ElementCollection(targetClass = EventBoothTransaction.class)
     private List<EventBoothTransaction> eventBoothTransactions;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @ElementCollection(targetClass = Booth.class)
     private List<Booth> booths;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @ElementCollection(targetClass = TicketTransaction.class)
     private List<TicketTransaction> ticketTransactions;
 
@@ -75,7 +80,7 @@ public class Event {
     private LocalDateTime saleStartDate;
 
     @Column(nullable = true)
-    private LocalDateTime salesndDate;
+    private LocalDateTime salesEndDate;
 
     @Column(nullable = false)
     @ElementCollection(targetClass = String.class)
