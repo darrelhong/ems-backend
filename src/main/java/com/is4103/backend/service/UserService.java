@@ -78,6 +78,8 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    // d. might be better to split this into respective controllers for organiser,
+    // partner etc
     @Transactional
     public User registerNewUser(SignupRequest signupRequest, String roleStr, boolean enabled)
             throws UserAlreadyExistsException {
