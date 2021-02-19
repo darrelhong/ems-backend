@@ -180,6 +180,7 @@ public class UserService {
     }
 
     public User updateProfilePic(User user, String profilePicUrl) {
+       
 
         user.setProfilePic(profilePicUrl);
 

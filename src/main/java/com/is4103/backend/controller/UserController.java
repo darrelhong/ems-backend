@@ -76,22 +76,20 @@ public class UserController {
     }
 
     @PostMapping(value = "/login/{role}")
-    public ResponseEntity<?> login(@PathVariable String role, @RequestBody LoginRequest loginRequest)
-            throws AuthenticationException {
+    public ResponseEntity<?> login(@PathVariable String role, @RequestBody LoginRequest loginRequest) 
+    throws AuthenticationException {
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         // verify user has requested role
         User user = userService.getUserByEmail(authentication.getName());
         Role loginRole = roleService.findByRoleEnum(RoleEnum.valueOf(role.toUpperCase()));
         Set<Role> userRoles = user.getRoles();
-
-        if (!userRoles.contains(loginRole)) {
+        
+        if(!userRoles.contains(loginRole)) {
             throw new UserNotFoundException();
         }
-
         final String token = jwtTokenUtil.generateToken(authentication);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Set-Cookie", ResponseCookie.from("token", token).maxAge(3600)

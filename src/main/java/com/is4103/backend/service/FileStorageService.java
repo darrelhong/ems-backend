@@ -28,11 +28,16 @@ public class FileStorageService {
     @Autowired
     private UserService userService;
 
+    // upload profile pic
     @Autowired
     public FileStorageService(FileStorageProperties fileStorageProperties) {
-        this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir()).toAbsolutePath().normalize();
+        this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir() + "/profilePics").toAbsolutePath().normalize();
+
+        System.out.println("upload path");
+        System.out.println(this.fileStorageLocation);
 
         try {
+            // create the upload directory
             Files.createDirectories(this.fileStorageLocation);
         } catch (Exception ex) {
             throw new FileStorageException("Could not create the directory where the uploaded files will be stored.",
@@ -43,7 +48,7 @@ public class FileStorageService {
     public String storeFile(MultipartFile file) {
 
         // generate an unique uuid
-        // UUID uuid = UUID.randomUUID();
+         UUID uuid = UUID.randomUUID();
 
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -56,7 +61,7 @@ public class FileStorageService {
             User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
             long userId = user.getId();
             String fileExtension = fileName.split("\\.")[1];
-            fileName = "user-id-" + userId + "." + fileExtension;
+            fileName = uuid + "." + fileExtension;
 
             // Copy file to the target location (Replacing existing file with the same name)
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
