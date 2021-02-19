@@ -76,8 +76,8 @@ public class UserController {
     }
 
     @PostMapping(value = "/login/{role}")
-    public ResponseEntity<?> login(@PathVariable String role, @RequestBody LoginRequest loginRequest) 
-    throws AuthenticationException {
+    public ResponseEntity<?> login(@PathVariable String role, @RequestBody LoginRequest loginRequest)
+            throws AuthenticationException {
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
@@ -86,8 +86,8 @@ public class UserController {
         User user = userService.getUserByEmail(authentication.getName());
         Role loginRole = roleService.findByRoleEnum(RoleEnum.valueOf(role.toUpperCase()));
         Set<Role> userRoles = user.getRoles();
-        
-        if(!userRoles.contains(loginRole)) {
+
+        if (!userRoles.contains(loginRole)) {
             throw new UserNotFoundException();
         }
         final String token = jwtTokenUtil.generateToken(authentication);
@@ -150,8 +150,6 @@ public class UserController {
         user = userService.updateUser(user, updateUserRequest);
         return ResponseEntity.ok(user);
     }
-    
-
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/update-account-status")
@@ -166,7 +164,6 @@ public class UserController {
         user = userService.updateAccountStatus(user, updateUserRequest);
         return ResponseEntity.ok(user);
     }
-
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/change-password")

@@ -17,7 +17,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import com.is4103.backend.model.User;
-import com.is4103.backend.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
@@ -31,7 +30,8 @@ public class FileStorageService {
     // upload profile pic
     @Autowired
     public FileStorageService(FileStorageProperties fileStorageProperties) {
-        this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir() + "/profilePics").toAbsolutePath().normalize();
+        this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir() + "/profilePics").toAbsolutePath()
+                .normalize();
 
         System.out.println("upload path");
         System.out.println(this.fileStorageLocation);
@@ -48,7 +48,7 @@ public class FileStorageService {
     public String storeFile(MultipartFile file) {
 
         // generate an unique uuid
-         UUID uuid = UUID.randomUUID();
+        UUID uuid = UUID.randomUUID();
 
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
