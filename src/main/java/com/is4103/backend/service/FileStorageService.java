@@ -74,11 +74,6 @@ public class FileStorageService {
         }
 
 
-        // generate an unique uuid
-        UUID uuid = UUID.randomUUID();
-     //   System.out.println("print uuid");
-       // System.out.println(uuid);
-
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         System.out.println("print org filename");
@@ -89,8 +84,17 @@ public class FileStorageService {
                 throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
             }
 
+
+        if(filetype.equals("profilepic")){
+            // generate an unique uuid
+            UUID uuid = UUID.randomUUID();
+            String fileExtension = fileName.split("\\.")[1];
+            fileName = uuid + "." + fileExtension;
+        }else if(filetype.equals("bizsupportdoc")){
             String fileExtension = fileName.split("\\.")[1];
             fileName = userEmail + "." + fileExtension;
+        }
+
             System.out.println(fileName);
             // Copy file to the target location (Replacing existing file with the same name)
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
