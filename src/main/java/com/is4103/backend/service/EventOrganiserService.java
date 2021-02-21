@@ -57,7 +57,7 @@ public class EventOrganiserService {
     }
 
     @Transactional
-    public EventOrganiser registerNewEventOrganiser(SignupRequest signupRequest, boolean enabled)
+    public EventOrganiser registerNewEventOrganiser(SignupRequest signupRequest, boolean enabled,String bizsupportdocdownloadurl)
             throws UserAlreadyExistsException {
         if (userService.emailExists(signupRequest.getEmail())) {
             throw new UserAlreadyExistsException("Account with email " + signupRequest.getEmail() + " already exists");
@@ -66,12 +66,12 @@ public class EventOrganiserService {
         EventOrganiser newEo = new EventOrganiser();
         newEo.setName(signupRequest.getName());
         newEo.setEmail(signupRequest.getEmail());
-
         newEo.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         Role role = roleService.findByRoleEnum(RoleEnum.EVNTORG);
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         newEo.setRoles(roles);
+        newEo.setSupportDocsUrl(bizsupportdocdownloadurl);
 
         if (enabled) {
             newEo.setEnabled(true);

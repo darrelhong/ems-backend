@@ -3,6 +3,8 @@ package com.is4103.backend.service;
 import com.is4103.backend.util.errors.MyFileNotFoundException;
 import com.is4103.backend.util.errors.FileStorageException;
 import com.is4103.backend.dto.FileStorageProperties;
+import com.is4103.backend.dto.SignupRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -17,52 +19,79 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import com.is4103.backend.model.User;
-import com.is4103.backend.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 public class FileStorageService {
 
-    private final Path fileStorageLocation;
+    private Path fileStorageLocation;
 
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private FileStorageProperties fileStorageProperties;
+
+
     // upload profile pic
     @Autowired
-    public FileStorageService(FileStorageProperties fileStorageProperties) {
-        this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir() + "/profilePics").toAbsolutePath().normalize();
+    public FileStorageService() {  
+     
+        // this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir() + "/profilePics").toAbsolutePath()
+        //        .normalize();
+       
+        // System.out.println("upload path");
+        // System.out.println(this.fileStorageLocation);
 
-        System.out.println("upload path");
-        System.out.println(this.fileStorageLocation);
-
-        try {
-            // create the upload directory
-            Files.createDirectories(this.fileStorageLocation);
-        } catch (Exception ex) {
-            throw new FileStorageException("Could not create the directory where the uploaded files will be stored.",
-                    ex);
-        }
+        // try {
+        //     // create the upload directory
+        //     Files.createDirectories(this.fileStorageLocation);
+        // } catch (Exception ex) {
+        //     throw new FileStorageException("Could not create the directory where the uploaded files will be stored.",
+        //             ex);
+        // }
     }
 
-    public String storeFile(MultipartFile file) {
+    public String storeFile(MultipartFile file,String filetype, String userEmail) {
+     
+        if(filetype.equals("profilepic")){
+        System.out.println("call profilepic");
+  
+        this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() +
+        "/profilePics").toAbsolutePath().normalize();
+        }else if(filetype.equals("bizsupportdoc")){
+        System.out.println("bizsupportdoc");
+        this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() +
+        "/bizSupportDocs").toAbsolutePath().normalize();
+        System.out.println(this.fileStorageLocation);
+        }
+        try {
+        // create the upload directory
+        Files.createDirectories(this.fileStorageLocation);
+        } catch (Exception ex) {
+        throw new FileStorageException("Could not create the directory where the uploaded files will be stored.",
+        ex);
+        }
+
 
         // generate an unique uuid
-         UUID uuid = UUID.randomUUID();
+        UUID uuid = UUID.randomUUID();
+     //   System.out.println("print uuid");
+       // System.out.println(uuid);
 
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-
+        System.out.println("print org filename");
+        System.out.println(fileName);
         try {
             // Check if the file's name contains invalid characters
             if (fileName.contains("..")) {
                 throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
             }
-            User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-            long userId = user.getId();
-            String fileExtension = fileName.split("\\.")[1];
-            fileName = uuid + "." + fileExtension;
 
+            String fileExtension = fileName.split("\\.")[1];
+            fileName = userEmail + "." + fileExtension;
+            System.out.println(fileName);
             // Copy file to the target location (Replacing existing file with the same name)
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);

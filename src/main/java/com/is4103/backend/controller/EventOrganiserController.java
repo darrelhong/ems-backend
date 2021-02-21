@@ -1,14 +1,17 @@
 package com.is4103.backend.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import com.is4103.backend.dto.FileStorageProperties;
 import com.is4103.backend.dto.RejectEventOrganiserDto;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.service.EventOrganiserService;
+import com.is4103.backend.service.FileStorageService;
 import com.is4103.backend.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping(path = "/organiser")
@@ -33,11 +38,16 @@ public class EventOrganiserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private FileStorageProperties fileStorageProperties;
     // @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
     public List<EventOrganiser> getAllEventOrganisers() {
         return eoService.getAllEventOrganisers();
     }
+    
+    @Autowired
+    private FileStorageService fileStorageService;
 
     // @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all/paginated")
@@ -53,14 +63,21 @@ public class EventOrganiserController {
     }
 
     @PostMapping(value = "/register")
-    public EventOrganiser registerNewEventOrganiser(@RequestBody @Valid SignupRequest signupRequest) {
-        return eoService.registerNewEventOrganiser(signupRequest, false);
+    public EventOrganiser registerNewEventOrganiser(SignupRequest signupRequest,@RequestParam("file") MultipartFile file) {
+  
+        String userEmail = signupRequest.getEmail();
+        System.out.println(userEmail);
+        String fileName = fileStorageService.storeFile(file,"bizsupportdoc",userEmail);
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/").path(fileName).toUriString();
+    
+        return eoService.registerNewEventOrganiser(signupRequest, false,fileDownloadUri);
+
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/register/noverify")
     public EventOrganiser registerNewEventOrganiserNoVerify(@RequestBody @Valid SignupRequest signupRequest) {
-        return eoService.registerNewEventOrganiser(signupRequest, true);
+        return eoService.registerNewEventOrganiser(signupRequest, true,"");
     }
 
     @PreAuthorize("hasRole('ADMIN')")

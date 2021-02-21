@@ -41,9 +41,10 @@ public class FileController {
     @Autowired
     private FileStorageProperties fileStorageProperties;
 
-    @PostMapping("/uploadFile")
+    //@PostMapping("/uploadFile")
+    @PostMapping("/uploadProfilePicFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file)  {
-        String fileName = fileStorageService.storeFile(file);
+        String fileName = fileStorageService.storeFile(file,"profilepic","");
 
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         long userId = user.getId();
@@ -71,6 +72,7 @@ public class FileController {
 
         return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
     }
+
 
     @PostMapping("/uploadMultipleFiles")
     public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
