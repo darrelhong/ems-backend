@@ -13,10 +13,12 @@ import com.is4103.backend.dto.LoginRequest;
 import com.is4103.backend.dto.LoginResponse;
 import com.is4103.backend.dto.ResetPasswordDto;
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.dto.UpdatePartnerRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
+import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.service.RoleService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.errors.InvalidTokenException;
@@ -150,6 +152,20 @@ public class UserController {
         }
 
         user = userService.updateUser(user, updateUserRequest);
+        return ResponseEntity.ok(user);
+    }
+
+    @PreAuthorize("hasAnyRole('BIZPTNR')")
+    @PostMapping("/update-partner")
+    public ResponseEntity<BusinessPartner> updatePartner(@RequestBody @Valid UpdatePartnerRequest updatePartnerRequest) {
+        BusinessPartner user = userService.getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        // verify user id
+        if (updatePartnerRequest.getId() != user.getId()) {
+            throw new AuthenticationServiceException("An error has occured");
+        }
+
+        user = userService.updatePartner(user, updatePartnerRequest);
         return ResponseEntity.ok(user);
     }
     
