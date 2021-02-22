@@ -84,7 +84,6 @@ public class UserController {
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         // verify user has requested role
         User user = userService.getUserByEmail(authentication.getName());
         Role loginRole = roleService.findByRoleEnum(RoleEnum.valueOf(role.toUpperCase()));
@@ -93,7 +92,6 @@ public class UserController {
         if (!userRoles.contains(loginRole)) {
             throw new UserNotFoundException();
         }
-
         final String token = jwtTokenUtil.generateToken(authentication);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Set-Cookie", ResponseCookie.from("token", token).maxAge(3600)
@@ -171,6 +169,7 @@ public class UserController {
     
 
 
+
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/update-account-status")
     public ResponseEntity<User> updateAccountStatus(@RequestBody @Valid DisabledAccountRequest updateUserRequest) {
@@ -184,7 +183,6 @@ public class UserController {
         user = userService.updateAccountStatus(user, updateUserRequest);
         return ResponseEntity.ok(user);
     }
-
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/change-password")

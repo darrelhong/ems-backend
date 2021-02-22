@@ -2,6 +2,7 @@ package com.is4103.backend.controller;
 
 import com.is4103.backend.service.FileStorageService;
 import com.is4103.backend.service.UserService;
+import com.is4103.backend.dto.FileStorageProperties;
 import com.is4103.backend.dto.UploadFileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +11,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.is4103.backend.model.User;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RestController
 public class FileController {
@@ -33,6 +37,9 @@ public class FileController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private FileStorageProperties fileStorageProperties;
+
     @PostMapping("/uploadFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
         String fileName = fileStorageService.storeFile(file);
@@ -42,6 +49,22 @@ public class FileController {
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
                 .path(fileName).toUriString();
+
+        if (user.getProfilePic() != null) {
+            String profilepicpath = user.getProfilePic();
+            String oldpicfilename = profilepicpath.substring(profilepicpath.lastIndexOf("/") + 1);
+
+            System.out.println(oldpicfilename);
+            Path oldFilepath = Paths.get(this.fileStorageProperties.getUploadDir() + "/profilePics/" + oldpicfilename)
+                    .toAbsolutePath().normalize();
+            System.out.println(oldFilepath);
+            try {
+                Files.deleteIfExists(oldFilepath);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
 
         user = userService.updateProfilePic(user, fileDownloadUri);
 
