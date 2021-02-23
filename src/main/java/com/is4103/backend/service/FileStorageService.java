@@ -89,10 +89,10 @@ public class FileStorageService {
             // generate an unique uuid
             UUID uuid = UUID.randomUUID();
             String fileExtension = fileName.split("\\.")[1];
-            fileName = uuid + "." + fileExtension;
+            fileName = "profilepic-"+uuid + "." + fileExtension;
         }else if(filetype.equals("bizsupportdoc")){
             String fileExtension = fileName.split("\\.")[1];
-            fileName = userEmail + "." + fileExtension;
+            fileName = "bizsupportdoc-"+userEmail + "." + fileExtension;
         }
 
             System.out.println(fileName);
@@ -106,9 +106,22 @@ public class FileStorageService {
     }
 
     public Resource loadFileAsResource(String fileName) {
+
         try {
+
+            System.out.println(fileName);
+            String[] parts = fileName.split("-");
+            String fileType = parts[0];
+            if(fileType.equals("profilepic")){
+                this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() + "/profilePics").toAbsolutePath().normalize();
+            }else if(fileType.equals("bizsupportdoc")){
+                System.out.println("bizsupportdoc");
+                this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() + "/bizSupportDocs").toAbsolutePath().normalize();
+            }
             Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
+      
+
             if (resource.exists()) {
                 return resource;
             } else {

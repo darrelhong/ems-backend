@@ -8,11 +8,13 @@ import javax.validation.Valid;
 import com.is4103.backend.dto.FileStorageProperties;
 import com.is4103.backend.dto.RejectEventOrganiserDto;
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.dto.SignupResponse;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.service.FileStorageService;
 import com.is4103.backend.service.UserService;
+import com.is4103.backend.util.errors.UserAlreadyExistsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import net.bytebuddy.asm.Advice.Return;
 
 @RestController
 @RequestMapping(path = "/organiser")
@@ -63,14 +67,29 @@ public class EventOrganiserController {
     }
 
     @PostMapping(value = "/register")
-    public EventOrganiser registerNewEventOrganiser(SignupRequest signupRequest,@RequestParam("file") MultipartFile file) {
+    public SignupResponse registerNewEventOrganiser(SignupRequest signupRequest,@RequestParam("file") MultipartFile file) {
   
+        try{
+    
+        if (userService.emailExists(signupRequest.getEmail())) {
+            throw new UserAlreadyExistsException("Account with email " + signupRequest.getEmail() + " already exists");
+        }else{
+        
         String userEmail = signupRequest.getEmail();
         System.out.println(userEmail);
-        String fileName = fileStorageService.storeFile(file,"bizsupportdoc",userEmail);
+        String fileName = fileStorageService.storeFile(file, "bizsupportdoc", userEmail);
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/").path(fileName).toUriString();
+        eoService.registerNewEventOrganiser(signupRequest, false, fileDownloadUri);
+
+        }
     
-        return eoService.registerNewEventOrganiser(signupRequest, false,fileDownloadUri);
+        }
+        catch(UserAlreadyExistsException userAlrExistException){
+           return new SignupResponse("alreadyExisted");
+        }
+
+       
+        return new SignupResponse("success");
 
     }
 
