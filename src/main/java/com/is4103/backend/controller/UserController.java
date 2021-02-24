@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import com.is4103.backend.config.JwtTokenUtil;
 import com.is4103.backend.dto.AuthToken;
 import com.is4103.backend.dto.ChangePasswordRequest;
+import com.is4103.backend.dto.ChangePasswordResponse;
 import com.is4103.backend.dto.DisabledAccountRequest;
 import com.is4103.backend.dto.LoginRequest;
 import com.is4103.backend.dto.LoginResponse;
@@ -113,16 +114,28 @@ public class UserController {
 
     @PostMapping(value = "/register/{role}/noverify")
     public User registerNewUserNoVerify(@PathVariable String role, @RequestBody @Valid SignupRequest signupRequest) {
+
+         
         return userService.registerNewUser(signupRequest, role, true);
     }
 
     @PostMapping("/register/{role}")
     public User registerNewUser(@PathVariable String role, @RequestBody @Valid SignupRequest signupRequest) {
+    
+   
         User user = userService.registerNewUser(signupRequest, role, false);
 
+        System.out.println("user");
+        System.out.println(user);
         eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user));
         return user;
+  
+
     }
+
+    
+
+
 
     @GetMapping("/register/confirm")
     public ModelAndView confirmRegistration(@RequestParam("token") String token) {
@@ -170,16 +183,21 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/change-password")
-    public ResponseEntity<String> changePassword(
+    public ChangePasswordResponse changePassword(
             @RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
+          
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
+        
         if (!userService.checkOldPasswordValid(user, changePasswordRequest.getOldPassword())) {
-            return new ResponseEntity<String>("Invalid old password", HttpStatus.UNAUTHORIZED);
+         //   return new ResponseEntity<String>("Invalid old password", HttpStatus.UNAUTHORIZED);
+            return new ChangePasswordResponse("Old password is incorrect.");
         }
-
+       
         userService.changePassword(user, changePasswordRequest.getNewPassword());
-        return ResponseEntity.ok("Success");
+        
+        return new ChangePasswordResponse("Success");
+        //return ResponseEntity.ok("Success");
     }
 
     @PostMapping("/reset-password/request")
