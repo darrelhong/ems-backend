@@ -45,6 +45,9 @@ public class UserService {
     @Value("${backend.from.email}")
     private String fromEmail;
 
+    @Value("${frontend.base.url}")
+    private String frontendBaseUrl;
+
     @Autowired
     private MessageSource messageSource;
 
@@ -247,7 +250,7 @@ public class UserService {
         String recipientAddress = user.getEmail();
         String subject = messageSource.getMessage("message.resetPasswordEmailSubject", null,
                 LocaleContextHolder.getLocale());
-        String confirmationUrl = "http://localhost:3000/register/reset-password/verify?token=" + prt.getToken();
+        String confirmationUrl = frontendBaseUrl + "/register/reset-password/verify?token=" + prt.getToken();
         String message = messageSource.getMessage("message.resetPasswordPrompt", null, LocaleContextHolder.getLocale());
 
         SimpleMailMessage email = new SimpleMailMessage();
