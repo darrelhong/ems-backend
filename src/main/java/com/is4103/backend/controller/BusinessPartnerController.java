@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/partner")
-@PreAuthorize("hasRole('BIZPTNR')")
+//@PreAuthorize("hasRole('BIZPTNR')")
 public class BusinessPartnerController {
 
     @Autowired

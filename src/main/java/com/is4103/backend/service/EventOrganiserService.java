@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.model.BusinessPartner;
+import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
@@ -122,5 +123,10 @@ public class EventOrganiserService {
     public List<BusinessPartner> getAllVips(Long eoId) {
         EventOrganiser eo = getEventOrganiserById(eoId);
         return eo.getVipList();
+    }
+
+    public List<Event> getAllEventsByEoId(Long eoId){
+        EventOrganiser eo = getEventOrganiserById(eoId);
+        return eo.getEvents();
     }
 }

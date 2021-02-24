@@ -2,6 +2,7 @@ package com.is4103.backend.util;
 
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -14,6 +15,7 @@ import com.is4103.backend.model.User;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.repository.RoleRepository;
 import com.is4103.backend.repository.UserRepository;
+import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.repository.EventRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    private EventOrganiserRepository eventOrganiserRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -131,6 +136,32 @@ public class DataInitRunner implements ApplicationRunner {
         event.setBoothCapacity(305);
         event.setRating(5);
         event.setEventStatus(EventStatus.COMPLETED);
+
+        Event event2 = new Event();
+        event2.setName("Second Event");
+        event2.setAddress("Sembwang");
+        event2.setDescriptions("Some description two");
+        event2.setPhysical(false);
+        event2.setEventStartDate(LocalDateTime.now());
+        event2.setEventEndDate(LocalDateTime.now());
+        event2.setSaleStartDate(LocalDateTime.now());
+        event2.setSalesEndDate(LocalDateTime.now());
+        event2.setImages(new ArrayList<>());
+        event2.setBoothCapacity(305);
+        event2.setRating(5);
+        event2.setEventStatus(EventStatus.UPCOMING);
+
+
+        EventOrganiser eventOrg = eventOrganiserRepository.findByEmail("organiser@abc.com");
+        event.setEventOrganiser(eventOrg);
+        event2.setEventOrganiser(eventOrg);
         eventRepository.save(event);
+        eventRepository.save(event2);
+
+        List<Event> eoEvents = new ArrayList<>();
+        eoEvents = eventOrg.getEvents();
+        eoEvents.add(event);
+        eoEvents.add(event2);
+        eventOrg.setEvents(eoEvents);
     }
 }
