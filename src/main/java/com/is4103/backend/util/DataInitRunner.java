@@ -81,7 +81,7 @@ public class DataInitRunner implements ApplicationRunner {
         }
 
         if (userRepository.findByEmail("partner@abc.com") == null) {
-            createBizPartner();
+            createBizPartners();
         }
 
         // Testing Entities
@@ -134,7 +134,7 @@ public class DataInitRunner implements ApplicationRunner {
     }
 
     @Transactional
-    private void createBizPartner() {
+    private void createBizPartners() {
         BusinessPartner bp = new BusinessPartner();
         bp.setEmail("partner@abc.com");
         bp.setName("First Business Partner");
@@ -145,6 +145,14 @@ public class DataInitRunner implements ApplicationRunner {
         userRepository.save(bp);
 
         this.bpTest = bp;
+        for (int i = 2; i <= 11; i++) {
+            bp = new BusinessPartner();
+            bp.setEmail("partner" + i + "@abc.com");
+            bp.setName("Partner " + i);
+            bp.setPassword(passwordEncoder.encode("password"));
+            bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
+            userRepository.save(bp);
+        }
     }
 
     // Testing Methods
