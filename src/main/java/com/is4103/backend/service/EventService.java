@@ -18,6 +18,8 @@ public class EventService {
         return eventRepository.findAll();
     }
 
+
+
     public Event getEventById(Long id) {
         return eventRepository.findById(id).orElseThrow(() -> new EventNotFoundException());
     }

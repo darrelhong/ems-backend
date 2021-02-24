@@ -10,7 +10,6 @@ import javax.transaction.Transactional;
 
 import com.is4103.backend.dto.DisabledAccountRequest;
 import com.is4103.backend.dto.SignupRequest;
-import com.is4103.backend.dto.UpdatePartnerRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.model.Admin;
 import com.is4103.backend.model.Attendee;
@@ -21,7 +20,6 @@ import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
 import com.is4103.backend.model.VerificationToken;
-import com.is4103.backend.repository.PartnerRepository;
 import com.is4103.backend.repository.PasswordResetTokenRepository;
 import com.is4103.backend.repository.UserRepository;
 import com.is4103.backend.repository.VerificationTokenRepository;
@@ -56,9 +54,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    
-    @Autowired
-    private PartnerRepository partnerRepository;
+
 
     @Autowired
     private VerificationTokenRepository vtRepository;
@@ -82,11 +78,6 @@ public class UserService {
 
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
-    }
-
-
-    public BusinessPartner getPartnerByEmail(String email) {
-        return partnerRepository.findByEmail(email);
     }
 
 
@@ -186,17 +177,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    @Transactional
-    public BusinessPartner updatePartner(BusinessPartner user, UpdatePartnerRequest updatePartnerRequest) {
-       
-        user.setName(updatePartnerRequest.getName());
-        user.setDescription(updatePartnerRequest.getDescription());
-        user.setAddress(updatePartnerRequest.getAddress());
-        user.setPhonenumber(updatePartnerRequest.getPhonenumber());
-        user.setBusinessCategory(updatePartnerRequest.getBusinessCategory());
-
-        return userRepository.save(user);
-    }
+   
 
     public User updateAccountStatus(User user, DisabledAccountRequest updateUserRequest) {
 

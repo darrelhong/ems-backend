@@ -15,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.CascadeType;
@@ -37,14 +39,17 @@ public class Event {
     @ElementCollection(targetClass = BusinessPartner.class)
     private List<BusinessPartner> favouriteBusinessPartners;
 
+    @Transient
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @ElementCollection(targetClass = EventBoothTransaction.class)
     private List<EventBoothTransaction> eventBoothTransactions;
 
+    @Transient 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @ElementCollection(targetClass = Booth.class)
     private List<Booth> booths;
-
+    
+    @Transient 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @ElementCollection(targetClass = TicketTransaction.class)
     private List<TicketTransaction> ticketTransactions;

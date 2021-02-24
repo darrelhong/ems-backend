@@ -2,18 +2,24 @@ package com.is4103.backend.util;
 
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
+import com.is4103.backend.model.BoothApplicationStatus;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.EventStatus;
+import com.is4103.backend.model.PaymentStatus;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
 import com.is4103.backend.model.Event;
+import com.is4103.backend.model.EventBoothTransaction;
 import com.is4103.backend.repository.RoleRepository;
 import com.is4103.backend.repository.UserRepository;
+import com.is4103.backend.repository.BusinessPartnerRepository;
+import com.is4103.backend.repository.EventBoothTransactionRepository;
 import com.is4103.backend.repository.EventRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +43,18 @@ public class DataInitRunner implements ApplicationRunner {
     private EventRepository eventRepository;
 
     @Autowired
+    private BusinessPartnerRepository businessPartnerRepository;
+
+    @Autowired
+    private EventBoothTransactionRepository eventBoothTransactionRepository;
+
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    private EventOrganiser eoTest;
+    private BusinessPartner bpTest;
+    private Event eventTest;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -68,8 +85,19 @@ public class DataInitRunner implements ApplicationRunner {
         }
 
         // Testing Entities
-        if (eventRepository.findAll().isEmpty())
+        if (eventRepository.findAll().isEmpty()){
             createEvent();
+           
+        }
+
+        if (eventBoothTransactionRepository.findAll().isEmpty()){
+           
+           createEventTransaction();
+        }
+            
+
+        
+           
     }
 
     @Transactional
@@ -93,6 +121,8 @@ public class DataInitRunner implements ApplicationRunner {
         eo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
         userRepository.save(eo);
 
+        this.eoTest = eo;
+
         for (int i = 2; i <= 11; i++) {
             eo = new EventOrganiser();
             eo.setEmail("organiser" + i + "@abc.com");
@@ -113,6 +143,8 @@ public class DataInitRunner implements ApplicationRunner {
         bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
         bp.setBusinessCategory("Travel");
         userRepository.save(bp);
+
+        this.bpTest = bp;
     }
 
     // Testing Methods
@@ -131,6 +163,36 @@ public class DataInitRunner implements ApplicationRunner {
         event.setBoothCapacity(305);
         event.setRating(5);
         event.setEventStatus(EventStatus.COMPLETED);
+        event.setEventOrganiser(eoTest);
         eventRepository.save(event);
+
+        this.eventTest = event;
+    }
+
+    @Transactional
+    private void createEventTransaction() {
+       
+        EventBoothTransaction eventBooth = new EventBoothTransaction();
+        eventBooth.setBoothApplicationstatus(BoothApplicationStatus.APPROVED);
+        eventBooth.setPaymentStatus(PaymentStatus.COMPLETED);
+        eventBooth.setBusinessPartner(this.bpTest);
+        eventBooth.setEvent(this.eventTest);   
+        eventBoothTransactionRepository.save(eventBooth);  
+
+        
+        List<EventBoothTransaction> transactions = new ArrayList<>();
+
+        
+        transactions.add(eventBooth);
+        this.bpTest.setEventBoothTransactions(transactions);
+        // System.out.println("test " + transactions);
+        businessPartnerRepository.save(this.bpTest);
+        this.eventTest.setEventBoothTransactions(transactions); 
+        eventRepository.save(this.eventTest);
+   
+         System.out.println("bptest " + this.bpTest.getEventBoothTransactions().size());
+         System.out.println("eventtest " + this.eventTest.getEventBoothTransactions().size());
+        
+       
     }
 }

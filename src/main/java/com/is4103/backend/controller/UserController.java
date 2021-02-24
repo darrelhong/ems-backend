@@ -153,22 +153,6 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PreAuthorize("hasAnyRole('BIZPTNR')")
-    @PostMapping("/update-partner")
-    public ResponseEntity<BusinessPartner> updatePartner(@RequestBody @Valid UpdatePartnerRequest updatePartnerRequest) {
-        BusinessPartner user = userService.getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-
-        // verify user id
-        if (updatePartnerRequest.getId() != user.getId()) {
-            throw new AuthenticationServiceException("An error has occured");
-        }
-
-        user = userService.updatePartner(user, updatePartnerRequest);
-        return ResponseEntity.ok(user);
-    }
-    
-
-
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/update-account-status")

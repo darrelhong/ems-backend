@@ -5,6 +5,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class BusinessPartner extends User {
     @ElementCollection(targetClass = EventOrganiser.class)
     private List<EventOrganiser> followEventOrganisers;
 
+    @Transient
     @OneToMany(mappedBy = "businessPartner")
     @ElementCollection(targetClass = EventBoothTransaction.class)
     private List<EventBoothTransaction> eventBoothTransactions;
@@ -40,11 +42,12 @@ public class BusinessPartner extends User {
     public BusinessPartner() {
 
     }
-
-    public BusinessPartner(String businessCategory, List<Event> favouriteEventList) {
+    
+    public BusinessPartner(String businessCategory, List<Event> favouriteEventList, List<EventBoothTransaction> eventBoothTransactions) {
         super();
         this.businessCategory = businessCategory;
         this.favouriteEventList = favouriteEventList;
+        this.eventBoothTransactions = eventBoothTransactions;
     }
 
     public String getBusinessCategory() {
@@ -69,5 +72,13 @@ public class BusinessPartner extends User {
 
     public void setAttendeeFollowers(List<Attendee> attendeeFollowers) {
         this.attendeeFollowers = attendeeFollowers;
+    }
+
+    public List<EventBoothTransaction> getEventBoothTransactions() {
+        return eventBoothTransactions;
+    }
+
+    public void setEventBoothTransactions(List<EventBoothTransaction> eventBoothTransactions) {
+        this.eventBoothTransactions = eventBoothTransactions;
     }
 }
