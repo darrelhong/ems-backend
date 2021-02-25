@@ -92,4 +92,6 @@ public class Event {
     // @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus;
+
+    private boolean isVip;
 }

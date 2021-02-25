@@ -62,6 +62,7 @@ public class EventController {
         event.setBoothCapacity(createEventRequest.getBoothCapacity());
         event.setRating(createEventRequest.getRating());
         event.setEventStatus(createEventRequest.getEventStatus());
+        event.setVip(createEventRequest.isVip());
         return eventRepository.save(event);
     }
 
