@@ -38,8 +38,6 @@ public class CreateEventRequest {
     @NotEmpty
     private String descriptions;
 
-    private String website;
-
     private float ticketPrice;
 
     private int ticketCapacity;
