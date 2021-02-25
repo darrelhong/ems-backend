@@ -2,6 +2,8 @@ package com.is4103.backend.util;
 
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
 import javax.transaction.Transactional;
 
@@ -14,6 +16,9 @@ import com.is4103.backend.model.User;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.repository.RoleRepository;
 import com.is4103.backend.repository.UserRepository;
+import com.thedeanda.lorem.Lorem;
+import com.thedeanda.lorem.LoremIpsum;
+import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.repository.EventRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 
 @Component
 public class DataInitRunner implements ApplicationRunner {
@@ -32,6 +38,9 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EventOrganiserRepository eoRepository;
 
     @Autowired
     private EventRepository eventRepository;
@@ -70,6 +79,10 @@ public class DataInitRunner implements ApplicationRunner {
         // Testing Entities
         if (eventRepository.findAll().isEmpty())
             createEvent();
+
+        if (eventRepository.findById((long) 2).isEmpty()) {
+            createDemoEvents();
+        }
     }
 
     @Transactional
@@ -142,4 +155,34 @@ public class DataInitRunner implements ApplicationRunner {
         event.setEventStatus(EventStatus.COMPLETED);
         eventRepository.save(event);
     }
+
+    private void createDemoEvents() {
+        Lorem lorem = LoremIpsum.getInstance();
+        Random rand = new Random();
+
+        EventOrganiser eo = eoRepository.findByEmail("organiser@abc.com");
+        for (int i = 0; i < 25; i++) {
+            Event e = new Event();
+            e.setName("Event " + i);
+            e.setEventOrganiser(eo);
+            e.setAddress("Singapore");
+            e.setDescriptions(lorem.getWords(5, 20));
+            e.setTicketPrice(rand.nextFloat() * 20);
+            e.setTicketCapacity(rand.nextInt(100));
+            e.setPhysical(true);
+            LocalDateTime eventStart = LocalDateTime.of(2022, Month.MARCH, 1, 9, 0).plusDays(i).plusHours(i % 3);
+            e.setEventStartDate(eventStart);
+            e.setEventEndDate(
+                    LocalDateTime.of(2022, Month.MARCH, 2, 17, 30).plusDays(rand.nextInt(5)).minusHours(i % 2));
+            e.setSaleStartDate(LocalDateTime.now());
+            e.setSalesEndDate(eventStart.minusDays(2));
+
+            e.setImages(Arrays.asList("/event-" + i + "/image-1.jpg", "/event-" + i + "/image-2.jpg",
+                    "/event-" + i + "/image-3.jpg"));
+            e.setBoothCapacity(rand.nextInt(50));
+            e.setEventStatus(EventStatus.PUBLISHED);
+            eventRepository.save(e);
+        }
+    }
+
 }
