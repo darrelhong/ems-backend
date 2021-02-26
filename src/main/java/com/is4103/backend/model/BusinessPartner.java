@@ -3,9 +3,12 @@ package com.is4103.backend.model;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
 
@@ -22,9 +25,11 @@ public class BusinessPartner extends User {
 
     @Column(nullable = true)
     @ElementCollection(targetClass = Attendee.class)
-    @ManyToMany(mappedBy = "businessPartnerFollowers")
+    @ManyToMany
+    // @JoinTable(name="followedBusinessPartners", joinColumns= @JoinColumn(name="business_partner_id"), inverseJoinColumns = @JoinColumn(name="attendee_id"))
     private List<Attendee> attendeeFollowers;
 
+    @JsonIgnore
     @Column(nullable = true)
     @ManyToMany
     @ElementCollection(targetClass = EventOrganiser.class)
@@ -43,11 +48,12 @@ public class BusinessPartner extends User {
 
     }
     
-    public BusinessPartner(String businessCategory, List<Event> favouriteEventList, List<EventBoothTransaction> eventBoothTransactions) {
+    public BusinessPartner(String businessCategory, List<Event> favouriteEventList, List<EventBoothTransaction> eventBoothTransactions,List<EventOrganiser> followEventOrganisers ) {
         super();
         this.businessCategory = businessCategory;
         this.favouriteEventList = favouriteEventList;
         this.eventBoothTransactions = eventBoothTransactions;
+        this.followEventOrganisers = followEventOrganisers;
     }
 
     public String getBusinessCategory() {
@@ -80,5 +86,13 @@ public class BusinessPartner extends User {
 
     public void setEventBoothTransactions(List<EventBoothTransaction> eventBoothTransactions) {
         this.eventBoothTransactions = eventBoothTransactions;
+    }
+
+    public List<EventOrganiser> getFollowEventOrganisers() {
+        return followEventOrganisers;
+    }
+
+    public void setFollowEventOrganisers(List<EventOrganiser> followEventOrganisers) {
+        this.followEventOrganisers = followEventOrganisers;
     }
 }

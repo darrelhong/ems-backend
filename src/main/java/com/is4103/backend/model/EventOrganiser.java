@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,6 +34,7 @@ public class EventOrganiser extends User {
     @ManyToMany
     private List<Attendee> attendeeFollowers;
 
+    @JsonIgnore
     @Column(nullable = true)
     @ElementCollection(targetClass = BusinessPartner.class)
     @ManyToMany

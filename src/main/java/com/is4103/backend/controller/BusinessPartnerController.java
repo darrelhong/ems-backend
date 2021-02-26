@@ -6,8 +6,10 @@ import javax.validation.Valid;
 
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdatePartnerRequest;
+import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
+import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.service.BusinessPartnerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/partner")
-@PreAuthorize("hasRole('BIZPTNR')")
+// @PreAuthorize("hasRole('BIZPTNR')")
 public class BusinessPartnerController {
 
     @Autowired
@@ -52,16 +54,24 @@ public class BusinessPartnerController {
         return bpService.getBusinessPartnerById(id);
     }
 
-    @PreAuthorize("hasAnyRole('BIZPTNR')")
     @GetMapping(path = "/events/{id}")
     public List<Event> getEventsById(@PathVariable Long id) {
         return bpService.getAllEvents(id);
     }
 
-    @PreAuthorize("hasAnyRole('BIZPTNR')")
     @PostMapping(value = "/register")
     public BusinessPartner registerNewBusinessPartner(@RequestBody @Valid SignupRequest signupRequest) {
         return bpService.registerNewBusinessPartner(signupRequest, false);
+    }
+
+    @GetMapping(path = "/followers/{id}")
+    public List<Attendee> getFollowers(@PathVariable Long id) {
+        return bpService.getFollowersById(id);
+    }
+
+    @GetMapping(path = "/following/{id}")
+    public List<EventOrganiser> getFollowing(@PathVariable Long id) {
+        return bpService.getFollowingById(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

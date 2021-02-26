@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BoothApplicationStatus;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
@@ -43,18 +44,9 @@ public class DataInitRunner implements ApplicationRunner {
     private EventRepository eventRepository;
 
     @Autowired
-    private BusinessPartnerRepository businessPartnerRepository;
-
-    @Autowired
-    private EventBoothTransactionRepository eventBoothTransactionRepository;
-
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     private EventOrganiser eoTest;
-    private BusinessPartner bpTest;
-    private Event eventTest;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -88,11 +80,6 @@ public class DataInitRunner implements ApplicationRunner {
         if (eventRepository.findAll().isEmpty()){
             createEvent();
            
-        }
-
-        if (eventBoothTransactionRepository.findAll().isEmpty()){
-           
-           createEventTransaction();
         }
             
 
@@ -135,6 +122,8 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Transactional
     private void createBizPartners() {
+
+        //create first Bp
         BusinessPartner bp = new BusinessPartner();
         bp.setEmail("partner@abc.com");
         bp.setName("First Business Partner");
@@ -144,7 +133,56 @@ public class DataInitRunner implements ApplicationRunner {
         bp.setBusinessCategory("Travel");
         userRepository.save(bp);
 
-        this.bpTest = bp;
+        //set follow eo list for bp
+        List<EventOrganiser> following = new ArrayList<>();
+        following.add(this.eoTest);
+        bp.setFollowEventOrganisers(following);
+
+        //set followers bp list for eo
+        List<BusinessPartner> followersBP = new ArrayList<>();
+        followersBP.add(bp);
+        this.eoTest.setBusinessPartnerFollowers(followersBP);
+        userRepository.save(this.eoTest);
+
+        //create attendee
+        Attendee atn = new Attendee();
+        atn.setEmail("attendee@abc.com");
+        atn.setName("first attendee");
+        atn.setPassword(passwordEncoder.encode("password"));
+        atn.setDescription("description for frst attendeeeeeeee :)");
+        atn.setEnabled(true);
+        atn.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.ATND)));
+
+        //create second attendee
+        Attendee atnTwo = new Attendee();
+        atnTwo.setEmail("attendeeTwo@abc.com");
+        atnTwo.setName("Second attendee");
+        atnTwo.setPassword(passwordEncoder.encode("password"));
+        atnTwo.setDescription("description for Second attendeeeeeeee :)");
+        atnTwo.setEnabled(true);
+        atnTwo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.ATND)));
+
+        //set following bp list for attendees
+        List<BusinessPartner> followBp = new ArrayList<>();
+        followBp.add(bp);
+        atn.setFollowedBusinessPartners(followBp);
+        // atnTwo.setFollowedBusinessPartners(followBp);
+
+        //save atn
+        userRepository.save(atn);
+        userRepository.save(atnTwo);
+        
+        // atnTwo.setFollowedBusinessPartners(followBp);
+
+        // userRepository.save(atnTwo);
+
+        //set bp followers list 
+        List<Attendee> followers = new ArrayList<>();
+        followers.add(atn);
+        followers.add(atnTwo);
+        bp.setAttendeeFollowers(followers);
+        userRepository.save(bp);        
+        
         for (int i = 2; i <= 11; i++) {
             bp = new BusinessPartner();
             bp.setEmail("partner" + i + "@abc.com");
@@ -171,36 +209,8 @@ public class DataInitRunner implements ApplicationRunner {
         event.setBoothCapacity(305);
         event.setRating(5);
         event.setEventStatus(EventStatus.COMPLETED);
-        event.setEventOrganiser(eoTest);
         eventRepository.save(event);
-
-        this.eventTest = event;
     }
 
-    @Transactional
-    private void createEventTransaction() {
-       
-        EventBoothTransaction eventBooth = new EventBoothTransaction();
-        eventBooth.setBoothApplicationstatus(BoothApplicationStatus.APPROVED);
-        eventBooth.setPaymentStatus(PaymentStatus.COMPLETED);
-        eventBooth.setBusinessPartner(this.bpTest);
-        eventBooth.setEvent(this.eventTest);   
-        eventBoothTransactionRepository.save(eventBooth);  
 
-        
-        List<EventBoothTransaction> transactions = new ArrayList<>();
-
-        
-        transactions.add(eventBooth);
-        this.bpTest.setEventBoothTransactions(transactions);
-        // System.out.println("test " + transactions);
-        businessPartnerRepository.save(this.bpTest);
-        this.eventTest.setEventBoothTransactions(transactions); 
-        eventRepository.save(this.eventTest);
-   
-         System.out.println("bptest " + this.bpTest.getEventBoothTransactions().size());
-         System.out.println("eventtest " + this.eventTest.getEventBoothTransactions().size());
-        
-       
-    }
 }

@@ -9,9 +9,11 @@ import javax.transaction.Transactional;
 
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdatePartnerRequest;
+import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventBoothTransaction;
+import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.repository.BusinessPartnerRepository;
@@ -91,6 +93,20 @@ public class BusinessPartnerService {
 
     public BusinessPartner getPartnerByEmail(String email) {
         return bpRepository.findByEmail(email);
+    }
+
+    public List<Attendee> getFollowersById (Long id){
+        BusinessPartner partner = getBusinessPartnerById(id);
+        List<Attendee>  followers = new ArrayList<>();
+        followers = partner.getAttendeeFollowers();
+        return followers;
+    }
+
+    public List<EventOrganiser> getFollowingById (Long id){
+        BusinessPartner partner = getBusinessPartnerById(id);
+        List<EventOrganiser> following = new ArrayList<>();
+        following = partner.getFollowEventOrganisers();
+        return following;
     }
 
     @Transactional
