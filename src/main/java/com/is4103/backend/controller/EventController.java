@@ -68,6 +68,13 @@ public class EventController {
         return eventRepository.save(event);
     }
 
+
+    @PostMapping("/update")
+    public Event updateEvent(@RequestBody Event event) {
+        return eventRepository.save(event);
+    }
+
+
     @GetMapping(path = "/get-events")
     public Page<Event> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
