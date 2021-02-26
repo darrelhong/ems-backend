@@ -177,8 +177,9 @@ public class DataInitRunner implements ApplicationRunner {
             e.setSaleStartDate(LocalDateTime.now());
             e.setSalesEndDate(eventStart.minusDays(2));
 
-            e.setImages(Arrays.asList("/event-" + i + "/image-1.jpg", "/event-" + i + "/image-2.jpg",
-                    "/event-" + i + "/image-3.jpg"));
+            e.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg",
+                    "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-2.jpg",
+                    "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-3.jpg"));
             e.setBoothCapacity(rand.nextInt(50));
             e.setEventStatus(EventStatus.PUBLISHED);
             eventRepository.save(e);
