@@ -10,7 +10,9 @@ import com.is4103.backend.dto.RejectEventOrganiserDto;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
 import com.is4103.backend.model.BusinessPartner;
+import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
+import com.is4103.backend.model.User;
 import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.service.FileStorageService;
 import com.is4103.backend.service.UserService;
@@ -128,5 +130,11 @@ public class EventOrganiserController {
     public List<BusinessPartner> removeFromVipList(@PathVariable Long bpId) {
         Long currentUserId = userService.getCurrentUserId();
         return eoService.removeFromVipList(currentUserId, bpId);
+    }
+
+    @GetMapping(value = "/event/{eoId}")
+    public List<Event> getAllEventsByEventOrgId(@PathVariable Long eoId) {
+        System.out.println("call get all event by eo id");
+        return eoService.getAllEventsByEoId(eoId);
     }
 }
