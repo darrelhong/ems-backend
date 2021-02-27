@@ -2,9 +2,11 @@ package com.is4103.backend.service;
 
 import java.util.List;
 
+import com.is4103.backend.dto.EventSearchCriteria;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventStatus;
 import com.is4103.backend.repository.EventRepository;
+import com.is4103.backend.repository.EventSpecification;
 import com.is4103.backend.util.errors.EventNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +35,10 @@ public class EventService {
 
     public List<Event> getAllEventsByOrganiser(Long oid) {
         return eventRepository.getAllEventsByOrganiser(oid);
+    }
+
+    public Page<Event> search(EventSearchCriteria eventSearchCriteria) {
+        return eventRepository.findAll(new EventSpecification(eventSearchCriteria),
+                eventSearchCriteria.toPageRequest());
     }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.is4103.backend.dto.CreateEventRequest;
+import com.is4103.backend.dto.EventSearchCriteria;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.repository.EventRepository;
@@ -84,5 +85,10 @@ public class EventController {
     public Page<Event> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
         return eventService.getEvents(page, size);
+    }
+
+    @GetMapping(path = "/search")
+    public Page<Event> search(EventSearchCriteria eventSearchCriteria) {
+        return eventService.search(eventSearchCriteria);
     }
 }
