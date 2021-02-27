@@ -16,12 +16,9 @@ Port number: 3307
 Using this command on terminal, you can go into your `mysql` on terminal
 `use is4103db` - after this you can run sql queries straight to our mysql db
 `SELECT * FROM user;` - example query
-<<<<<<< HEAD
-=======
 
 You can also run connect to it via mysql workbench or DataGrip to visually see all the tables and rows
 
->>>>>>> eventcontroller
 
 You can also run connect to it via mysql workbench or DataGrip to visually see all the tables and rows
 
