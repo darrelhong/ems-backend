@@ -38,6 +38,8 @@ public class CreateEventRequest {
     @NotEmpty
     private String descriptions;
 
+    private String website;
+
     private float ticketPrice;
 
     private int ticketCapacity;
@@ -79,4 +81,8 @@ public class CreateEventRequest {
     private EventStatus eventStatus;
 
     private boolean isVip;
+
+    private boolean isHidden;
+
+    private boolean isPublished;
 }

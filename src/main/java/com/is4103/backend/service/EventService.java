@@ -26,6 +26,12 @@ public class EventService {
     }
 
     public Page<Event> getEvents(int page, int size) {
-        return eventRepository.findByEventStatus(EventStatus.PUBLISHED, PageRequest.of(page, size));
+        // return eventRepository.findByEventStatus(EventStatus.PUBLISHED,
+        // PageRequest.of(page, size));
+        return eventRepository.findByIsPublished(true, PageRequest.of(page, size));
+    }
+
+    public List<Event> getAllEventsByOrganiser(Long oid) {
+        return eventRepository.getAllEventsByOrganiser(oid);
     }
 }

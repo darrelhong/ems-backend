@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.CascadeType;
 
+import javax.persistence.CascadeType;
+
 import lombok.Data;
 
 @Entity
@@ -77,6 +79,7 @@ public class Event {
     private LocalDateTime saleStartDate;
 
     // @Column(nullable = true)
+    @Column(nullable = true)
     private LocalDateTime salesEndDate;
 
     // @Column(nullable = false)
@@ -89,9 +92,13 @@ public class Event {
     // @Column(nullable = true)
     private int rating;
 
-    // @Column(nullable = false)
+    // @Column(nullable = false)s
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus;
 
     private boolean isVip;
+
+    private boolean isHidden;
+
+    private boolean isPublished;
 }

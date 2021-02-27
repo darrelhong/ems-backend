@@ -83,6 +83,10 @@ public class DataInitRunner implements ApplicationRunner {
         if (eventRepository.findById((long) 2).isEmpty()) {
             createDemoEvents();
         }
+
+        // Testing Entities
+        if (eventRepository.findAll().isEmpty())
+            createEvent();
     }
 
     @Transactional
@@ -153,6 +157,8 @@ public class DataInitRunner implements ApplicationRunner {
         event.setBoothCapacity(305);
         event.setRating(5);
         event.setEventStatus(EventStatus.COMPLETED);
+        event.setHidden(true);
+        event.setPublished(true);
         eventRepository.save(event);
     }
 
@@ -167,7 +173,7 @@ public class DataInitRunner implements ApplicationRunner {
             e.setEventOrganiser(eo);
             e.setAddress("Singapore");
             e.setDescriptions(lorem.getWords(5, 20));
-            e.setTicketPrice(rand.nextFloat() * 20);
+            e.setTicketPrice(Math.round(rand.nextFloat() * 20));
             e.setTicketCapacity(rand.nextInt(100));
             e.setPhysical(true);
             LocalDateTime eventStart = LocalDateTime.of(2022, Month.MARCH, 1, 9, 0).plusDays(i).plusHours(i % 3);
@@ -181,7 +187,8 @@ public class DataInitRunner implements ApplicationRunner {
                     "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-2.jpg",
                     "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-3.jpg"));
             e.setBoothCapacity(rand.nextInt(50));
-            e.setEventStatus(EventStatus.PUBLISHED);
+            e.setEventStatus(EventStatus.UPCOMING);
+            e.setPublished(true);
             eventRepository.save(e);
         }
     }

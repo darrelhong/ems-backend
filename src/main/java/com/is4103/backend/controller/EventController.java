@@ -43,6 +43,11 @@ public class EventController {
         return eventService.getEventById(id);
     }
 
+    @GetMapping("/{oid}/all")
+    public List<Event> getAllEventsByOrganiser(@PathVariable Long oid) {
+        return eventService.getAllEventsByOrganiser(oid);
+    }
+
     @PostMapping("/create")
     public Event createEvent(@RequestBody CreateEventRequest createEventRequest) {
         Event event = new Event();
@@ -65,15 +70,15 @@ public class EventController {
         event.setRating(createEventRequest.getRating());
         event.setEventStatus(createEventRequest.getEventStatus());
         event.setVip(createEventRequest.isVip());
+        event.setPublished(createEventRequest.isPublished());
+        event.setHidden(createEventRequest.isHidden());
         return eventRepository.save(event);
     }
-
 
     @PostMapping("/update")
     public Event updateEvent(@RequestBody Event event) {
         return eventRepository.save(event);
     }
-
 
     @GetMapping(path = "/get-events")
     public Page<Event> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
