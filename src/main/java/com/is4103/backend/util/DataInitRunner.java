@@ -2,7 +2,12 @@ package com.is4103.backend.util;
 
 import java.util.Set;
 import java.util.ArrayList;
+<<<<<<< HEAD
 import java.util.List;
+=======
+import java.util.Arrays;
+import java.util.Random;
+>>>>>>> c89d20479bd62fcea1ac80287ee92909a8f5d2eb
 
 import javax.transaction.Transactional;
 
@@ -15,6 +20,11 @@ import com.is4103.backend.model.User;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.repository.RoleRepository;
 import com.is4103.backend.repository.UserRepository;
+<<<<<<< HEAD
+=======
+import com.thedeanda.lorem.Lorem;
+import com.thedeanda.lorem.LoremIpsum;
+>>>>>>> c89d20479bd62fcea1ac80287ee92909a8f5d2eb
 import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.repository.EventRepository;
 
@@ -25,6 +35,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 
 @Component
 public class DataInitRunner implements ApplicationRunner {
@@ -34,6 +45,9 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EventOrganiserRepository eoRepository;
 
     @Autowired
     private EventRepository eventRepository;
@@ -69,7 +83,15 @@ public class DataInitRunner implements ApplicationRunner {
         }
 
         if (userRepository.findByEmail("partner@abc.com") == null) {
-            createBizPartner();
+            createBizPartners();
+        }
+
+        // Testing Entities
+        if (eventRepository.findAll().isEmpty())
+            createEvent();
+
+        if (eventRepository.findById((long) 2).isEmpty()) {
+            createDemoEvents();
         }
 
         // Testing Entities
@@ -109,7 +131,7 @@ public class DataInitRunner implements ApplicationRunner {
     }
 
     @Transactional
-    private void createBizPartner() {
+    private void createBizPartners() {
         BusinessPartner bp = new BusinessPartner();
         bp.setEmail("partner@abc.com");
         bp.setName("First Business Partner");
@@ -118,6 +140,15 @@ public class DataInitRunner implements ApplicationRunner {
         bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
         bp.setBusinessCategory("Travel");
         userRepository.save(bp);
+
+        for (int i = 2; i <= 11; i++) {
+            bp = new BusinessPartner();
+            bp.setEmail("partner" + i + "@abc.com");
+            bp.setName("Partner " + i);
+            bp.setPassword(passwordEncoder.encode("password"));
+            bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
+            userRepository.save(bp);
+        }
     }
 
     // Testing Methods
@@ -136,6 +167,8 @@ public class DataInitRunner implements ApplicationRunner {
         event.setBoothCapacity(305);
         event.setRating(5);
         event.setEventStatus(EventStatus.COMPLETED);
+        event.setHidden(true);
+        event.setPublished(true);
 
         Event event2 = new Event();
         event2.setName("Second Event");
@@ -150,6 +183,8 @@ public class DataInitRunner implements ApplicationRunner {
         event2.setBoothCapacity(305);
         event2.setRating(5);
         event2.setEventStatus(EventStatus.UPCOMING);
+        event2.setHidden(false);
+        event2.setPublished(true);
 
         Event event3 = new Event();
         event3.setName("Third Event");
@@ -160,10 +195,14 @@ public class DataInitRunner implements ApplicationRunner {
         event3.setEventEndDate(LocalDateTime.now());
         event3.setSaleStartDate(LocalDateTime.now());
         event3.setSalesEndDate(LocalDateTime.now());
-        event3.setImages(new ArrayList<>());
+        event3.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg",
+                    "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-2.jpg",
+                    "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-3.jpg"));
         event3.setBoothCapacity(305);
         event3.setRating(5);
         event3.setEventStatus(EventStatus.UPCOMING);
+        event3.setHidden(false);
+        event3.setPublished(false);
 
         Event event4 = new Event();
         event4.setName("Fourth Event");
@@ -174,10 +213,14 @@ public class DataInitRunner implements ApplicationRunner {
         event4.setEventEndDate(LocalDateTime.now());
         event4.setSaleStartDate(LocalDateTime.now());
         event4.setSalesEndDate(LocalDateTime.now());
-        event4.setImages(new ArrayList<>());
+        event4.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-1.jpg",
+                    "https://storage.googleapis.com/ems-images/events//event-" + 4 + "/image-2.jpg",
+                    "https://storage.googleapis.com/ems-images/events//event-" + 4 + "/image-3.jpg"));
         event4.setBoothCapacity(305);
         event4.setRating(5);
         event4.setEventStatus(EventStatus.UPCOMING);
+        event4.setHidden(true);
+        event4.setPublished(false);
 
         Event event5 = new Event();
         event5.setName("Fiveth Event");
@@ -188,10 +231,15 @@ public class DataInitRunner implements ApplicationRunner {
         event5.setEventEndDate(LocalDateTime.now());
         event5.setSaleStartDate(LocalDateTime.now());
         event5.setSalesEndDate(LocalDateTime.now());
-        event5.setImages(new ArrayList<>());
+        event5.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-1.jpg",
+                    "https://storage.googleapis.com/ems-images/events//event-" + 5 + "/image-2.jpg",
+                    "https://storage.googleapis.com/ems-images/events//event-" +  5 + "/image-3.jpg"));
         event5.setBoothCapacity(305);
         event5.setRating(5);
         event5.setEventStatus(EventStatus.UPCOMING);
+        event5.setHidden(false);
+        event5.setPublished(true);
+
 
         Event event6 = new Event();
         event6.setName("Sixth Event");
@@ -206,6 +254,8 @@ public class DataInitRunner implements ApplicationRunner {
         event6.setBoothCapacity(305);
         event6.setRating(5);
         event6.setEventStatus(EventStatus.UPCOMING);
+        event6.setHidden(false);
+        event6.setPublished(true);
 
 
         EventOrganiser eventOrg = eventOrganiserRepository.findByEmail("organiser@abc.com");
@@ -215,6 +265,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4.setEventOrganiser(eventOrg);
         event5.setEventOrganiser(eventOrg);
         event6.setEventOrganiser(eventOrg);
+      
         eventRepository.save(event);
         eventRepository.save(event2);
         eventRepository.save(event3);
@@ -222,17 +273,39 @@ public class DataInitRunner implements ApplicationRunner {
         eventRepository.save(event5);
         eventRepository.save(event6);
 
-        // List<Event> eoEvents = new ArrayList<>();
-        // eoEvents.add(event);
-        // eoEvents.add(event2);
-        // eoEvents.add(event3);
-        // eoEvents.add(event4);
-        // eoEvents.add(event5);
-        // eoEvents.add(event6);
-        // eventOrg.setEvents(eoEvents);
-        // eventOrganiserRepository.save(eventOrg);
+     
      
     }
 
+    private void createDemoEvents() {
+        Lorem lorem = LoremIpsum.getInstance();
+        Random rand = new Random();
+
+        EventOrganiser eo = eoRepository.findByEmail("organiser@abc.com");
+        for (int i = 0; i < 25; i++) {
+            Event e = new Event();
+            e.setName("Event " + i);
+            e.setEventOrganiser(eo);
+            e.setAddress("Singapore");
+            e.setDescriptions(lorem.getWords(5, 20));
+            e.setTicketPrice(Math.round(rand.nextFloat() * 20));
+            e.setTicketCapacity(rand.nextInt(100));
+            e.setPhysical(true);
+            LocalDateTime eventStart = LocalDateTime.of(2022, Month.MARCH, 1, 9, 0).plusDays(i).plusHours(i % 3);
+            e.setEventStartDate(eventStart);
+            e.setEventEndDate(
+                    LocalDateTime.of(2022, Month.MARCH, 2, 17, 30).plusDays(rand.nextInt(5)).minusHours(i % 2));
+            e.setSaleStartDate(LocalDateTime.now());
+            e.setSalesEndDate(eventStart.minusDays(2));
+
+            e.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg",
+                    "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-2.jpg",
+                    "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-3.jpg"));
+            e.setBoothCapacity(rand.nextInt(50));
+            e.setEventStatus(EventStatus.UPCOMING);
+            e.setPublished(true);
+            eventRepository.save(e);
+        }
+    }
 
 }

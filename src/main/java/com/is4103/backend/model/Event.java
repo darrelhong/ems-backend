@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.CascadeType;
 
+import javax.persistence.CascadeType;
+
 import lombok.Data;
 
 @Entity
@@ -49,50 +51,54 @@ public class Event {
     @ElementCollection(targetClass = TicketTransaction.class)
     private List<TicketTransaction> ticketTransactions;
 
-    @Column(nullable = false)
+    // @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    // @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
+    // @Column(nullable = false)
     private String descriptions;
 
-    @Column(nullable = true)
-    private String website;
-
-    @Column(nullable = true)
+    // @Column(nullable = true)
     private float ticketPrice;
 
-    @Column(nullable = true)
+    // @Column(nullable = true)
     private int ticketCapacity;
 
-    @Column(nullable = false)
+    // @Column(nullable = false)
     private boolean isPhysical;
 
-    @Column(nullable = false)
+    // @Column(nullable = false)
     private LocalDateTime eventStartDate;
 
-    @Column(nullable = false)
+    // @Column(nullable = false)
     private LocalDateTime eventEndDate;
 
-    @Column(nullable = true)
+    // @Column(nullable = true)
     private LocalDateTime saleStartDate;
 
+    // @Column(nullable = true)
     @Column(nullable = true)
     private LocalDateTime salesEndDate;
 
-    @Column(nullable = false)
+    // @Column(nullable = false)
     @ElementCollection(targetClass = String.class)
     private List<String> images;
 
-    @Column(nullable = false)
+    // @Column(nullable = false)
     private int boothCapacity;
 
-    @Column(nullable = true)
+    // @Column(nullable = true)
     private int rating;
 
-    @Column(nullable = false)
+    // @Column(nullable = false)s
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus;
+
+    private boolean isVip;
+
+    private boolean isHidden;
+
+    private boolean isPublished;
 }

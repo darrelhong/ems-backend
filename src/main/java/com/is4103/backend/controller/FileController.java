@@ -11,7 +11,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +44,9 @@ public class FileController {
     @PostMapping("/uploadProfilePicFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file)  {
         String fileName = fileStorageService.storeFile(file,"profilepic","");
+    // @PostMapping("/uploadFile")
+    // public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
+    //     String fileName = fileStorageService.storeFile(file);
 
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         long userId = user.getId();

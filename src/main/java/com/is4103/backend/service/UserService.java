@@ -45,6 +45,9 @@ public class UserService {
     @Value("${backend.from.email}")
     private String fromEmail;
 
+    @Value("${frontend.base.url}")
+    private String frontendBaseUrl;
+
     @Autowired
     private MessageSource messageSource;
 
@@ -78,6 +81,8 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    // d. might be better to split this into respective controllers for organiser,
+    // partner etc
     @Transactional
     public User registerNewUser(SignupRequest signupRequest, String roleStr, boolean enabled)
             throws UserAlreadyExistsException {
@@ -88,75 +93,72 @@ public class UserService {
             throw new UserAlreadyExistsException("Account with email " + signupRequest.getEmail() + " already exists");
         }
 
-        if(roleStr.equals("bizptnr")){
-        BusinessPartner newbp = new BusinessPartner();
-        newbp.setEmail(signupRequest.getEmail());
-        newbp.setName(signupRequest.getName());
-       // newbp.setBusinessCategory(signupRequest.getBusinessCategory());
-        newbp.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-        Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        newbp.setRoles(roles);
- 
-        if (enabled) {
-            newbp.setEnabled(true);
-        }
-       return userRepository.save(newbp);
+        if (roleStr.equals("bizptnr")) {
+            BusinessPartner newbp = new BusinessPartner();
+            newbp.setEmail(signupRequest.getEmail());
+            newbp.setName(signupRequest.getName());
+            // newbp.setBusinessCategory(signupRequest.getBusinessCategory());
+            newbp.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+            Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
+            Set<Role> roles = new HashSet<>();
+            roles.add(role);
+            newbp.setRoles(roles);
 
-    }else if(roleStr.equals("evntorg")){
-        EventOrganiser neweo = new EventOrganiser();
-        neweo.setEmail(signupRequest.getEmail());
-        neweo.setName(signupRequest.getName());
-        neweo.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-        Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        neweo.setRoles(roles);
- 
-        if (enabled) {
-            neweo.setEnabled(true);
-        }
-       return userRepository.save(neweo);
+            if (enabled) {
+                newbp.setEnabled(true);
+            }
+            return userRepository.save(newbp);
 
-    }else if(roleStr.equals("atnd")){
-        Attendee newatt = new Attendee();
-        newatt.setEmail(signupRequest.getEmail());
-        newatt.setName(signupRequest.getName());
-        newatt.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-        Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        newatt.setRoles(roles);
- 
-        if (enabled) {
-            newatt.setEnabled(true);
+        } else if (roleStr.equals("evntorg")) {
+            EventOrganiser neweo = new EventOrganiser();
+            neweo.setEmail(signupRequest.getEmail());
+            neweo.setName(signupRequest.getName());
+            neweo.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+            Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
+            Set<Role> roles = new HashSet<>();
+            roles.add(role);
+            neweo.setRoles(roles);
+
+            if (enabled) {
+                neweo.setEnabled(true);
+            }
+            return userRepository.save(neweo);
+
+        } else if (roleStr.equals("atnd")) {
+            Attendee newatt = new Attendee();
+            newatt.setEmail(signupRequest.getEmail());
+            newatt.setName(signupRequest.getName());
+            newatt.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+            Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
+            Set<Role> roles = new HashSet<>();
+            roles.add(role);
+            newatt.setRoles(roles);
+
+            if (enabled) {
+                newatt.setEnabled(true);
+            }
+
+            return userRepository.save(newatt);
+        } else if (roleStr.equals("admin")) {
+            Admin newadmin = new Admin();
+            newadmin.setEmail(signupRequest.getEmail());
+            newadmin.setName(signupRequest.getName());
+            newadmin.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+            Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
+            Set<Role> roles = new HashSet<>();
+            roles.add(role);
+            newadmin.setRoles(roles);
+            if (enabled) {
+                newadmin.setEnabled(true);
+            }
+
+            return userRepository.save(newadmin);
+
+        } else {
+            return null;
         }
 
-       return userRepository.save(newatt);
     }
-    else if(roleStr.equals("admin")){
-        Admin newadmin = new Admin();
-        newadmin.setEmail(signupRequest.getEmail());
-        newadmin.setName(signupRequest.getName());
-        newadmin.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-        Role role = roleService.findByRoleEnum(RoleEnum.valueOf(roleStr.toUpperCase()));
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        newadmin.setRoles(roles);
-        if (enabled) {
-            newadmin.setEnabled(true);
-        }
-
-       return userRepository.save(newadmin);
-   
-    }else{
-        return null;
-    }
-    
-}
-
-       
 
     public boolean emailExists(String email) {
         return userRepository.findByEmail(email) != null;
@@ -180,8 +182,6 @@ public class UserService {
     }
 
     public User updateProfilePic(User user, String profilePicUrl) {
-       
-
         user.setProfilePic(profilePicUrl);
 
         return userRepository.save(user);
@@ -250,7 +250,7 @@ public class UserService {
         String recipientAddress = user.getEmail();
         String subject = messageSource.getMessage("message.resetPasswordEmailSubject", null,
                 LocaleContextHolder.getLocale());
-        String confirmationUrl = "http://localhost:3000/register/reset-password/verify?token=" + prt.getToken();
+        String confirmationUrl = frontendBaseUrl + "/register/reset-password/verify?token=" + prt.getToken();
         String message = messageSource.getMessage("message.resetPasswordPrompt", null, LocaleContextHolder.getLocale());
 
         SimpleMailMessage email = new SimpleMailMessage();

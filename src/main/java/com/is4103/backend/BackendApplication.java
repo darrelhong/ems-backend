@@ -12,7 +12,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 public class BackendApplication {
 
-
     public static void main(String[] args) {
         SpringApplication.run(BackendApplication.class, args);
     }

@@ -51,11 +51,6 @@ public class EventOrganiser extends User {
     @ElementCollection(targetClass = Enquiry.class)
     private List<Enquiry> enquiries;
 
-
-
-
-
-
     public EventOrganiser() {
 
     }

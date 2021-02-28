@@ -79,4 +79,10 @@ public class CreateEventRequest {
     @NotEmpty
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus;
+
+    private boolean isVip;
+
+    private boolean isHidden;
+
+    private boolean isPublished;
 }
