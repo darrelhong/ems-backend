@@ -12,6 +12,7 @@ import com.is4103.backend.util.errors.EventNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,9 +28,16 @@ public class EventService {
         return eventRepository.findById(id).orElseThrow(() -> new EventNotFoundException());
     }
 
-    public Page<Event> getEvents(int page, int size) {
-        // return eventRepository.findByEventStatus(EventStatus.PUBLISHED,
-        // PageRequest.of(page, size));
+    public Page<Event> getPublishedEvents(int page, int size, String sortBy, String sortDir) {
+        Sort sort;
+        if (sortBy != null && sortDir != null) {
+            if (sortDir.equals("desc")) {
+                sort = Sort.by(sortBy).descending();
+            } else {
+                sort = Sort.by(sortBy).ascending();
+            }
+            return eventRepository.findByIsPublished(true, PageRequest.of(page, size, sort));
+        }
         return eventRepository.findByIsPublished(true, PageRequest.of(page, size));
     }
 

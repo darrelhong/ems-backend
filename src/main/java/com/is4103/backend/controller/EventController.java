@@ -82,9 +82,12 @@ public class EventController {
     }
 
     @GetMapping(path = "/get-events")
-    public Page<Event> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
-        return eventService.getEvents(page, size);
+    public Page<Event> getEvents(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String sortDir) {
+        return eventService.getPublishedEvents(page, size, sort, sortDir);
     }
 
     @GetMapping(path = "/search")
