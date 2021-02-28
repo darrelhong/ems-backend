@@ -2,12 +2,9 @@ package com.is4103.backend.util;
 
 import java.util.Set;
 import java.util.ArrayList;
-<<<<<<< HEAD
 import java.util.List;
-=======
 import java.util.Arrays;
 import java.util.Random;
->>>>>>> c89d20479bd62fcea1ac80287ee92909a8f5d2eb
 
 import javax.transaction.Transactional;
 
@@ -20,11 +17,8 @@ import com.is4103.backend.model.User;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.repository.RoleRepository;
 import com.is4103.backend.repository.UserRepository;
-<<<<<<< HEAD
-=======
 import com.thedeanda.lorem.Lorem;
 import com.thedeanda.lorem.LoremIpsum;
->>>>>>> c89d20479bd62fcea1ac80287ee92909a8f5d2eb
 import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.repository.EventRepository;
 
@@ -195,9 +189,9 @@ public class DataInitRunner implements ApplicationRunner {
         event3.setEventEndDate(LocalDateTime.now());
         event3.setSaleStartDate(LocalDateTime.now());
         event3.setSalesEndDate(LocalDateTime.now());
-        event3.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-2.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-3.jpg"));
+        event3.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-1.jpg",
+                    "https://storage.googleapis.com/ems-images/events//event-" + 3 + "/image-2.jpg",
+                    "https://storage.googleapis.com/ems-images/events//event-" + 3 + "/image-3.jpg"));
         event3.setBoothCapacity(305);
         event3.setRating(5);
         event3.setEventStatus(EventStatus.UPCOMING);
