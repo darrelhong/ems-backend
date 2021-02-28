@@ -19,8 +19,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.CascadeType;
 
-import javax.persistence.CascadeType;
-
 import lombok.Data;
 
 @Entity

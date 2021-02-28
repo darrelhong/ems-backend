@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.is4103.backend.dto.EventSearchCriteria;
 import com.is4103.backend.model.Event;
-import com.is4103.backend.model.EventStatus;
 import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.repository.EventSpecification;
 import com.is4103.backend.util.errors.EventNotFoundException;
@@ -28,9 +27,6 @@ public class EventService {
         return eventRepository.findById(id).orElseThrow(() -> new EventNotFoundException());
     }
 
-    public Page<Event> getEvents(int page, int size) {
-        // return eventRepository.findByEventStatus(EventStatus.PUBLISHED, PageRequest.of(page, size));
-        return eventRepository.findByIsPublished(true, PageRequest.of(page,size));
     public Page<Event> getPublishedEvents(int page, int size, String sortBy, String sortDir) {
         Sort sort;
         if (sortBy != null && sortDir != null) {
