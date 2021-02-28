@@ -85,4 +85,5 @@ public class CreateEventRequest {
     private boolean isHidden;
 
     private boolean isPublished;
+
 }

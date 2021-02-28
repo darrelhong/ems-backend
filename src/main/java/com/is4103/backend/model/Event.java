@@ -99,4 +99,5 @@ public class Event {
     private boolean isHidden;
 
     private boolean isPublished;
+    
 }
