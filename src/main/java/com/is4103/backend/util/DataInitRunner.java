@@ -163,7 +163,9 @@ public class DataInitRunner implements ApplicationRunner {
 
         event.setSaleStartDate(salesStart1);
         event.setSalesEndDate(salesEnd1);
-        event.setImages(new ArrayList<>());
+        event.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-3.jpg"));
         event.setBoothCapacity(305);
         event.setRating(5);
         event.setEventStatus(EventStatus.CREATED);
@@ -185,7 +187,9 @@ public class DataInitRunner implements ApplicationRunner {
 
         event2.setSaleStartDate(salesStart);
         event2.setSalesEndDate(salesEnd);
-        event2.setImages(new ArrayList<>());
+        event2.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-3.jpg"));
         event2.setBoothCapacity(305);
         event2.setRating(5);
         event2.setEventStatus(EventStatus.CREATED);
@@ -209,8 +213,8 @@ public class DataInitRunner implements ApplicationRunner {
         event3.setSaleStartDate(salesStart3);
         event3.setSalesEndDate(salesEnd3);
         event3.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-1.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + 3 + "/image-2.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + 3 + "/image-3.jpg"));
+                    "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-2.jpg",
+                    "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
         event3.setBoothCapacity(305);
         event3.setRating(5);
         event3.setEventStatus(EventStatus.CREATED);
@@ -235,8 +239,8 @@ public class DataInitRunner implements ApplicationRunner {
         event4.setSalesEndDate(salesEnd4);
 
         event4.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-1.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + 4 + "/image-2.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + 4 + "/image-3.jpg"));
+                    "https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-2.jpg",
+                    "https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-3.jpg"));
         event4.setBoothCapacity(305);
         event4.setRating(5);
         event4.setEventStatus(EventStatus.CREATED);
@@ -257,8 +261,8 @@ public class DataInitRunner implements ApplicationRunner {
         event5.setSaleStartDate(salesStart5);
         event5.setSalesEndDate(salesEnd5);
         event5.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-1.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + 5 + "/image-2.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" +  5 + "/image-3.jpg"));
+                    "https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-2.jpg",
+                    "https://storage.googleapis.com/ems-images/events/event-" +  5 + "/image-3.jpg"));
         event5.setBoothCapacity(305);
         event5.setRating(5);
         event5.setEventStatus(EventStatus.CREATED);
@@ -324,8 +328,8 @@ public class DataInitRunner implements ApplicationRunner {
             e.setSalesEndDate(eventStart.minusDays(2));
 
             e.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-2.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-3.jpg"));
+                    "https://storage.googleapis.com/ems-images/events/event-" + i + "/image-2.jpg",
+                    "https://storage.googleapis.com/ems-images/events/event-" + i + "/image-3.jpg"));
             e.setBoothCapacity(rand.nextInt(50));
             e.setEventStatus(EventStatus.CREATED);
             e.setPublished(true);
