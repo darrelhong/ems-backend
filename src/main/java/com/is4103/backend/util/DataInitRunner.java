@@ -166,8 +166,8 @@ public class DataInitRunner implements ApplicationRunner {
         event.setImages(new ArrayList<>());
         event.setBoothCapacity(305);
         event.setRating(5);
-        event.setEventStatus(null);
-        event.setHidden(true);
+        event.setEventStatus(EventStatus.CREATED);
+        event.setHidden(false);
         event.setPublished(true);
 
         Event event2 = new Event();
@@ -188,7 +188,7 @@ public class DataInitRunner implements ApplicationRunner {
         event2.setImages(new ArrayList<>());
         event2.setBoothCapacity(305);
         event2.setRating(5);
-        event2.setEventStatus(EventStatus.UPCOMING);
+        event2.setEventStatus(EventStatus.CREATED);
         event2.setHidden(false);
         event2.setPublished(true);
 
@@ -213,7 +213,7 @@ public class DataInitRunner implements ApplicationRunner {
                     "https://storage.googleapis.com/ems-images/events//event-" + 3 + "/image-3.jpg"));
         event3.setBoothCapacity(305);
         event3.setRating(5);
-        event3.setEventStatus(EventStatus.UPCOMING);
+        event3.setEventStatus(EventStatus.CREATED);
         event3.setHidden(false);
         event3.setPublished(true);
 
@@ -239,7 +239,7 @@ public class DataInitRunner implements ApplicationRunner {
                     "https://storage.googleapis.com/ems-images/events//event-" + 4 + "/image-3.jpg"));
         event4.setBoothCapacity(305);
         event4.setRating(5);
-        event4.setEventStatus(EventStatus.UPCOMING);
+        event4.setEventStatus(EventStatus.CREATED);
         event4.setHidden(true);
         event4.setPublished(false);
 
@@ -257,7 +257,7 @@ public class DataInitRunner implements ApplicationRunner {
                     "https://storage.googleapis.com/ems-images/events//event-" +  5 + "/image-3.jpg"));
         event5.setBoothCapacity(305);
         event5.setRating(5);
-        event5.setEventStatus(EventStatus.COMPLETED);
+        event5.setEventStatus(EventStatus.CANCELLED);
         event5.setHidden(false);
         event5.setPublished(true);
 
@@ -274,7 +274,7 @@ public class DataInitRunner implements ApplicationRunner {
         event6.setImages(new ArrayList<>());
         event6.setBoothCapacity(305);
         event6.setRating(5);
-        event6.setEventStatus(EventStatus.COMPLETED);
+        event6.setEventStatus(EventStatus.DRAFT);
         event6.setHidden(false);
         event6.setPublished(true);
 
@@ -323,7 +323,7 @@ public class DataInitRunner implements ApplicationRunner {
                     "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-2.jpg",
                     "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-3.jpg"));
             e.setBoothCapacity(rand.nextInt(50));
-            e.setEventStatus(EventStatus.UPCOMING);
+            e.setEventStatus(EventStatus.CREATED);
             e.setPublished(true);
             eventRepository.save(e);
         }

@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.is4103.backend.dto.EventSearchCriteria;
 import com.is4103.backend.model.Event;
-import com.is4103.backend.model.EventStatus;
 import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.repository.EventSpecification;
 import com.is4103.backend.util.errors.EventNotFoundException;
