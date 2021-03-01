@@ -33,6 +33,13 @@ public class FileStorageService {
     private FileStorageProperties fileStorageProperties;
 
 
+    @Autowired
+    private static String PROFILE_PIC_TYPE = "profilepic";
+
+    @Autowired
+    private static String BIZSUPPORT_DOC_TYPE = "bizsupportdoc";
+
+
     // upload profile pic
     @Autowired
     public FileStorageService() {  
@@ -53,14 +60,13 @@ public class FileStorageService {
     }
 
     public String storeFile(MultipartFile file,String filetype, String userEmail) {
-     
-        if(filetype.equals("profilepic")){
-        System.out.println("call profilepic");
-  
+    
+        if(filetype.equals(PROFILE_PIC_TYPE)){
+    
         this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() +
         "/profilePics").toAbsolutePath().normalize();
-        }else if(filetype.equals("bizsupportdoc")){
-        System.out.println("bizsupportdoc");
+        }else if(filetype.equals(BIZSUPPORT_DOC_TYPE)){
+    
         this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() +
         "/bizSupportDocs").toAbsolutePath().normalize();
         System.out.println(this.fileStorageLocation);
@@ -85,16 +91,15 @@ public class FileStorageService {
             }
 
 
-        if(filetype.equals("profilepic")){
+        if(filetype.equals(PROFILE_PIC_TYPE)){
             // generate an unique uuid
             UUID uuid = UUID.randomUUID();
             String fileExtension = fileName.split("\\.")[1];
             fileName = "profilepic-"+uuid + "." + fileExtension;
-        }else if(filetype.equals("bizsupportdoc")){
+        }else if(filetype.equals(BIZSUPPORT_DOC_TYPE)){
             String fileExtension = fileName.split("\\.")[1];
             fileName = "bizsupportdoc-"+userEmail + "." + fileExtension;
         }
-
             System.out.println(fileName);
             // Copy file to the target location (Replacing existing file with the same name)
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
@@ -112,10 +117,9 @@ public class FileStorageService {
             System.out.println(fileName);
             String[] parts = fileName.split("-");
             String fileType = parts[0];
-            if(fileType.equals("profilepic")){
+            if(fileType.equals(PROFILE_PIC_TYPE)){
                 this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() + "/profilePics").toAbsolutePath().normalize();
-            }else if(fileType.equals("bizsupportdoc")){
-                System.out.println("bizsupportdoc");
+            }else if(fileType.equals(BIZSUPPORT_DOC_TYPE)){
                 this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() + "/bizSupportDocs").toAbsolutePath().normalize();
             }
             Path filePath = this.fileStorageLocation.resolve(fileName).normalize();

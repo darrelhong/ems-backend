@@ -1,5 +1,6 @@
 package com.is4103.backend.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +36,9 @@ public class EventOrganiserService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EventService eventService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -144,6 +148,17 @@ public class EventOrganiserService {
 
     public List<Event> getAllEventsByEoId(Long eoId){
         EventOrganiser eo = getEventOrganiserById(eoId);
+        List<Event> eventlist = eventService.getAllEvents();
+    
+         List<Event> eoeventlist = new ArrayList<>();
+         for(int i = 0;i < eventlist.size();i++){
+            if(eventlist.get(i).getEventOrganiser().getId() == eoId){
+                eoeventlist.add(eventlist.get(i));
+            }
+         }
+         eo.setEvents(eoeventlist);
+  
         return eo.getEvents();
+     
     }
 }

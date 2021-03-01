@@ -42,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/test/**", "/greeting",
                         "/user/register/**", "/organiser/register/**", "/partner/register/**",
                         "/user/login/**", "/user/reset-password/**",
-                        "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html","/user/{\\d+}","/downloadFile/**")
+                        "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html","/user/{\\d+}","/downloadFile/**","/organiser/event/{\\d+}")
                 .permitAll()
                 // can also be used to protected routes
                 .antMatchers("/user/userping").hasRole("USER").antMatchers("/user/adminping").hasRole("ADMIN")

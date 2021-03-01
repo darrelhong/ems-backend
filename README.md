@@ -20,6 +20,9 @@ Using this command on terminal, you can go into your `mysql` on terminal
 You can also run connect to it via mysql workbench or DataGrip to visually see all the tables and rows
 
 
+You can also run connect to it via mysql workbench or DataGrip to visually see all the tables and rows
+
+
 ## Setup
 
 ### Database

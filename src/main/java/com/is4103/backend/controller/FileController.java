@@ -45,6 +45,11 @@ public class FileController {
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file)  {
         String fileName = fileStorageService.storeFile(file,"profilepic","");
 
+    // @PostMapping("/uploadFile")
+    // public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
+    //     String fileName = fileStorageService.storeFile(file);
+
+
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         long userId = user.getId();
 

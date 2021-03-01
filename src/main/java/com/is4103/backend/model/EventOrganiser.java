@@ -44,7 +44,7 @@ public class EventOrganiser extends User {
     @ElementCollection(targetClass = BusinessPartner.class)
     @ManyToMany
     private List<BusinessPartner> businessPartnerFollowers;
-    
+
     @Transient
     @Column(nullable = true)
     @ElementCollection(targetClass = Event.class)
@@ -56,10 +56,6 @@ public class EventOrganiser extends User {
     @OneToMany(mappedBy = "eventOrganiser")
     @ElementCollection(targetClass = Enquiry.class)
     private List<Enquiry> enquiries;
-
-
-
-
 
 
     public EventOrganiser() {

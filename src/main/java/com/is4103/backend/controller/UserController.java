@@ -27,6 +27,7 @@ import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -52,6 +53,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping(path = "/user")
 public class UserController {
+
+    @Value("${frontend.base.url}")
+    private String frontendBaseUrl;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -142,9 +146,9 @@ public class UserController {
         String result = userService.validateVerificationToken(token);
         if (result.equals("Valid Token")) {
             // redirect to login page
-            return new ModelAndView("redirect:" + "http://localhost:3000/register/verified");
+            return new ModelAndView("redirect:" + frontendBaseUrl + "/register/verified");
         }
-        return new ModelAndView("redirect:" + "http://localhost:3000/register/error?&token=" + token);
+        return new ModelAndView("redirect:" + frontendBaseUrl + "/register/error?&token=" + token);
     }
 
     @GetMapping("/register/resend")
