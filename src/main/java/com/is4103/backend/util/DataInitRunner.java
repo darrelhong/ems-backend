@@ -156,7 +156,7 @@ public class DataInitRunner implements ApplicationRunner {
         event.setImages(new ArrayList<>());
         event.setBoothCapacity(305);
         event.setRating(5);
-        event.setEventStatus(EventStatus.COMPLETED);
+        event.setEventStatus(EventStatus.CREATED);
         event.setHidden(true);
         event.setPublished(true);
         eventRepository.save(event);
@@ -187,7 +187,7 @@ public class DataInitRunner implements ApplicationRunner {
                     "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-2.jpg",
                     "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-3.jpg"));
             e.setBoothCapacity(rand.nextInt(50));
-            e.setEventStatus(EventStatus.UPCOMING);
+            e.setEventStatus(EventStatus.CREATED);
             e.setPublished(true);
             eventRepository.save(e);
         }

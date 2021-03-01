@@ -1,5 +1,5 @@
 package com.is4103.backend.model;
 
 public enum EventStatus {
-    DRAFT, UPCOMING, COMPLETED, CANCELLED
+    DRAFT, CREATED, CANCELLED
 }
