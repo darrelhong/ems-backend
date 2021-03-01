@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.transaction.Transactional;
 
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
@@ -43,6 +44,7 @@ public class EventOrganiserService {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+
 
     public List<EventOrganiser> getAllEventOrganisers() {
         return eoRepository.findAll();
@@ -124,6 +126,21 @@ public class EventOrganiserService {
         EventOrganiser eo = getEventOrganiserById(eoId);
         return eo.getVipList();
     }
+
+    public List<Attendee> getAttendeeFollowersById (Long id){
+        EventOrganiser organiser = getEventOrganiserById(id);
+        List<Attendee>  followers = new ArrayList<>();
+        followers = organiser.getAttendeeFollowers();
+        return followers;
+    }
+
+    public List<BusinessPartner> getPartnerFollowersById (Long id){
+        EventOrganiser organiser = getEventOrganiserById(id);
+        List<BusinessPartner>  followers = new ArrayList<>();
+        followers = organiser.getBusinessPartnerFollowers();
+        return followers;
+    }
+
 
     public List<Event> getAllEventsByEoId(Long eoId){
         EventOrganiser eo = getEventOrganiserById(eoId);

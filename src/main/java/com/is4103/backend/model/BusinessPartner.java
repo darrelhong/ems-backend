@@ -1,16 +1,26 @@
 package com.is4103.backend.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+// import org.hibernate.mapping.Set;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 
@@ -25,9 +35,9 @@ public class BusinessPartner extends User {
 
     @Column(nullable = true)
     @ElementCollection(targetClass = Attendee.class)
-    @ManyToMany
-    // @JoinTable(name="followedBusinessPartners", joinColumns= @JoinColumn(name="business_partner_id"), inverseJoinColumns = @JoinColumn(name="attendee_id"))
-    private List<Attendee> attendeeFollowers;
+    @ManyToMany(cascade = CascadeType.MERGE)
+    // @JoinTable(name="followed_BusinessPartners", joinColumns= @JoinColumn(name="business_partner_id"), inverseJoinColumns = @JoinColumn(name="attendee_id"))
+    private Set<Attendee> attendeeFollowers  = new HashSet<>();
 
     @JsonIgnore
     @Column(nullable = true)
@@ -72,11 +82,11 @@ public class BusinessPartner extends User {
         this.favouriteEventList = favouriteEventList;
     }
 
-    public List<Attendee> getAttendeeFollowers() {
+    public Set<Attendee> getAttendeeFollowers() {
         return attendeeFollowers;
     }
 
-    public void setAttendeeFollowers(List<Attendee> attendeeFollowers) {
+    public void setAttendeeFollowers(Set<Attendee> attendeeFollowers) {
         this.attendeeFollowers = attendeeFollowers;
     }
 

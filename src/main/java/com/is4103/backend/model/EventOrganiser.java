@@ -1,10 +1,14 @@
 package com.is4103.backend.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -29,6 +33,7 @@ public class EventOrganiser extends User {
     @OneToMany
     private List<BusinessPartner> vipList;
 
+    @JsonIgnore
     @Column(nullable = true)
     @ElementCollection(targetClass = Attendee.class)
     @ManyToMany
@@ -39,12 +44,14 @@ public class EventOrganiser extends User {
     @ElementCollection(targetClass = BusinessPartner.class)
     @ManyToMany
     private List<BusinessPartner> businessPartnerFollowers;
-
+    
+    @Transient
     @Column(nullable = true)
     @ElementCollection(targetClass = Event.class)
     @OneToMany(mappedBy = "eventOrganiser")
     @JsonIgnoreProperties("eventOrganiser")
     private List<Event> events;
+
 
     @OneToMany(mappedBy = "eventOrganiser")
     @ElementCollection(targetClass = Enquiry.class)

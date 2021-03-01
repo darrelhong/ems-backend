@@ -1,14 +1,20 @@
 package com.is4103.backend.model;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+// import org.hibernate.mapping.Set;
 
 @Entity
 
@@ -28,15 +34,15 @@ public class Attendee extends User {
     private List<TicketTransaction> ticketTransactions;
 
     @JsonIgnore
-    @ManyToMany (mappedBy = "attendeeFollowers")
+    @ManyToMany (mappedBy="attendeeFollowers", cascade = CascadeType.MERGE)
     @ElementCollection(targetClass = BusinessPartner.class)
-    private List<BusinessPartner> followedBusinessPartners;
+    private Set<BusinessPartner> followedBusinessPartners  = new HashSet<>();
 
     public Attendee() {
 
     }
 
-    public Attendee(List<String> categoryPreferences, List<EventOrganiser> followedEventOrgs, List<BusinessPartner> followBusinessPartners) {
+    public Attendee(List<String> categoryPreferences, List<EventOrganiser> followedEventOrgs, Set<BusinessPartner> followedBusinessPartners) {
         super();
         this.categoryPreferences = categoryPreferences;
         this.followedEventOrganisers = followedEventOrgs;
@@ -59,11 +65,11 @@ public class Attendee extends User {
         this.followedEventOrganisers = followedEventOrgs;
     }
 
-    public List<BusinessPartner> getFollowedBusinessPartners() {
+    public Set<BusinessPartner> getFollowedBusinessPartners() {
         return followedBusinessPartners;
     }
 
-    public void setFollowedBusinessPartners(List<BusinessPartner> followedBusinessPartners) {
+    public void setFollowedBusinessPartners(Set<BusinessPartner> followedBusinessPartners) {
         this.followedBusinessPartners = followedBusinessPartners;
     }
 

@@ -2,6 +2,7 @@ package com.is4103.backend.util;
 
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -132,13 +133,15 @@ public class DataInitRunner implements ApplicationRunner {
         bp.setEnabled(true);
         bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
         bp.setBusinessCategory("Travel");
-        userRepository.save(bp);
+        
 
         //set follow eo list for bp
         List<EventOrganiser> following = new ArrayList<>();
         following.add(this.eoTest);
         bp.setFollowEventOrganisers(following);
+        userRepository.save(bp);
 
+        
         //set followers bp list for eo
         List<BusinessPartner> followersBP = new ArrayList<>();
         followersBP.add(bp);
@@ -153,6 +156,16 @@ public class DataInitRunner implements ApplicationRunner {
         atn.setDescription("description for frst attendeeeeeeee :)");
         atn.setEnabled(true);
         atn.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.ATND)));
+        List<String> category= new ArrayList<>();
+        category.add("Travel");
+        category.add("Healthcare");
+        atn.setCategoryPreferences(category);
+        userRepository.save(atn);
+        //set following bp list for attendees got issues here
+        Set<BusinessPartner> followBp = new HashSet<>();
+        followBp.add(bp);
+        atn.setFollowedBusinessPartners(followBp);
+        userRepository.save(atn);
 
         //create second attendee
         Attendee atnTwo = new Attendee();
@@ -162,27 +175,22 @@ public class DataInitRunner implements ApplicationRunner {
         atnTwo.setDescription("description for Second attendeeeeeeee :)");
         atnTwo.setEnabled(true);
         atnTwo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.ATND)));
-
-        //set following bp list for attendees
-        List<BusinessPartner> followBp = new ArrayList<>();
-        followBp.add(bp);
-        atn.setFollowedBusinessPartners(followBp);
-        // atnTwo.setFollowedBusinessPartners(followBp);
-
-        //save atn
-        userRepository.save(atn);
+        atnTwo.setCategoryPreferences(category);
+        // Set<BusinessPartner> followBpTwo = new HashSet<>();
+        // followBpTwo.add(bp);
+        // atnTwo.setFollowedBusinessPartners(followBpTwo);
         userRepository.save(atnTwo);
-        
-        // atnTwo.setFollowedBusinessPartners(followBp);
-
-        // userRepository.save(atnTwo);
 
         //set bp followers list 
-        List<Attendee> followers = new ArrayList<>();
+        Set<Attendee> followers = new HashSet<>();
         followers.add(atn);
         followers.add(atnTwo);
         bp.setAttendeeFollowers(followers);
-        userRepository.save(bp);        
+        userRepository.save(bp);    
+
+       
+
+           
         
         for (int i = 2; i <= 11; i++) {
             bp = new BusinessPartner();
@@ -233,7 +241,7 @@ public class DataInitRunner implements ApplicationRunner {
         eventRepository.save(event2);
 
         List<Event> eoEvents = new ArrayList<>();
-        eoEvents = eventOrg.getEvents();
+        // eoEvents = eventOrg.getEvents();
         eoEvents.add(event);
         eoEvents.add(event2);
         eventOrg.setEvents(eoEvents);

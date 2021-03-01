@@ -95,9 +95,9 @@ public class BusinessPartnerService {
         return bpRepository.findByEmail(email);
     }
 
-    public List<Attendee> getFollowersById (Long id){
+    public Set<Attendee> getFollowersById (Long id){
         BusinessPartner partner = getBusinessPartnerById(id);
-        List<Attendee>  followers = new ArrayList<>();
+        Set<Attendee>  followers = new HashSet<>();
         followers = partner.getAttendeeFollowers();
         return followers;
     }

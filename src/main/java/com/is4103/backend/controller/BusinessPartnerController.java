@@ -1,6 +1,7 @@
 package com.is4103.backend.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -65,7 +66,7 @@ public class BusinessPartnerController {
     }
 
     @GetMapping(path = "/followers/{id}")
-    public List<Attendee> getFollowers(@PathVariable Long id) {
+    public Set<Attendee> getFollowers(@PathVariable Long id) {
         return bpService.getFollowersById(id);
     }
 
