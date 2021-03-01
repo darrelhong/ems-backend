@@ -170,6 +170,13 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin-update")
+    public ResponseEntity<User> adminUpdateUser(@RequestBody @Valid UpdateUserRequest updateUserRequest) {
+        User user = userService.getUserById(updateUserRequest.getId());
+        user = userService.updateUser(user, updateUserRequest);
+        return ResponseEntity.ok(user);
+    }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/update-account-status")
