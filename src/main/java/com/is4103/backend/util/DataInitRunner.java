@@ -152,14 +152,14 @@ public class DataInitRunner implements ApplicationRunner {
         event.setAddress("Woodlands");
         event.setDescriptions("Some description");
         event.setPhysical(false);
-        LocalDateTime eventStart1 = LocalDateTime.of(2022, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
-        LocalDateTime eventEnd1 = LocalDateTime.of(2022, Month.MAY, 2, 9, 0).plusDays(15).plusHours(2 % 3);
+        LocalDateTime eventStart1 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime eventEnd1 = LocalDateTime.of(2021, Month.MAY, 2, 9, 0).plusDays(15).plusHours(2 % 3);
 
         event.setEventStartDate(eventStart1);
         event.setEventEndDate(eventEnd1);
 
-        LocalDateTime salesStart1 = LocalDateTime.of(2022, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
-        LocalDateTime salesEnd1 = LocalDateTime.of(2022, Month.MARCH,2, 9, 0).plusDays(15).plusHours(2 % 3);
+        LocalDateTime salesStart1 = LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime salesEnd1 = LocalDateTime.of(2021, Month.MARCH,2, 9, 0).plusDays(15).plusHours(2 % 3);
 
         event.setSaleStartDate(salesStart1);
         event.setSalesEndDate(salesEnd1);
@@ -175,13 +175,13 @@ public class DataInitRunner implements ApplicationRunner {
         event2.setAddress("Sembwang2");
         event2.setDescriptions("Some description two2");
         event2.setPhysical(false);
-        LocalDateTime eventStart = LocalDateTime.of(2022, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime eventStart = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         event2.setEventStartDate(eventStart);
-        LocalDateTime eventEnd = LocalDateTime.of(2022, Month.APRIL, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+        LocalDateTime eventEnd = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(15).plusHours(2 % 3);
         event2.setEventEndDate(eventEnd);
 
-        LocalDateTime salesStart = LocalDateTime.of(2022, Month.MARCH, 1, 9, 0).plusDays(2).plusHours(2 % 3);
-        LocalDateTime salesEnd = LocalDateTime.of(2022, Month.MARCH, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+        LocalDateTime salesStart = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime salesEnd = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(15).plusHours(2 % 3);
 
         event2.setSaleStartDate(salesStart);
         event2.setSalesEndDate(salesEnd);
@@ -197,15 +197,15 @@ public class DataInitRunner implements ApplicationRunner {
         event3.setAddress("Sembwang3");
         event3.setDescriptions("Some description two3");
         event3.setPhysical(false);
-        LocalDateTime eventStart3 = LocalDateTime.of(2022, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
-        LocalDateTime eventEnd3 = LocalDateTime.of(2022, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+        LocalDateTime eventStart3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime eventEnd3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
 
         event3.setEventStartDate(eventStart3);
         event3.setEventEndDate(eventEnd3);
 
 
-        LocalDateTime salesStart3 = LocalDateTime.of(2022, Month.FEBRUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
-        LocalDateTime salesEnd3 = LocalDateTime.of(2022, Month.MARCH, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+        LocalDateTime salesStart3 = LocalDateTime.of(2021, Month.FEBRUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime salesEnd3 = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(15).plusHours(2 % 3);
         event3.setSaleStartDate(salesStart3);
         event3.setSalesEndDate(salesEnd3);
         event3.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-1.jpg",
@@ -222,14 +222,14 @@ public class DataInitRunner implements ApplicationRunner {
         event4.setAddress("Sembwang4");
         event4.setDescriptions("Some description 4");
         event4.setPhysical(false);
-        LocalDateTime eventStart4 = LocalDateTime.of(2022, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
-        LocalDateTime eventEnd4 = LocalDateTime.of(2022, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+        LocalDateTime eventStart4 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime eventEnd4 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
 
         event4.setEventStartDate(eventStart4);
         event4.setEventEndDate(eventEnd4);
 
-        LocalDateTime salesStart4 = LocalDateTime.of(2022, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
-        LocalDateTime salesEnd4 = LocalDateTime.of(2022, Month.APRIL, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+        LocalDateTime salesStart4 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime salesEnd4 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(15).plusHours(2 % 3);
 
         event4.setSaleStartDate(salesStart4);
         event4.setSalesEndDate(salesEnd4);
@@ -240,7 +240,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4.setBoothCapacity(305);
         event4.setRating(5);
         event4.setEventStatus(EventStatus.CREATED);
-        event4.setHidden(true);
+        event4.setHidden(false);
         event4.setPublished(false);
 
         Event event5 = new Event();
@@ -248,16 +248,20 @@ public class DataInitRunner implements ApplicationRunner {
         event5.setAddress("Sembwang 5");
         event5.setDescriptions("Some description 5");
         event5.setPhysical(false);
-        event5.setEventStartDate(LocalDateTime.now());
-        event5.setEventEndDate(LocalDateTime.now());
-        event5.setSaleStartDate(LocalDateTime.now());
-        event5.setSalesEndDate(LocalDateTime.now());
+        LocalDateTime eventStart5 = LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime eventEnd5 = LocalDateTime.of(2021, Month.JANUARY, 2, 9, 0).plusDays(15).plusHours(2 % 3);
+        event5.setEventStartDate(eventStart5);
+        event5.setEventEndDate(eventEnd5);
+          LocalDateTime salesStart5 = LocalDateTime.of(2020, Month.DECEMBER, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime salesEnd5 = LocalDateTime.of(2020, Month.DECEMBER, 2, 9, 0).plusDays(15).plusHours(2 % 3);
+        event5.setSaleStartDate(salesStart5);
+        event5.setSalesEndDate(salesEnd5);
         event5.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-1.jpg",
                     "https://storage.googleapis.com/ems-images/events//event-" + 5 + "/image-2.jpg",
                     "https://storage.googleapis.com/ems-images/events//event-" +  5 + "/image-3.jpg"));
         event5.setBoothCapacity(305);
         event5.setRating(5);
-        event5.setEventStatus(EventStatus.CANCELLED);
+        event5.setEventStatus(EventStatus.CREATED);
         event5.setHidden(false);
         event5.setPublished(true);
 
@@ -312,10 +316,10 @@ public class DataInitRunner implements ApplicationRunner {
             e.setTicketPrice(Math.round(rand.nextFloat() * 20));
             e.setTicketCapacity(rand.nextInt(100));
             e.setPhysical(true);
-            LocalDateTime eventStart = LocalDateTime.of(2022, Month.MARCH, 1, 9, 0).plusDays(i).plusHours(i % 3);
+            LocalDateTime eventStart = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(i).plusHours(i % 3);
             e.setEventStartDate(eventStart);
             e.setEventEndDate(
-                    LocalDateTime.of(2022, Month.MARCH, 2, 17, 30).plusDays(rand.nextInt(5)).minusHours(i % 2));
+                    LocalDateTime.of(2021, Month.MARCH, 2, 17, 30).plusDays(rand.nextInt(5)).minusHours(i % 2));
             e.setSaleStartDate(LocalDateTime.now());
             e.setSalesEndDate(eventStart.minusDays(2));
 
