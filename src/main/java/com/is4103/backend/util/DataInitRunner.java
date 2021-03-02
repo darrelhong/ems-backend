@@ -180,7 +180,7 @@ public class DataInitRunner implements ApplicationRunner {
             e.setEventStartDate(eventStart);
             e.setEventEndDate(
                     LocalDateTime.of(2022, Month.MARCH, 2, 17, 30).plusDays(rand.nextInt(5)).minusHours(i % 2));
-            e.setSaleStartDate(LocalDateTime.now());
+            e.setSaleStartDate(LocalDateTime.of(2022, Month.MARCH, 2, 17, 30).plusDays(rand.nextInt(5)).minusHours(i % 2));
             e.setSalesEndDate(eventStart.minusDays(2));
 
             e.setImages(Arrays.asList(
