@@ -47,6 +47,9 @@ public class EventOrganiserService {
     private RoleService roleService;
 
     @Autowired
+    private EventService eventService;
+
+    @Autowired
     private ApplicationEventPublisher eventPublisher;
 
 
@@ -146,7 +149,7 @@ public class EventOrganiserService {
     }
 
 
-    public List<Event> getAllEventsByEoId(Long eoId){
+  public List<Event> getAllEventsByEoId(Long eoId){
         EventOrganiser eo = getEventOrganiserById(eoId);
         List<Event> eventlist = eventService.getAllEvents();
     
