@@ -33,6 +33,7 @@ public class BusinessPartner extends User {
     @ElementCollection(targetClass = Event.class)
     private List<Event> favouriteEventList;
 
+    @JsonIgnore
     @Column(nullable = true)
     @ElementCollection(targetClass = Attendee.class)
     @ManyToMany(cascade = CascadeType.MERGE)

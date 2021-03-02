@@ -346,7 +346,7 @@ public class DataInitRunner implements ApplicationRunner {
 
 
     private void createDemoEvents() {
-        Lorem lorem = LoremIpsum.getInstance();
+        // Lorem lorem = LoremIpsum.getInstance();
         Random rand = new Random();
 
         EventOrganiser eo = eoRepository.findByEmail("organiser@abc.com");
@@ -355,7 +355,8 @@ public class DataInitRunner implements ApplicationRunner {
             e.setName("Event " + i);
             e.setEventOrganiser(eo);
             e.setAddress("Singapore");
-            e.setDescriptions(lorem.getWords(5, 20));
+            // e.setDescriptions(lorem.getWords(5, 20));
+            e.setDescriptions("lorem.getWords(5, 20)");
             e.setTicketPrice(Math.round(rand.nextFloat() * 20));
             e.setTicketCapacity(rand.nextInt(100));
             e.setPhysical(true);

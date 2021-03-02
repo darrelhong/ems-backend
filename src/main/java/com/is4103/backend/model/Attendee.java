@@ -25,6 +25,7 @@ public class Attendee extends User {
     private List<String> categoryPreferences;
 
     @Column(nullable = true)
+    @JsonIgnore
     @ElementCollection(targetClass = EventOrganiser.class)
     @ManyToMany(mappedBy = "attendeeFollowers")
     private List<EventOrganiser> followedEventOrganisers;

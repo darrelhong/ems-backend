@@ -1,16 +1,15 @@
 package com.is4103.backend.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -52,11 +51,9 @@ public class EventOrganiser extends User {
     @JsonIgnoreProperties("eventOrganiser")
     private List<Event> events;
 
-
     @OneToMany(mappedBy = "eventOrganiser")
     @ElementCollection(targetClass = Enquiry.class)
     private List<Enquiry> enquiries;
-
 
     public EventOrganiser() {
 
