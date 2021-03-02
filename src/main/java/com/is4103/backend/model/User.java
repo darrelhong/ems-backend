@@ -59,7 +59,7 @@ public class User {
             @JoinColumn(name = "ROLE_ID") })
     private Set<Role> roles;
 
-    @OneToMany
+    @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @ElementCollection(targetClass = Notification.class)
     private List<Notification> notifications;
 }

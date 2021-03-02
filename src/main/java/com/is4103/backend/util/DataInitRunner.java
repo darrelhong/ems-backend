@@ -2,14 +2,17 @@ package com.is4103.backend.util;
 
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Arrays;
 import java.util.Random;
-
 import javax.transaction.Transactional;
-
+import com.is4103.backend.model.Attendee;
+import com.is4103.backend.model.BoothApplicationStatus;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.EventStatus;
+import com.is4103.backend.model.PaymentStatus;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
@@ -51,6 +54,8 @@ public class DataInitRunner implements ApplicationRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    private EventOrganiser eoTest;
+
     @Override
     public void run(ApplicationArguments args) {
         // init roles
@@ -80,9 +85,10 @@ public class DataInitRunner implements ApplicationRunner {
         }
 
         // Testing Entities
-        if (eventRepository.findAll().isEmpty())
+        if (eventRepository.findAll().isEmpty()){
             createEvent();
-
+           
+        }
         if (eventRepository.findById((long) 2).isEmpty()) {
             createDemoEvents();
         }
@@ -90,6 +96,7 @@ public class DataInitRunner implements ApplicationRunner {
         // Testing Entities
         if (eventRepository.findAll().isEmpty())
             createEvent();
+
     }
 
     @Transactional
@@ -113,6 +120,8 @@ public class DataInitRunner implements ApplicationRunner {
         eo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
         userRepository.save(eo);
 
+        this.eoTest = eo;
+
         for (int i = 2; i <= 11; i++) {
             eo = new EventOrganiser();
             eo.setEmail("organiser" + i + "@abc.com");
@@ -125,6 +134,8 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Transactional
     private void createBizPartners() {
+
+        //create first Bp
         BusinessPartner bp = new BusinessPartner();
         bp.setEmail("partner@abc.com");
         bp.setName("First Business Partner");
@@ -132,8 +143,65 @@ public class DataInitRunner implements ApplicationRunner {
         bp.setEnabled(true);
         bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
         bp.setBusinessCategory("Travel");
+        
+
+        //set follow eo list for bp
+        List<EventOrganiser> following = new ArrayList<>();
+        following.add(this.eoTest);
+        bp.setFollowEventOrganisers(following);
         userRepository.save(bp);
 
+        
+        //set followers bp list for eo
+        List<BusinessPartner> followersBP = new ArrayList<>();
+        followersBP.add(bp);
+        this.eoTest.setBusinessPartnerFollowers(followersBP);
+        userRepository.save(this.eoTest);
+
+        //create attendee
+        Attendee atn = new Attendee();
+        atn.setEmail("attendee@abc.com");
+        atn.setName("first attendee");
+        atn.setPassword(passwordEncoder.encode("password"));
+        atn.setDescription("description for frst attendeeeeeeee :)");
+        atn.setEnabled(true);
+        atn.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.ATND)));
+        List<String> category= new ArrayList<>();
+        category.add("Travel");
+        category.add("Healthcare");
+        atn.setCategoryPreferences(category);
+        userRepository.save(atn);
+        //set following bp list for attendees got issues here
+        Set<BusinessPartner> followBp = new HashSet<>();
+        followBp.add(bp);
+        atn.setFollowedBusinessPartners(followBp);
+        userRepository.save(atn);
+
+        //create second attendee
+        Attendee atnTwo = new Attendee();
+        atnTwo.setEmail("attendeeTwo@abc.com");
+        atnTwo.setName("Second attendee");
+        atnTwo.setPassword(passwordEncoder.encode("password"));
+        atnTwo.setDescription("description for Second attendeeeeeeee :)");
+        atnTwo.setEnabled(true);
+        atnTwo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.ATND)));
+        atnTwo.setCategoryPreferences(category);
+        // Set<BusinessPartner> followBpTwo = new HashSet<>();
+        // followBpTwo.add(bp);
+        // atnTwo.setFollowedBusinessPartners(followBpTwo);
+        userRepository.save(atnTwo);
+
+        //set bp followers list 
+        Set<Attendee> followers = new HashSet<>();
+        followers.add(atn);
+        followers.add(atnTwo);
+        bp.setAttendeeFollowers(followers);
+        userRepository.save(bp);    
+
+       
+
+           
+        
         for (int i = 2; i <= 11; i++) {
             bp = new BusinessPartner();
             bp.setEmail("partner" + i + "@abc.com");
@@ -302,12 +370,17 @@ public class DataInitRunner implements ApplicationRunner {
         eventRepository.save(event5);
         eventRepository.save(event6);
 
-     
-     
+
+        List<Event> eoEvents = new ArrayList<>();
+        // eoEvents = eventOrg.getEvents();
+        eoEvents.add(event);
+        eoEvents.add(event2);
+        eventOrg.setEvents(eoEvents);
     }
 
+
     private void createDemoEvents() {
-        Lorem lorem = LoremIpsum.getInstance();
+        // Lorem lorem = LoremIpsum.getInstance();
         Random rand = new Random();
 
         EventOrganiser eo = eoRepository.findByEmail("organiser@abc.com");
@@ -316,7 +389,8 @@ public class DataInitRunner implements ApplicationRunner {
             e.setName("Event " + i);
             e.setEventOrganiser(eo);
             e.setAddress("Singapore");
-            e.setDescriptions(lorem.getWords(5, 20));
+            // e.setDescriptions(lorem.getWords(5, 20));
+            e.setDescriptions("lorem.getWords(5, 20)");
             e.setTicketPrice(Math.round(rand.nextFloat() * 20));
             e.setTicketCapacity(rand.nextInt(100));
             e.setPhysical(true);
@@ -336,5 +410,6 @@ public class DataInitRunner implements ApplicationRunner {
             eventRepository.save(e);
         }
     }
+
 
 }

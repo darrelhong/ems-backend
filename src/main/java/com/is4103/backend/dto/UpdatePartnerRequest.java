@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UpdateUserRequest {
+public class UpdatePartnerRequest {
 
     @NotNull
     private Long id;
@@ -30,6 +30,7 @@ public class UpdateUserRequest {
 
     private boolean enabled;
 
+    private String businessCategory;
     
 
 

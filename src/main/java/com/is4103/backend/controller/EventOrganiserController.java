@@ -9,6 +9,7 @@ import com.is4103.backend.dto.FileStorageProperties;
 import com.is4103.backend.dto.RejectEventOrganiserDto;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
+import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
@@ -66,6 +67,16 @@ public class EventOrganiserController {
     @GetMapping(path = "/{id}")
     public EventOrganiser getEventOrganiserById(@PathVariable Long id) {
         return eoService.getEventOrganiserById(id);
+    }
+
+    @GetMapping(path = "/attendeeFollowers/{id}")
+    public List<Attendee> getAttendeeFollowers(@PathVariable Long id) {
+        return eoService.getAttendeeFollowersById(id);
+    }
+
+    @GetMapping(path = "/partnerFollowers/{id}")
+    public List<BusinessPartner> getPartnerFollowers(@PathVariable Long id) {
+        return eoService.getPartnerFollowersById(id);
     }
 
     @PostMapping(value = "/register")
