@@ -71,6 +71,37 @@ public class FileController {
         return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
     }
 
+    @PostMapping("/uploadEventImage")
+    public UploadFileResponse uploadEventImage(@RequestParam("file") MultipartFile file) {
+        String fileName = fileStorageService.storeFile(file);
+
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        long userId = user.getId();
+
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
+                .path(fileName).toUriString();
+
+        if (user.getProfilePic() != null) {
+            String profilepicpath = user.getProfilePic();
+            String oldpicfilename = profilepicpath.substring(profilepicpath.lastIndexOf("/") + 1);
+
+            System.out.println(oldpicfilename);
+            Path oldFilepath = Paths.get(this.fileStorageProperties.getUploadDir() + "/profilePics/" + oldpicfilename)
+                    .toAbsolutePath().normalize();
+            System.out.println(oldFilepath);
+            try {
+                Files.deleteIfExists(oldFilepath);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        user = userService.updateProfilePic(user, fileDownloadUri);
+
+        return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
+    }
+
     @PostMapping("/uploadMultipleFiles")
     public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
         return Arrays.asList(files).stream().map(file -> uploadFile(file)).collect(Collectors.toList());
