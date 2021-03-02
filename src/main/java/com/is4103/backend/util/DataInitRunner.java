@@ -2,8 +2,10 @@ package com.is4103.backend.util;
 
 import java.util.Set;
 import java.util.ArrayList;
+
 import java.util.HashSet;
 import java.util.List;
+
 import java.util.Arrays;
 import java.util.Random;
 
@@ -222,15 +224,24 @@ public class DataInitRunner implements ApplicationRunner {
         event.setAddress("Woodlands");
         event.setDescriptions("Some description");
         event.setPhysical(false);
-        event.setEventStartDate(LocalDateTime.now());
-        event.setEventEndDate(LocalDateTime.now());
-        event.setSaleStartDate(LocalDateTime.now());
-        event.setSalesEndDate(LocalDateTime.now());
-        event.setImages(new ArrayList<>());
+        LocalDateTime eventStart1 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime eventEnd1 = LocalDateTime.of(2021, Month.MAY, 2, 9, 0).plusDays(15).plusHours(2 % 3);
+
+        event.setEventStartDate(eventStart1);
+        event.setEventEndDate(eventEnd1);
+
+        LocalDateTime salesStart1 = LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime salesEnd1 = LocalDateTime.of(2021, Month.MARCH,2, 9, 0).plusDays(15).plusHours(2 % 3);
+
+        event.setSaleStartDate(salesStart1);
+        event.setSalesEndDate(salesEnd1);
+        event.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-3.jpg"));
         event.setBoothCapacity(305);
         event.setRating(5);
-        event.setEventStatus(EventStatus.COMPLETED);
-        event.setHidden(true);
+        event.setEventStatus(EventStatus.CREATED);
+        event.setHidden(false);
         event.setPublished(true);
 
         Event event2 = new Event();
@@ -238,14 +249,22 @@ public class DataInitRunner implements ApplicationRunner {
         event2.setAddress("Sembwang2");
         event2.setDescriptions("Some description two2");
         event2.setPhysical(false);
-        event2.setEventStartDate(LocalDateTime.now());
-        event2.setEventEndDate(LocalDateTime.now());
-        event2.setSaleStartDate(LocalDateTime.now());
-        event2.setSalesEndDate(LocalDateTime.now());
-        event2.setImages(new ArrayList<>());
+        LocalDateTime eventStart = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        event2.setEventStartDate(eventStart);
+        LocalDateTime eventEnd = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+        event2.setEventEndDate(eventEnd);
+
+        LocalDateTime salesStart = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime salesEnd = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+
+        event2.setSaleStartDate(salesStart);
+        event2.setSalesEndDate(salesEnd);
+        event2.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-3.jpg"));
         event2.setBoothCapacity(305);
         event2.setRating(5);
-        event2.setEventStatus(EventStatus.UPCOMING);
+        event2.setEventStatus(EventStatus.CREATED);
         event2.setHidden(false);
         event2.setPublished(true);
 
@@ -254,35 +273,50 @@ public class DataInitRunner implements ApplicationRunner {
         event3.setAddress("Sembwang3");
         event3.setDescriptions("Some description two3");
         event3.setPhysical(false);
-        event3.setEventStartDate(LocalDateTime.now());
-        event3.setEventEndDate(LocalDateTime.now());
-        event3.setSaleStartDate(LocalDateTime.now());
-        event3.setSalesEndDate(LocalDateTime.now());
+        LocalDateTime eventStart3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime eventEnd3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+
+        event3.setEventStartDate(eventStart3);
+        event3.setEventEndDate(eventEnd3);
+
+
+        LocalDateTime salesStart3 = LocalDateTime.of(2021, Month.FEBRUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime salesEnd3 = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+        event3.setSaleStartDate(salesStart3);
+        event3.setSalesEndDate(salesEnd3);
         event3.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-1.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + 3 + "/image-2.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + 3 + "/image-3.jpg"));
+                    "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-2.jpg",
+                    "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
         event3.setBoothCapacity(305);
         event3.setRating(5);
-        event3.setEventStatus(EventStatus.UPCOMING);
+        event3.setEventStatus(EventStatus.CREATED);
         event3.setHidden(false);
-        event3.setPublished(false);
+        event3.setPublished(true);
 
         Event event4 = new Event();
         event4.setName("Fourth Event");
         event4.setAddress("Sembwang4");
         event4.setDescriptions("Some description 4");
         event4.setPhysical(false);
-        event4.setEventStartDate(LocalDateTime.now());
-        event4.setEventEndDate(LocalDateTime.now());
-        event4.setSaleStartDate(LocalDateTime.now());
-        event4.setSalesEndDate(LocalDateTime.now());
+        LocalDateTime eventStart4 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime eventEnd4 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+
+        event4.setEventStartDate(eventStart4);
+        event4.setEventEndDate(eventEnd4);
+
+        LocalDateTime salesStart4 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime salesEnd4 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+
+        event4.setSaleStartDate(salesStart4);
+        event4.setSalesEndDate(salesEnd4);
+
         event4.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-1.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + 4 + "/image-2.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + 4 + "/image-3.jpg"));
+                    "https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-2.jpg",
+                    "https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-3.jpg"));
         event4.setBoothCapacity(305);
         event4.setRating(5);
-        event4.setEventStatus(EventStatus.UPCOMING);
-        event4.setHidden(true);
+        event4.setEventStatus(EventStatus.CREATED);
+        event4.setHidden(false);
         event4.setPublished(false);
 
         Event event5 = new Event();
@@ -290,16 +324,20 @@ public class DataInitRunner implements ApplicationRunner {
         event5.setAddress("Sembwang 5");
         event5.setDescriptions("Some description 5");
         event5.setPhysical(false);
-        event5.setEventStartDate(LocalDateTime.now());
-        event5.setEventEndDate(LocalDateTime.now());
-        event5.setSaleStartDate(LocalDateTime.now());
-        event5.setSalesEndDate(LocalDateTime.now());
+        LocalDateTime eventStart5 = LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime eventEnd5 = LocalDateTime.of(2021, Month.JANUARY, 2, 9, 0).plusDays(15).plusHours(2 % 3);
+        event5.setEventStartDate(eventStart5);
+        event5.setEventEndDate(eventEnd5);
+          LocalDateTime salesStart5 = LocalDateTime.of(2020, Month.DECEMBER, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime salesEnd5 = LocalDateTime.of(2020, Month.DECEMBER, 2, 9, 0).plusDays(15).plusHours(2 % 3);
+        event5.setSaleStartDate(salesStart5);
+        event5.setSalesEndDate(salesEnd5);
         event5.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-1.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + 5 + "/image-2.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" +  5 + "/image-3.jpg"));
+                    "https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-2.jpg",
+                    "https://storage.googleapis.com/ems-images/events/event-" +  5 + "/image-3.jpg"));
         event5.setBoothCapacity(305);
         event5.setRating(5);
-        event5.setEventStatus(EventStatus.UPCOMING);
+        event5.setEventStatus(EventStatus.CREATED);
         event5.setHidden(false);
         event5.setPublished(true);
 
@@ -316,7 +354,7 @@ public class DataInitRunner implements ApplicationRunner {
         event6.setImages(new ArrayList<>());
         event6.setBoothCapacity(305);
         event6.setRating(5);
-        event6.setEventStatus(EventStatus.UPCOMING);
+        event6.setEventStatus(EventStatus.DRAFT);
         event6.setHidden(false);
         event6.setPublished(true);
 
@@ -360,18 +398,18 @@ public class DataInitRunner implements ApplicationRunner {
             e.setTicketPrice(Math.round(rand.nextFloat() * 20));
             e.setTicketCapacity(rand.nextInt(100));
             e.setPhysical(true);
-            LocalDateTime eventStart = LocalDateTime.of(2022, Month.MARCH, 1, 9, 0).plusDays(i).plusHours(i % 3);
+            LocalDateTime eventStart = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(i).plusHours(i % 3);
             e.setEventStartDate(eventStart);
             e.setEventEndDate(
-                    LocalDateTime.of(2022, Month.MARCH, 2, 17, 30).plusDays(rand.nextInt(5)).minusHours(i % 2));
+                    LocalDateTime.of(2021, Month.MARCH, 2, 17, 30).plusDays(rand.nextInt(5)).minusHours(i % 2));
             e.setSaleStartDate(LocalDateTime.now());
             e.setSalesEndDate(eventStart.minusDays(2));
 
             e.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-2.jpg",
-                    "https://storage.googleapis.com/ems-images/events//event-" + i + "/image-3.jpg"));
+                    "https://storage.googleapis.com/ems-images/events/event-" + i + "/image-2.jpg",
+                    "https://storage.googleapis.com/ems-images/events/event-" + i + "/image-3.jpg"));
             e.setBoothCapacity(rand.nextInt(50));
-            e.setEventStatus(EventStatus.UPCOMING);
+            e.setEventStatus(EventStatus.CREATED);
             e.setPublished(true);
             eventRepository.save(e);
         }
