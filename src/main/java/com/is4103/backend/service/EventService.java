@@ -48,4 +48,11 @@ public class EventService {
         return eventRepository.findAll(new EventSpecification(eventSearchCriteria),
                 eventSearchCriteria.toPageRequest());
     }
+
+    public Event addEventImage(Event event, String imageUrl) {
+        List<String> images = event.getImages();
+        images.add(imageUrl);
+        event.setImages(images);
+        return eventRepository.save(event);
+    };
 }
