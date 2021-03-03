@@ -44,6 +44,9 @@ public class EventOrganiserService {
     private RoleService roleService;
 
     @Autowired
+    private EventService eventService;
+
+    @Autowired
     private ApplicationEventPublisher eventPublisher;
 
 
