@@ -40,6 +40,7 @@ public class Event {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @ElementCollection(targetClass = EventBoothTransaction.class)
+    @JsonIgnoreProperties("event")
     private List<EventBoothTransaction> eventBoothTransactions;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
