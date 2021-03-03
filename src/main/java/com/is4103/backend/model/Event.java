@@ -16,6 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+// import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.CascadeType;
 
@@ -68,16 +69,20 @@ public class Event {
     private boolean isPhysical;
 
     // @Column(nullable = false)
+    // @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime eventStartDate;
 
     // @Column(nullable = false)
+    // @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime eventEndDate;
 
     // @Column(nullable = true)
+    // @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime saleStartDate;
 
     // @Column(nullable = true)
     @Column(nullable = true)
+    // @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime salesEndDate;
 
     // @Column(nullable = false)
