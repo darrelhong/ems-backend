@@ -5,13 +5,17 @@ import java.util.Set;
 
 import javax.validation.Valid;
 
+import com.is4103.backend.dto.DisabledAccountRequest;
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.dto.SignupResponse;
 import com.is4103.backend.dto.UpdatePartnerRequest;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.service.BusinessPartnerService;
+import com.is4103.backend.service.UserService;
+import com.is4103.backend.util.errors.UserAlreadyExistsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +38,9 @@ public class BusinessPartnerController {
 
     @Autowired
     private BusinessPartnerService bpService;
+
+    @Autowired
+    private UserService userService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
@@ -61,8 +68,25 @@ public class BusinessPartnerController {
     }
 
     @PostMapping(value = "/register")
-    public BusinessPartner registerNewBusinessPartner(@RequestBody @Valid SignupRequest signupRequest) {
-        return bpService.registerNewBusinessPartner(signupRequest, false);
+    public SignupResponse registerNewBusinessPartner(@RequestBody @Valid SignupRequest signupRequest) {
+        // return 
+        try{
+    
+            if (userService.emailExists(signupRequest.getEmail())) {
+                throw new UserAlreadyExistsException("Account with email " + signupRequest.getEmail() + " already exists");
+            }else{
+            
+           bpService.registerNewBusinessPartner(signupRequest, false);
+    
+            }
+        
+            }
+            catch(UserAlreadyExistsException userAlrExistException){
+               return new SignupResponse("alreadyExisted");
+            }
+    
+           
+            return new SignupResponse("success");
     }
 
     @GetMapping(path = "/followers/{id}")
@@ -94,6 +118,9 @@ public class BusinessPartnerController {
         user = bpService.updatePartner(user, updatePartnerRequest);
         return ResponseEntity.ok(user);
     }
+
+    
+ 
 
 
 

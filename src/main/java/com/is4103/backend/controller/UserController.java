@@ -178,17 +178,18 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
+    // @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/update-account-status")
     public ResponseEntity<User> updateAccountStatus(@RequestBody @Valid DisabledAccountRequest updateUserRequest) {
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-
+        System.out.println("test update account");
         // verify user id
         if (updateUserRequest.getId() != user.getId()) {
             throw new AuthenticationServiceException("An error has occured");
         }
 
         user = userService.updateAccountStatus(user, updateUserRequest);
+        System.out.println("user " + user);
         return ResponseEntity.ok(user);
     }
 
@@ -254,5 +255,11 @@ public class UserController {
     @GetMapping(value = "/adminping")
     public String adminPing() {
         return "Pong Admin";
+    }
+
+    @PostMapping(value = "/disableStatus/{userId}")
+    public User disableStatus(@PathVariable Long userId) {
+        System.out.println("test ");
+        return userService.disableUser(userId);
     }
 }
