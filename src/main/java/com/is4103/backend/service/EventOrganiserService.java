@@ -38,9 +38,6 @@ public class EventOrganiserService {
     private UserService userService;
 
     @Autowired
-    private EventService eventService;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
