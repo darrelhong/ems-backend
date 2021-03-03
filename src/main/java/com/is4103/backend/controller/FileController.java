@@ -1,6 +1,5 @@
 package com.is4103.backend.controller;
 
-import com.is4103.backend.service.EventFileStorageService;
 import com.is4103.backend.service.EventService;
 import com.is4103.backend.service.FileStorageService;
 import com.is4103.backend.service.UserService;
@@ -36,9 +35,6 @@ public class FileController {
 
     @Autowired
     private FileStorageService fileStorageService;
-
-    @Autowired
-    private EventFileStorageService eventFileStorageService;
 
     @Autowired
     private UserService userService;
@@ -89,7 +85,7 @@ public class FileController {
     @PostMapping("/uploadEventImage")
     public UploadFileResponse uploadEventImage(@RequestParam("file") MultipartFile file,
             @RequestParam(name = "eid", defaultValue = "1") Long eventId) {
-        String fileName = eventFileStorageService.storeFile(file);
+        String fileName = fileStorageService.storeFile(file,"eventimage","");
 
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         long userId = user.getId();

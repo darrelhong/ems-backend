@@ -38,6 +38,9 @@ public class FileStorageService {
     @Autowired
     private static String BIZSUPPORT_DOC_TYPE = "bizsupportdoc";
 
+    @Autowired
+    private static String EVENT_IMAGE = "eventimage";
+
     // upload profile pic
     @Autowired
     public FileStorageService() {
@@ -63,12 +66,16 @@ public class FileStorageService {
 
         if (filetype.equals(PROFILE_PIC_TYPE)) {
 
-            this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() +
-                    "/profilePics").toAbsolutePath().normalize();
+            this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() + "/profilePics")
+                    .toAbsolutePath().normalize();
         } else if (filetype.equals(BIZSUPPORT_DOC_TYPE)) {
 
-            this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() +
-                    "/bizSupportDocs").toAbsolutePath().normalize();
+            this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() + "/bizSupportDocs")
+                    .toAbsolutePath().normalize();
+            System.out.println(this.fileStorageLocation);
+        } else if (filetype.equals(EVENT_IMAGE)) {
+            this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() + "/eventImages")
+                    .toAbsolutePath().normalize();
             System.out.println(this.fileStorageLocation);
         }
         try {
@@ -97,6 +104,11 @@ public class FileStorageService {
             } else if (filetype.equals(BIZSUPPORT_DOC_TYPE)) {
                 String fileExtension = fileName.split("\\.")[1];
                 fileName = "bizsupportdoc-" + userEmail + "." + fileExtension;
+            } else if (filetype.equals(EVENT_IMAGE)) {
+                // generate an unique uuid
+                UUID uuid = UUID.randomUUID();
+                String fileExtension = fileName.split("\\.")[1];
+                fileName = "eventimage-" + uuid + "." + fileExtension;
             }
             System.out.println(fileName);
             // Copy file to the target location (Replacing existing file with the same name)
