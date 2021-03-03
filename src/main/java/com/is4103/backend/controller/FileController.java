@@ -1,5 +1,7 @@
 package com.is4103.backend.controller;
 
+import com.is4103.backend.service.EventFileStorageService;
+import com.is4103.backend.service.EventService;
 import com.is4103.backend.service.FileStorageService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.dto.FileStorageProperties;
@@ -21,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.is4103.backend.model.User;
+import com.is4103.backend.model.Event;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,7 +38,13 @@ public class FileController {
     private FileStorageService fileStorageService;
 
     @Autowired
+    private EventFileStorageService eventFileStorageService;
+
+    @Autowired
     private UserService userService;
+
+    @Autowired
+    private EventService eventService;
 
     @Autowired
     private FileStorageProperties fileStorageProperties;
@@ -73,6 +82,42 @@ public class FileController {
         }
 
         user = userService.updateProfilePic(user, fileDownloadUri);
+
+        return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
+    }
+
+    @PostMapping("/uploadEventImage")
+    public UploadFileResponse uploadEventImage(@RequestParam("file") MultipartFile file,
+            @RequestParam(name = "eid", defaultValue = "1") Long eventId) {
+        String fileName = eventFileStorageService.storeFile(file);
+
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        long userId = user.getId();
+
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
+                .path(fileName).toUriString();
+
+        // if (user.getProfilePic() != null) {
+        // String profilepicpath = user.getProfilePic();
+        // String oldpicfilename =
+        // profilepicpath.substring(profilepicpath.lastIndexOf("/") + 1);
+
+        // System.out.println(oldpicfilename);
+        // Path oldFilepath = Paths.get(this.fileStorageProperties.getUploadDir() +
+        // "/eventPics/" + eventId + oldpicfilename)
+        // .toAbsolutePath().normalize();
+        // System.out.println(oldFilepath);
+        // try {
+        // Files.deleteIfExists(oldFilepath);
+        // } catch (IOException e) {
+        // // TODO Auto-generated catch block
+        // e.printStackTrace();
+        // }
+        // }
+
+        Event event = eventService.getEventById(eventId);
+        // user = userService.updateProfilePic(user, fileDownloadUri);
+        event = eventService.addEventImage(event, fileDownloadUri);
 
         return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
     }

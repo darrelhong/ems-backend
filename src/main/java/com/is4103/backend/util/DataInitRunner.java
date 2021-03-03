@@ -17,11 +17,13 @@ import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
 import com.is4103.backend.model.Event;
+import com.is4103.backend.model.EventBoothTransaction;
 import com.is4103.backend.repository.RoleRepository;
 import com.is4103.backend.repository.UserRepository;
 import com.thedeanda.lorem.Lorem;
 import com.thedeanda.lorem.LoremIpsum;
 import com.is4103.backend.repository.EventOrganiserRepository;
+import com.is4103.backend.repository.EventBoothTransactionRepository;
 import com.is4103.backend.repository.EventRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,9 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Autowired
     private EventOrganiserRepository eoRepository;
+
+    @Autowired
+    private EventBoothTransactionRepository eventBoothTransactionRepository;
 
     @Autowired
     private EventRepository eventRepository;
@@ -361,6 +366,18 @@ public class DataInitRunner implements ApplicationRunner {
         eoEvents.add(event);
         eoEvents.add(event2);
         eventOrg.setEvents(eoEvents);
+        event.setImages(Arrays.asList(
+                "https://storage.googleapis.com/ems-images/events/event-1/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-2/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-3/image-3.jpg"));
+
+        EventOrganiser eo = eoRepository.findByEmail("organiser@abc.com");
+        event.setEventOrganiser(eo);
+        eventRepository.save(event);
+
+        EventBoothTransaction transaction = new EventBoothTransaction();
+        transaction.setEvent(event);
+        eventBoothTransactionRepository.save(transaction);
     }
 
     private void createDemoEvents() {

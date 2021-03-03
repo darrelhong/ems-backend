@@ -41,6 +41,7 @@ public class Event {
     @Transient
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @ElementCollection(targetClass = EventBoothTransaction.class)
+    @JsonIgnoreProperties("event")
     private List<EventBoothTransaction> eventBoothTransactions;
 
     @Transient
@@ -72,16 +73,20 @@ public class Event {
     private boolean isPhysical;
 
     // @Column(nullable = false)
+    // @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime eventStartDate;
 
     // @Column(nullable = false)
+    // @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime eventEndDate;
 
     // @Column(nullable = true)
+    // @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime saleStartDate;
 
     // @Column(nullable = true)
     @Column(nullable = true)
+    // @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime salesEndDate;
 
     // @Column(nullable = false)
