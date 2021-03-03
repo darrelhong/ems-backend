@@ -27,6 +27,12 @@ public class EventService {
         return eventRepository.findById(id).orElseThrow(() -> new EventNotFoundException());
     }
 
+    public Page<Event> getEvents(int page, int size) {
+        // return eventRepository.findByEventStatus(EventStatus.PUBLISHED,
+        // PageRequest.of(page, size));
+        return eventRepository.findByIsPublished(true, PageRequest.of(page, size));
+    }
+
     public Page<Event> getPublishedEvents(int page, int size, String sortBy, String sortDir) {
         Sort sort;
         if (sortBy != null && sortDir != null) {

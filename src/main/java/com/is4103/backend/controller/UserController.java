@@ -8,15 +8,18 @@ import javax.validation.Valid;
 import com.is4103.backend.config.JwtTokenUtil;
 import com.is4103.backend.dto.AuthToken;
 import com.is4103.backend.dto.ChangePasswordRequest;
+import com.is4103.backend.dto.ChangePasswordResponse;
 import com.is4103.backend.dto.DisabledAccountRequest;
 import com.is4103.backend.dto.LoginRequest;
 import com.is4103.backend.dto.LoginResponse;
 import com.is4103.backend.dto.ResetPasswordDto;
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.dto.UpdatePartnerRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
+import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.service.RoleService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.errors.InvalidTokenException;
@@ -115,15 +118,20 @@ public class UserController {
 
     @PostMapping(value = "/register/{role}/noverify")
     public User registerNewUserNoVerify(@PathVariable String role, @RequestBody @Valid SignupRequest signupRequest) {
+
         return userService.registerNewUser(signupRequest, role, true);
     }
 
     @PostMapping("/register/{role}")
     public User registerNewUser(@PathVariable String role, @RequestBody @Valid SignupRequest signupRequest) {
+
         User user = userService.registerNewUser(signupRequest, role, false);
 
+        System.out.println("user");
+        System.out.println(user);
         eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user));
         return user;
+
     }
 
     @GetMapping("/register/confirm")
@@ -163,32 +171,38 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
+    // @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/update-account-status")
     public ResponseEntity<User> updateAccountStatus(@RequestBody @Valid DisabledAccountRequest updateUserRequest) {
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-
+        System.out.println("test update account");
         // verify user id
         if (updateUserRequest.getId() != user.getId()) {
             throw new AuthenticationServiceException("An error has occured");
         }
 
         user = userService.updateAccountStatus(user, updateUserRequest);
+        System.out.println("user " + user);
         return ResponseEntity.ok(user);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/change-password")
-    public ResponseEntity<String> changePassword(
+    public ChangePasswordResponse changePassword(
             @RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
+
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
         if (!userService.checkOldPasswordValid(user, changePasswordRequest.getOldPassword())) {
-            return new ResponseEntity<String>("Invalid old password", HttpStatus.UNAUTHORIZED);
+            // return new ResponseEntity<String>("Invalid old password",
+            // HttpStatus.UNAUTHORIZED);
+            return new ChangePasswordResponse("Old password is incorrect.");
         }
 
         userService.changePassword(user, changePasswordRequest.getNewPassword());
-        return ResponseEntity.ok("Success");
+
+        return new ChangePasswordResponse("Success");
+        // return ResponseEntity.ok("Success");
     }
 
     @PostMapping("/reset-password/request")
@@ -234,5 +248,11 @@ public class UserController {
     @GetMapping(value = "/adminping")
     public String adminPing() {
         return "Pong Admin";
+    }
+
+    @PostMapping(value = "/disableStatus/{userId}")
+    public User disableStatus(@PathVariable Long userId) {
+        System.out.println("test ");
+        return userService.disableUser(userId);
     }
 }

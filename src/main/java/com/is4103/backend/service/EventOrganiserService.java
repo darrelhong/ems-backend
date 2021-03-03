@@ -1,5 +1,6 @@
 package com.is4103.backend.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -7,7 +8,9 @@ import java.util.Set;
 import javax.transaction.Transactional;
 
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
+import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
@@ -41,6 +44,9 @@ public class EventOrganiserService {
     private RoleService roleService;
 
     @Autowired
+    private EventService eventService;
+
+    @Autowired
     private ApplicationEventPublisher eventPublisher;
 
     public List<EventOrganiser> getAllEventOrganisers() {
@@ -57,21 +63,18 @@ public class EventOrganiserService {
     }
 
     @Transactional
-    public EventOrganiser registerNewEventOrganiser(SignupRequest signupRequest, boolean enabled)
-            throws UserAlreadyExistsException {
-        if (userService.emailExists(signupRequest.getEmail())) {
-            throw new UserAlreadyExistsException("Account with email " + signupRequest.getEmail() + " already exists");
-        }
+    public EventOrganiser registerNewEventOrganiser(SignupRequest signupRequest, boolean enabled,
+            String bizsupportdocdownloadurl) {
 
         EventOrganiser newEo = new EventOrganiser();
         newEo.setName(signupRequest.getName());
         newEo.setEmail(signupRequest.getEmail());
-
         newEo.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         Role role = roleService.findByRoleEnum(RoleEnum.EVNTORG);
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         newEo.setRoles(roles);
+        newEo.setSupportDocsUrl(bizsupportdocdownloadurl);
 
         if (enabled) {
             newEo.setEnabled(true);
@@ -125,5 +128,35 @@ public class EventOrganiserService {
     public List<BusinessPartner> getAllVips(Long eoId) {
         EventOrganiser eo = getEventOrganiserById(eoId);
         return eo.getVipList();
+    }
+
+    public List<Attendee> getAttendeeFollowersById(Long id) {
+        EventOrganiser organiser = getEventOrganiserById(id);
+        List<Attendee> followers = new ArrayList<>();
+        followers = organiser.getAttendeeFollowers();
+        return followers;
+    }
+
+    public List<BusinessPartner> getPartnerFollowersById(Long id) {
+        EventOrganiser organiser = getEventOrganiserById(id);
+        List<BusinessPartner> followers = new ArrayList<>();
+        followers = organiser.getBusinessPartnerFollowers();
+        return followers;
+    }
+
+    public List<Event> getAllEventsByEoId(Long eoId) {
+        EventOrganiser eo = getEventOrganiserById(eoId);
+        List<Event> eventlist = eventService.getAllEvents();
+
+        List<Event> eoeventlist = new ArrayList<>();
+        for (int i = 0; i < eventlist.size(); i++) {
+            if (eventlist.get(i).getEventOrganiser().getId() == eoId) {
+                eoeventlist.add(eventlist.get(i));
+            }
+        }
+        eo.setEvents(eoeventlist);
+
+        return eo.getEvents();
+
     }
 }

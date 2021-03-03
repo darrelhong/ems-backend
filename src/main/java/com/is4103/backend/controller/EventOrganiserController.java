@@ -1,15 +1,23 @@
 package com.is4103.backend.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import com.is4103.backend.dto.FileStorageProperties;
 import com.is4103.backend.dto.RejectEventOrganiserDto;
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.dto.SignupResponse;
+import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
+import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
+import com.is4103.backend.model.User;
 import com.is4103.backend.service.EventOrganiserService;
+import com.is4103.backend.service.FileStorageService;
 import com.is4103.backend.service.UserService;
+import com.is4103.backend.util.errors.UserAlreadyExistsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +29,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import net.bytebuddy.asm.Advice.Return;
 
 @RestController
 @RequestMapping(path = "/organiser")
@@ -33,11 +45,17 @@ public class EventOrganiserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private FileStorageProperties fileStorageProperties;
+
     // @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
     public List<EventOrganiser> getAllEventOrganisers() {
         return eoService.getAllEventOrganisers();
     }
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     // @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all/paginated")
@@ -52,15 +70,48 @@ public class EventOrganiserController {
         return eoService.getEventOrganiserById(id);
     }
 
+    @GetMapping(path = "/attendeeFollowers/{id}")
+    public List<Attendee> getAttendeeFollowers(@PathVariable Long id) {
+        return eoService.getAttendeeFollowersById(id);
+    }
+
+    @GetMapping(path = "/partnerFollowers/{id}")
+    public List<BusinessPartner> getPartnerFollowers(@PathVariable Long id) {
+        return eoService.getPartnerFollowersById(id);
+    }
+
     @PostMapping(value = "/register")
-    public EventOrganiser registerNewEventOrganiser(@RequestBody @Valid SignupRequest signupRequest) {
-        return eoService.registerNewEventOrganiser(signupRequest, false);
+    public SignupResponse registerNewEventOrganiser(SignupRequest signupRequest,
+            @RequestParam("file") MultipartFile file) {
+
+        try {
+
+            if (userService.emailExists(signupRequest.getEmail())) {
+                throw new UserAlreadyExistsException(
+                        "Account with email " + signupRequest.getEmail() + " already exists");
+            } else {
+
+                String userEmail = signupRequest.getEmail();
+                System.out.println(userEmail);
+                String fileName = fileStorageService.storeFile(file, "bizsupportdoc", userEmail);
+                String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
+                        .path(fileName).toUriString();
+                eoService.registerNewEventOrganiser(signupRequest, false, fileDownloadUri);
+
+            }
+
+        } catch (UserAlreadyExistsException userAlrExistException) {
+            return new SignupResponse("alreadyExisted");
+        }
+
+        return new SignupResponse("success");
+
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/register/noverify")
     public EventOrganiser registerNewEventOrganiserNoVerify(@RequestBody @Valid SignupRequest signupRequest) {
-        return eoService.registerNewEventOrganiser(signupRequest, true);
+        return eoService.registerNewEventOrganiser(signupRequest, true, "");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -92,5 +143,11 @@ public class EventOrganiserController {
     public List<BusinessPartner> removeFromVipList(@PathVariable Long bpId) {
         Long currentUserId = userService.getCurrentUserId();
         return eoService.removeFromVipList(currentUserId, bpId);
+    }
+
+    @GetMapping(value = "/event/{eoId}")
+    public List<Event> getAllEventsByEventOrgId(@PathVariable Long eoId) {
+        System.out.println("call get all event by eo id");
+        return eoService.getAllEventsByEoId(eoId);
     }
 }

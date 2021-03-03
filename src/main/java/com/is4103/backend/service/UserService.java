@@ -83,6 +83,7 @@ public class UserService {
 
     // d. might be better to split this into respective controllers for organiser,
     // partner etc
+
     @Transactional
     public User registerNewUser(SignupRequest signupRequest, String roleStr, boolean enabled)
             throws UserAlreadyExistsException {
@@ -166,6 +167,7 @@ public class UserService {
 
     @Transactional
     public User updateUser(User user, UpdateUserRequest updateUserRequest) {
+
         user.setName(updateUserRequest.getName());
         user.setDescription(updateUserRequest.getDescription());
         user.setAddress(updateUserRequest.getAddress());

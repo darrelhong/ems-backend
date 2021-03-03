@@ -40,9 +40,15 @@ public class FileController {
     @Autowired
     private FileStorageProperties fileStorageProperties;
 
-    @PostMapping("/uploadFile")
+    // @PostMapping("/uploadFile")
+    @PostMapping("/uploadProfilePicFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
-        String fileName = fileStorageService.storeFile(file);
+        String fileName = fileStorageService.storeFile(file, "profilepic", "");
+
+        // @PostMapping("/uploadFile")
+        // public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile
+        // file) {
+        // String fileName = fileStorageService.storeFile(file);
 
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         long userId = user.getId();
@@ -79,7 +85,9 @@ public class FileController {
     @GetMapping("/downloadFile/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
         // Load file as Resource
+
         Resource resource = fileStorageService.loadFileAsResource(fileName);
+        System.out.println(resource);
 
         // Try to determine file's content type
         String contentType = null;
