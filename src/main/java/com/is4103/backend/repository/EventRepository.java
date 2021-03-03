@@ -12,8 +12,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
+
     Page<Event> findByEventStatus(EventStatus eventStatus, Pageable pageable);
+
     @Query("SELECT e from Event e where e.eventOrganiser.id = ?1")
     List<Event> getAllEventsByOrganiser(Long oid);
+
     Page<Event> findByIsPublished(boolean isPublished, Pageable pageable);
+
+    List<Event> findByName(String name);
 }

@@ -85,18 +85,13 @@ public class DataInitRunner implements ApplicationRunner {
         }
 
         // Testing Entities
-        if (eventRepository.findAll().isEmpty()){
+        if (eventRepository.findAll().isEmpty()) {
             createEvent();
-           
+
         }
-        if (eventRepository.findById((long) 2).isEmpty()) {
+        if (eventRepository.findByName("Event 0").isEmpty()) {
             createDemoEvents();
         }
-
-        // Testing Entities
-        if (eventRepository.findAll().isEmpty())
-            createEvent();
-
     }
 
     @Transactional
@@ -135,7 +130,7 @@ public class DataInitRunner implements ApplicationRunner {
     @Transactional
     private void createBizPartners() {
 
-        //create first Bp
+        // create first Bp
         BusinessPartner bp = new BusinessPartner();
         bp.setEmail("partner@abc.com");
         bp.setName("First Business Partner");
@@ -143,22 +138,20 @@ public class DataInitRunner implements ApplicationRunner {
         bp.setEnabled(true);
         bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
         bp.setBusinessCategory("Travel");
-        
 
-        //set follow eo list for bp
+        // set follow eo list for bp
         List<EventOrganiser> following = new ArrayList<>();
         following.add(this.eoTest);
         bp.setFollowEventOrganisers(following);
         userRepository.save(bp);
 
-        
-        //set followers bp list for eo
+        // set followers bp list for eo
         List<BusinessPartner> followersBP = new ArrayList<>();
         followersBP.add(bp);
         this.eoTest.setBusinessPartnerFollowers(followersBP);
         userRepository.save(this.eoTest);
 
-        //create attendee
+        // create attendee
         Attendee atn = new Attendee();
         atn.setEmail("attendee@abc.com");
         atn.setName("first attendee");
@@ -166,18 +159,18 @@ public class DataInitRunner implements ApplicationRunner {
         atn.setDescription("description for frst attendeeeeeeee :)");
         atn.setEnabled(true);
         atn.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.ATND)));
-        List<String> category= new ArrayList<>();
+        List<String> category = new ArrayList<>();
         category.add("Travel");
         category.add("Healthcare");
         atn.setCategoryPreferences(category);
         userRepository.save(atn);
-        //set following bp list for attendees got issues here
+        // set following bp list for attendees got issues here
         Set<BusinessPartner> followBp = new HashSet<>();
         followBp.add(bp);
         atn.setFollowedBusinessPartners(followBp);
         userRepository.save(atn);
 
-        //create second attendee
+        // create second attendee
         Attendee atnTwo = new Attendee();
         atnTwo.setEmail("attendeeTwo@abc.com");
         atnTwo.setName("Second attendee");
@@ -191,17 +184,13 @@ public class DataInitRunner implements ApplicationRunner {
         // atnTwo.setFollowedBusinessPartners(followBpTwo);
         userRepository.save(atnTwo);
 
-        //set bp followers list 
+        // set bp followers list
         Set<Attendee> followers = new HashSet<>();
         followers.add(atn);
         followers.add(atnTwo);
         bp.setAttendeeFollowers(followers);
-        userRepository.save(bp);    
+        userRepository.save(bp);
 
-       
-
-           
-        
         for (int i = 2; i <= 11; i++) {
             bp = new BusinessPartner();
             bp.setEmail("partner" + i + "@abc.com");
@@ -227,7 +216,7 @@ public class DataInitRunner implements ApplicationRunner {
         event.setEventEndDate(eventEnd1);
 
         LocalDateTime salesStart1 = LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
-        LocalDateTime salesEnd1 = LocalDateTime.of(2021, Month.MARCH,2, 9, 0).plusDays(15).plusHours(2 % 3);
+        LocalDateTime salesEnd1 = LocalDateTime.of(2021, Month.MARCH, 2, 9, 0).plusDays(15).plusHours(2 % 3);
 
         event.setSaleStartDate(salesStart1);
         event.setSalesEndDate(salesEnd1);
@@ -275,14 +264,13 @@ public class DataInitRunner implements ApplicationRunner {
         event3.setEventStartDate(eventStart3);
         event3.setEventEndDate(eventEnd3);
 
-
         LocalDateTime salesStart3 = LocalDateTime.of(2021, Month.FEBRUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime salesEnd3 = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(15).plusHours(2 % 3);
         event3.setSaleStartDate(salesStart3);
         event3.setSalesEndDate(salesEnd3);
         event3.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-1.jpg",
-                    "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-2.jpg",
-                    "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
+                "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
         event3.setBoothCapacity(305);
         event3.setRating(5);
         event3.setEventStatus(EventStatus.CREATED);
@@ -307,8 +295,8 @@ public class DataInitRunner implements ApplicationRunner {
         event4.setSalesEndDate(salesEnd4);
 
         event4.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-1.jpg",
-                    "https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-2.jpg",
-                    "https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-3.jpg"));
+                "https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-3.jpg"));
         event4.setBoothCapacity(305);
         event4.setRating(5);
         event4.setEventStatus(EventStatus.CREATED);
@@ -324,19 +312,18 @@ public class DataInitRunner implements ApplicationRunner {
         LocalDateTime eventEnd5 = LocalDateTime.of(2021, Month.JANUARY, 2, 9, 0).plusDays(15).plusHours(2 % 3);
         event5.setEventStartDate(eventStart5);
         event5.setEventEndDate(eventEnd5);
-          LocalDateTime salesStart5 = LocalDateTime.of(2020, Month.DECEMBER, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime salesStart5 = LocalDateTime.of(2020, Month.DECEMBER, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime salesEnd5 = LocalDateTime.of(2020, Month.DECEMBER, 2, 9, 0).plusDays(15).plusHours(2 % 3);
         event5.setSaleStartDate(salesStart5);
         event5.setSalesEndDate(salesEnd5);
         event5.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-1.jpg",
-                    "https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-2.jpg",
-                    "https://storage.googleapis.com/ems-images/events/event-" +  5 + "/image-3.jpg"));
+                "https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-3.jpg"));
         event5.setBoothCapacity(305);
         event5.setRating(5);
         event5.setEventStatus(EventStatus.CREATED);
         event5.setHidden(false);
         event5.setPublished(true);
-
 
         Event event6 = new Event();
         event6.setName("Sixth Event");
@@ -354,7 +341,6 @@ public class DataInitRunner implements ApplicationRunner {
         event6.setHidden(false);
         event6.setPublished(true);
 
-
         EventOrganiser eventOrg = eventOrganiserRepository.findByEmail("organiser@abc.com");
         event.setEventOrganiser(eventOrg);
         event2.setEventOrganiser(eventOrg);
@@ -362,14 +348,13 @@ public class DataInitRunner implements ApplicationRunner {
         event4.setEventOrganiser(eventOrg);
         event5.setEventOrganiser(eventOrg);
         event6.setEventOrganiser(eventOrg);
-      
+
         eventRepository.save(event);
         eventRepository.save(event2);
         eventRepository.save(event3);
         eventRepository.save(event4);
         eventRepository.save(event5);
         eventRepository.save(event6);
-
 
         List<Event> eoEvents = new ArrayList<>();
         // eoEvents = eventOrg.getEvents();
@@ -378,9 +363,8 @@ public class DataInitRunner implements ApplicationRunner {
         eventOrg.setEvents(eoEvents);
     }
 
-
     private void createDemoEvents() {
-        // Lorem lorem = LoremIpsum.getInstance();
+        Lorem lorem = LoremIpsum.getInstance();
         Random rand = new Random();
 
         EventOrganiser eo = eoRepository.findByEmail("organiser@abc.com");
@@ -389,8 +373,7 @@ public class DataInitRunner implements ApplicationRunner {
             e.setName("Event " + i);
             e.setEventOrganiser(eo);
             e.setAddress("Singapore");
-            // e.setDescriptions(lorem.getWords(5, 20));
-            e.setDescriptions("lorem.getWords(5, 20)");
+            e.setDescriptions(lorem.getWords(5, 20));
             e.setTicketPrice(Math.round(rand.nextFloat() * 20));
             e.setTicketCapacity(rand.nextInt(100));
             e.setPhysical(true);
@@ -410,6 +393,5 @@ public class DataInitRunner implements ApplicationRunner {
             eventRepository.save(e);
         }
     }
-
 
 }
