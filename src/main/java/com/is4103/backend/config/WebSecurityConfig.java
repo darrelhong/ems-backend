@@ -40,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // Enable CORS disable CSRF
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers("/test/**", "/greeting",
-                        "/user/register/**", "/organiser/register/**", "/partner/register/**",
+                        "/user/register/**", "/organiser/register/**", "/partner/register/**", "/attendee/register/**",
                         "/user/login/**", "/user/reset-password/**",
                         "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/user/{\\d+}", "/downloadFile/**",
                         "/organiser/event/{\\d+}", "/partner/followers/{\\d+}", "/partner/following/{\\d+}",
