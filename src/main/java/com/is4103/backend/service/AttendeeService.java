@@ -6,6 +6,7 @@ import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.repository.AttendeeRepository;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
+import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -35,6 +37,14 @@ public class AttendeeService {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+
+    public List<Attendee> getAllAttendees() {
+        return atnRepository.findAll();
+    }
+
+    public Attendee getAttendeeById(Long id) {
+        return atnRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
+    }
 
     @Transactional
     public Attendee registerNewAttendee(SignupRequest signupRequest, boolean enabled)

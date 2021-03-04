@@ -1,14 +1,20 @@
 package com.is4103.backend.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
+import com.is4103.backend.model.Attendee;
 import com.is4103.backend.service.AttendeeService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +29,18 @@ public class AttendeeController {
 
     @Autowired
     private UserService userService;
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/all")
+    public List<Attendee> getAllAttendees() {
+        return atnService.getAllAttendees();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATND')")
+    @GetMapping(path = "/{id}")
+    public Attendee getAttendeeById(@PathVariable Long id) {
+        return atnService.getAttendeeById(id);
+    }
 
     @PostMapping(value = "/register")
     public SignupResponse registerNewAttendee(@RequestBody @Valid SignupRequest signupRequest) {
