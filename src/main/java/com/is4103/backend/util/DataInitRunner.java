@@ -118,6 +118,7 @@ public class DataInitRunner implements ApplicationRunner {
         eo.setPassword(passwordEncoder.encode("password"));
         eo.setEnabled(true);
         eo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
+        eo.setSupportDocsUrl("https://storage.googleapis.com/ems-docs/organiser-document.zip");
         userRepository.save(eo);
 
         this.eoTest = eo;
