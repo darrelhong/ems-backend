@@ -30,7 +30,9 @@ public class Event {
     private long eid;
 
     @ManyToOne
-    @JsonIgnoreProperties("events")
+    @JsonIgnoreProperties({ "events", "approved", "approvalMessage", "supportDocsUrl", "vipList", "attendeeFollowers",
+            "businessPartnerFollowers", "enquiries", "description", "profilePic", "email", "enabled", "phonenumber",
+            "address", "roles", "notifications" })
     private EventOrganiser eventOrganiser;
 
     @ManyToMany(fetch = FetchType.LAZY)
