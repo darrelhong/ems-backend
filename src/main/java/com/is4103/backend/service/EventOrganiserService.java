@@ -8,13 +8,16 @@ import java.util.Set;
 import javax.transaction.Transactional;
 
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
+import com.is4103.backend.model.User;
 import com.is4103.backend.repository.EventOrganiserRepository;
+import com.is4103.backend.repository.UserRepository;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
@@ -48,6 +51,9 @@ public class EventOrganiserService {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public List<EventOrganiser> getAllEventOrganisers() {
         return eoRepository.findAll();
@@ -159,4 +165,22 @@ public class EventOrganiserService {
         return eo.getEvents();
 
     }
+
+    @Transactional
+    public User updateEoProfile(User user, UpdateUserRequest updateUserRequest,String profilepicurl) {
+
+    
+        user.setName(updateUserRequest.getName());
+        user.setDescription(updateUserRequest.getDescription());
+        user.setAddress(updateUserRequest.getAddress());
+        user.setPhonenumber(updateUserRequest.getPhonenumber());
+        if(profilepicurl != null){
+        user.setProfilePic(profilepicurl);
+        }
+
+        return userRepository.save(user);
+    }
+
+
 }
+

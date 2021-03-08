@@ -139,13 +139,16 @@ public class BusinessPartnerService {
     }
 
     @Transactional
-    public BusinessPartner updatePartner(BusinessPartner user, UpdatePartnerRequest updatePartnerRequest) {
+    public BusinessPartner updatePartner(BusinessPartner user, UpdatePartnerRequest updatePartnerRequest, String profilepicurl) {
 
         user.setName(updatePartnerRequest.getName());
         user.setDescription(updatePartnerRequest.getDescription());
         user.setAddress(updatePartnerRequest.getAddress());
         user.setPhonenumber(updatePartnerRequest.getPhonenumber());
         user.setBusinessCategory(updatePartnerRequest.getBusinessCategory());
+        if(profilepicurl != null){
+            user.setProfilePic(profilepicurl);
+        }
 
         return bpRepository.save(user);
     }

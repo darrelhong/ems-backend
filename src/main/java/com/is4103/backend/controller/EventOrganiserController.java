@@ -1,5 +1,9 @@
 package com.is4103.backend.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +13,7 @@ import com.is4103.backend.dto.FileStorageProperties;
 import com.is4103.backend.dto.RejectEventOrganiserDto;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
+import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
@@ -21,7 +26,10 @@ import com.is4103.backend.util.errors.UserAlreadyExistsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import com.is4103.backend.dto.UploadFileResponse;
 
 import net.bytebuddy.asm.Advice.Return;
 
@@ -149,5 +158,54 @@ public class EventOrganiserController {
     public List<Event> getAllEventsByEventOrgId(@PathVariable Long eoId) {
         System.out.println("call get all event by eo id");
         return eoService.getAllEventsByEoId(eoId);
+    }
+    
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @PostMapping(value = "/updateEoProfile")
+    public UploadFileResponse updateUser(UpdateUserRequest updateUserRequest, @RequestParam(value ="profilepicfile", required = false) MultipartFile file) {
+
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        System.out.println("file and user");
+        System.out.println(user);
+        System.out.println(file);
+        String fileDownloadUri = null;
+        String filename = null;
+        // verify user id
+        if (updateUserRequest.getId() != user.getId()) {
+            throw new AuthenticationServiceException("An error has occured");
+        }
+        System.out.println("file");
+
+        if(file != null){
+                filename = fileStorageService.storeFile(file, "profilepic", "");
+
+            fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/").path(filename)
+                    .toUriString();
+
+            // if the user current has a profile picture
+            if (user.getProfilePic() != null) {
+                String profilepicpath = user.getProfilePic();
+                String oldpicfilename = profilepicpath.substring(profilepicpath.lastIndexOf("/") + 1);
+
+                System.out.println(oldpicfilename);
+                Path oldFilepath = Paths
+                        .get(this.fileStorageProperties.getUploadDir() + "/profilePics/" + oldpicfilename)
+                        .toAbsolutePath().normalize();
+                System.out.println(oldFilepath);
+                try {
+                    Files.deleteIfExists(oldFilepath);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+             }
+        }
+         
+         user = eoService.updateEoProfile(user, updateUserRequest,fileDownloadUri);
+         System.out.println("user profile pic");
+         System.out.println(user.getProfilePic());
+         
+         return new UploadFileResponse(user.getProfilePic());
     }
 }

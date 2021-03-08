@@ -1,19 +1,28 @@
 package com.is4103.backend.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
 import javax.validation.Valid;
 
 import com.is4103.backend.dto.DisabledAccountRequest;
+import com.is4103.backend.dto.FileStorageProperties;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
 import com.is4103.backend.dto.UpdatePartnerRequest;
+import com.is4103.backend.dto.UpdateUserRequest;
+import com.is4103.backend.dto.UploadFileResponse;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
+import com.is4103.backend.model.User;
 import com.is4103.backend.service.BusinessPartnerService;
+import com.is4103.backend.service.FileStorageService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 
@@ -30,6 +39,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping(path = "/partner")
@@ -41,6 +52,12 @@ public class BusinessPartnerController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FileStorageProperties fileStorageProperties;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
@@ -103,20 +120,66 @@ public class BusinessPartnerController {
         return bpService.registerNewBusinessPartner(signupRequest, true);
     }
 
+    // @PreAuthorize("hasAnyRole('BIZPTNR')")
+    // @PostMapping(value = "/update")
+    // public ResponseEntity<BusinessPartner> updatePartner(
+    //         @RequestBody @Valid UpdatePartnerRequest updatePartnerRequest) {
+    //     BusinessPartner user = bpService
+    //             .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+    //     // verify user id
+    //     if (updatePartnerRequest.getId() != user.getId()) {
+    //         throw new AuthenticationServiceException("An error has occured");
+    //     }
+
+    //     user = bpService.updatePartner(user, updatePartnerRequest);
+    //     return ResponseEntity.ok(user);
+    // }
+
     @PreAuthorize("hasAnyRole('BIZPTNR')")
     @PostMapping(value = "/update")
-    public ResponseEntity<BusinessPartner> updatePartner(
-            @RequestBody @Valid UpdatePartnerRequest updatePartnerRequest) {
-        BusinessPartner user = bpService
-                .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    public UploadFileResponse updateUser(
+            UpdatePartnerRequest updatePartnerRequest,
+            @RequestParam(value = "profilepicfile", required = false) MultipartFile file) {
 
+      BusinessPartner user = bpService.getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        String fileDownloadUri = null;
+        String filename = null;
         // verify user id
         if (updatePartnerRequest.getId() != user.getId()) {
             throw new AuthenticationServiceException("An error has occured");
         }
+        System.out.println("file");
 
-        user = bpService.updatePartner(user, updatePartnerRequest);
-        return ResponseEntity.ok(user);
+        if (file != null) {
+            filename = fileStorageService.storeFile(file, "profilepic", "");
+            fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/").path(filename)
+                    .toUriString();
+            // if the user current has a profile picture
+            if (user.getProfilePic() != null) {
+                String profilepicpath = user.getProfilePic();
+                String oldpicfilename = profilepicpath.substring(profilepicpath.lastIndexOf("/") + 1);
+
+                System.out.println(oldpicfilename);
+                Path oldFilepath = Paths
+                        .get(this.fileStorageProperties.getUploadDir() + "/profilePics/" + oldpicfilename)
+                        .toAbsolutePath().normalize();
+                System.out.println(oldFilepath);
+                try {
+                    Files.deleteIfExists(oldFilepath);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+        user = bpService.updatePartner(user, updatePartnerRequest, fileDownloadUri);
+
+        return new UploadFileResponse(user.getProfilePic());
     }
+
+
 
 }

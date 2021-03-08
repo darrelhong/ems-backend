@@ -173,6 +173,7 @@ public class UserService {
         user.setAddress(updateUserRequest.getAddress());
         user.setPhonenumber(updateUserRequest.getPhonenumber());
 
+
         return userRepository.save(user);
     }
 
@@ -183,11 +184,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateProfilePic(User user, String profilePicUrl) {
-        user.setProfilePic(profilePicUrl);
+    // public User updateProfilePic(User user, String profilePicUrl) {
+    //     user.setProfilePic(profilePicUrl);
 
-        return userRepository.save(user);
-    }
+    //     return userRepository.save(user);
+    // }
 
     public void createVerificationToken(User user, String token) {
         VerificationToken vt = new VerificationToken(token, user);
