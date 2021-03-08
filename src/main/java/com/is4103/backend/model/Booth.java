@@ -15,20 +15,19 @@ import javax.persistence.Column;
 
 @Entity
 @Data
-
 public class Booth {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long bid;
+    private Long id;
 
     @Column(nullable = false)
-    private Long price;
+    private Double price;
 
     @Column(nullable = true)
-    private double length;
+    private Double length;
 
     @Column(nullable = true)
-    private double width;
+    private Double width;
 
     @Column(nullable = true)
     @ManyToMany
@@ -36,4 +35,22 @@ public class Booth {
 
     @ManyToOne
     private Event event;
+
+    public Booth() {
+    };
+
+    public Booth(Double price, Double length, Double width, Event event) {
+        super();
+        this.price = price;
+        this.length = length;
+        this.width = width;
+        this.event = event;
+    }
+
+    public Booth(Double price, Double length, Double width) {
+        super();
+        this.price = price;
+        this.length = length;
+        this.width = width;
+    }
 }

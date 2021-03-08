@@ -8,11 +8,10 @@ import java.util.Arrays;
 import java.util.Random;
 import javax.transaction.Transactional;
 import com.is4103.backend.model.Attendee;
-import com.is4103.backend.model.BoothApplicationStatus;
+import com.is4103.backend.model.Booth;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.EventStatus;
-import com.is4103.backend.model.PaymentStatus;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
@@ -236,6 +235,10 @@ public class DataInitRunner implements ApplicationRunner {
         event.setEventStatus(EventStatus.CREATED);
         event.setHidden(false);
         event.setPublished(true);
+        List<Booth> booths = new ArrayList<>();
+        booths.add(new Booth(199.0, 5.0, 4.5, event));
+        booths.add(new Booth(299.0, 6.3, 5.4, event));
+        event.setBooths(booths);
 
         Event event2 = new Event();
         event2.setName("IT Fair 2021");
