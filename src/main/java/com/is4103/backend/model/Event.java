@@ -32,7 +32,8 @@ public class Event {
     @ManyToOne
     @JsonIgnoreProperties({ "events", "approved", "approvalMessage", "supportDocsUrl", "vipList", "attendeeFollowers",
             "businessPartnerFollowers", "enquiries", "description", "profilePic", "email", "enabled", "phonenumber",
-            "address", "roles", "notifications" })
+            "address", "roles", "notifications"
+    })
     private EventOrganiser eventOrganiser;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -107,4 +108,11 @@ public class Event {
 
     private boolean isPublished;
 
+    public boolean isAvailableForSale() {
+        if (this.saleStartDate != null && this.salesEndDate != null) {
+            return LocalDateTime.now().isAfter(this.saleStartDate)
+                    && LocalDateTime.now().isBefore(this.salesEndDate);
+        }
+        return false;
+    }
 }

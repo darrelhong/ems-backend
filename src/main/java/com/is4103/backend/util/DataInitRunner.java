@@ -250,8 +250,8 @@ public class DataInitRunner implements ApplicationRunner {
         LocalDateTime eventEnd = LocalDateTime.of(2021, Month.JUNE, 1, 9, 0).plusDays(15).plusHours(2 % 3);
         event2.setEventEndDate(eventEnd);
 
-        LocalDateTime salesStart = LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
-        LocalDateTime salesEnd = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+        LocalDateTime salesStart = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime salesEnd = LocalDateTime.of(2021, Month.APRIL, 10, 9, 0).plusDays(15).plusHours(2 % 3);
 
         event2.setSaleStartDate(salesStart);
         event2.setSalesEndDate(salesEnd);
