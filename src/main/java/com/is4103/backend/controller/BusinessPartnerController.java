@@ -11,6 +11,7 @@ import javax.validation.Valid;
 
 import com.is4103.backend.dto.DisabledAccountRequest;
 import com.is4103.backend.dto.FileStorageProperties;
+import com.is4103.backend.dto.FollowRequest;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
 import com.is4103.backend.dto.UpdatePartnerRequest;
@@ -72,7 +73,7 @@ public class BusinessPartnerController {
         return bpService.getBusinessPartnersPage(page, size);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'BIZPTNR')")
+    // @PreAuthorize("hasAnyRole('ADMIN', 'BIZPTNR')")
     @GetMapping(path = "/{id}")
     public BusinessPartner getBusinessPartnerById(@PathVariable Long id) {
         return bpService.getBusinessPartnerById(id);
@@ -105,13 +106,29 @@ public class BusinessPartnerController {
     }
 
     @GetMapping(path = "/followers/{id}")
-    public Set<Attendee> getFollowers(@PathVariable Long id) {
+    public List<Attendee> getFollowers(@PathVariable Long id) {
         return bpService.getFollowersById(id);
     }
 
     @GetMapping(path = "/following/{id}")
     public List<EventOrganiser> getFollowing(@PathVariable Long id) {
         return bpService.getFollowingById(id);
+    }
+
+    @PreAuthorize("hasAnyRole('BIZPTNR')")
+    @PostMapping(value ="/followEO")
+    public ResponseEntity<BusinessPartner> followEventOrganiser(@RequestBody @Valid FollowRequest followEORequest){
+        BusinessPartner user = bpService.getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        user = bpService.followEventOrganiser(user, followEORequest);
+        return ResponseEntity.ok(user);
+    }
+
+    @PreAuthorize("hasAnyRole('BIZPTNR')")
+    @PostMapping(value ="/unfollowEO")
+    public ResponseEntity<BusinessPartner> unfollowEventOrganiser(@RequestBody @Valid FollowRequest followEORequest){
+        BusinessPartner user = bpService.getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        user = bpService.unfollowEventOrganiser(user, followEORequest);
+        return ResponseEntity.ok(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

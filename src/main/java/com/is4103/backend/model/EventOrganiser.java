@@ -34,13 +34,11 @@ public class EventOrganiser extends User {
 
     @JsonIgnore
     @Column(nullable = true)
-    @ElementCollection(targetClass = Attendee.class)
     @ManyToMany
     private List<Attendee> attendeeFollowers;
 
     @JsonIgnore
     @Column(nullable = true)
-    @ElementCollection(targetClass = BusinessPartner.class)
     @ManyToMany
     private List<BusinessPartner> businessPartnerFollowers;
 
