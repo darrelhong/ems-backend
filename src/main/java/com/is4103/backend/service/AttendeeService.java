@@ -1,6 +1,7 @@
 package com.is4103.backend.service;
 
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.dto.UpdateAttendeeRequest;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
@@ -46,6 +47,10 @@ public class AttendeeService {
         return atnRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
     }
 
+    public Attendee getAttendeeByEmail(String email) {
+        return atnRepository.findByEmail(email);
+    }
+
     @Transactional
     public Attendee registerNewAttendee(SignupRequest signupRequest, boolean enabled)
             throws UserAlreadyExistsException {
@@ -78,6 +83,18 @@ public class AttendeeService {
         }
 
         return atn;
+    }
+
+    @Transactional
+    public Attendee updateAttendee(Attendee user, UpdateAttendeeRequest updateAttendeeRequest) {
+
+        user.setName(updateAttendeeRequest.getName());
+        user.setDescription(updateAttendeeRequest.getDescription());
+        user.setAddress(updateAttendeeRequest.getAddress());
+        user.setPhonenumber(updateAttendeeRequest.getPhonenumber());
+        user.setCategoryPreferences(updateAttendeeRequest.getCategoryPreferences());
+
+        return atnRepository.save(user);
     }
 
 }
