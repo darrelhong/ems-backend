@@ -1,5 +1,6 @@
 package com.is4103.backend.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,10 +10,13 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 // import org.hibernate.mapping.Set;
 
@@ -20,30 +24,30 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Attendee extends User {
 
+
     @Column(nullable = true)
     @ElementCollection(targetClass = String.class)
     private List<String> categoryPreferences;
 
     @Column(nullable = true)
     @JsonIgnore
-    @ElementCollection(targetClass = EventOrganiser.class)
-    @ManyToMany(mappedBy = "attendeeFollowers")
-    private List<EventOrganiser> followedEventOrganisers;
+    @ManyToMany
+    private List<EventOrganiser> followedEventOrganisers = new ArrayList<>();
 
     @OneToMany(mappedBy = "attendee")
     @ElementCollection(targetClass = TicketTransaction.class)
     private List<TicketTransaction> ticketTransactions;
 
+
     @JsonIgnore
-    @ManyToMany (mappedBy="attendeeFollowers", cascade = CascadeType.MERGE)
-    @ElementCollection(targetClass = BusinessPartner.class)
-    private Set<BusinessPartner> followedBusinessPartners  = new HashSet<>();
+    @ManyToMany
+    private List<BusinessPartner> followedBusinessPartners;
 
     public Attendee() {
 
     }
 
-    public Attendee(List<String> categoryPreferences, List<EventOrganiser> followedEventOrgs, Set<BusinessPartner> followedBusinessPartners) {
+    public Attendee(List<String> categoryPreferences, List<EventOrganiser> followedEventOrgs, List<BusinessPartner> followedBusinessPartners) {
         super();
         this.categoryPreferences = categoryPreferences;
         this.followedEventOrganisers = followedEventOrgs;
@@ -66,13 +70,15 @@ public class Attendee extends User {
         this.followedEventOrganisers = followedEventOrgs;
     }
 
-    public Set<BusinessPartner> getFollowedBusinessPartners() {
+    public List<BusinessPartner> getFollowedBusinessPartners() {
         return followedBusinessPartners;
     }
 
-    public void setFollowedBusinessPartners(Set<BusinessPartner> followedBusinessPartners) {
+    public void setFollowedBusinessPartners(List<BusinessPartner> followedBusinessPartners) {
         this.followedBusinessPartners = followedBusinessPartners;
     }
+
+
 
     
 

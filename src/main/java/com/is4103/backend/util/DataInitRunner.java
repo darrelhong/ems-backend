@@ -25,6 +25,7 @@ import com.is4103.backend.repository.RoleRepository;
 import com.is4103.backend.repository.UserRepository;
 import com.thedeanda.lorem.Lorem;
 import com.thedeanda.lorem.LoremIpsum;
+import com.is4103.backend.repository.BusinessPartnerRepository;
 import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.repository.EventRepository;
 
@@ -54,6 +55,9 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Autowired
     private EventOrganiserRepository eventOrganiserRepository;
+
+    @Autowired
+    private BusinessPartnerRepository partnerRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -162,6 +166,7 @@ public class DataInitRunner implements ApplicationRunner {
         this.eoTest.setBusinessPartnerFollowers(followersBP);
         userRepository.save(this.eoTest);
 
+
         //create attendee
         Attendee atn = new Attendee();
         atn.setEmail("attendee@abc.com");
@@ -174,12 +179,13 @@ public class DataInitRunner implements ApplicationRunner {
         category.add("Travel");
         category.add("Healthcare");
         atn.setCategoryPreferences(category);
+        // atn.addfollowBP(businesspartner);
+        List<BusinessPartner> bpFollowing= new ArrayList<>();
+        bpFollowing.add(bp);
+        atn.setFollowedBusinessPartners(bpFollowing);
         userRepository.save(atn);
-        //set following bp list for attendees got issues here
-        Set<BusinessPartner> followBp = new HashSet<>();
-        followBp.add(bp);
-        atn.setFollowedBusinessPartners(followBp);
-        userRepository.save(atn);
+ 
+        
 
         //create second attendee
         Attendee atnTwo = new Attendee();
@@ -190,19 +196,25 @@ public class DataInitRunner implements ApplicationRunner {
         atnTwo.setEnabled(true);
         atnTwo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.ATND)));
         atnTwo.setCategoryPreferences(category);
-        // Set<BusinessPartner> followBpTwo = new HashSet<>();
-        // followBpTwo.add(bp);
-        // atnTwo.setFollowedBusinessPartners(followBpTwo);
+        // atnTwo.addfollowBP(businesspartner);
+        atnTwo.setFollowedBusinessPartners(bpFollowing);
         userRepository.save(atnTwo);
 
+        //set atn and atn2 follow bp list 
+        
+        // Set<BusinessPartner> followBp = new HashSet<>();
+        // followBp.add(bp);
+        // atn.setFollowedBusinessPartners(followBp);
+        // atnTwo.setFollowedBusinessPartners(followBp);
+        // userRepository.save(atn);
+        // userRepository.save(atnTwo);
+
         //set bp followers list 
-        Set<Attendee> followers = new HashSet<>();
+        List<Attendee> followers = new ArrayList<>();
         followers.add(atn);
         followers.add(atnTwo);
         bp.setAttendeeFollowers(followers);
         userRepository.save(bp);    
-
-       
 
            
         
@@ -214,6 +226,8 @@ public class DataInitRunner implements ApplicationRunner {
             bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
             userRepository.save(bp);
         }
+
+        
     }
 
     // Testing Methods

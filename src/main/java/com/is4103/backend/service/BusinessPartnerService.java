@@ -7,6 +7,8 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import com.is4103.backend.controller.EventOrganiserController;
+import com.is4103.backend.dto.FollowRequest;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdatePartnerRequest;
 import com.is4103.backend.model.Attendee;
@@ -17,6 +19,7 @@ import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.repository.BusinessPartnerRepository;
+import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 import com.is4103.backend.util.errors.UserNotFoundException;
@@ -34,6 +37,12 @@ public class BusinessPartnerService {
 
     @Autowired
     private BusinessPartnerRepository bpRepository;
+
+    @Autowired
+    private EventOrganiserRepository eoRepository;
+
+    @Autowired
+    private EventOrganiserController eoController;
 
     @Autowired
     private UserService userService;
@@ -95,9 +104,9 @@ public class BusinessPartnerService {
         return bpRepository.findByEmail(email);
     }
 
-    public Set<Attendee> getFollowersById (Long id){
+    public List<Attendee> getFollowersById (Long id){
         BusinessPartner partner = getBusinessPartnerById(id);
-        Set<Attendee>  followers = new HashSet<>();
+        List<Attendee>  followers = new ArrayList<>();
         followers = partner.getAttendeeFollowers();
         return followers;
     }
@@ -155,6 +164,29 @@ public class BusinessPartnerService {
         return bpRepository.save(user);
     }
 
-
+    @Transactional
+    public BusinessPartner followEventOrganiser(BusinessPartner user, FollowRequest followEORequest) {
+       
+        EventOrganiser eo = eoController.getEventOrganiserById(followEORequest.getId());
+       List<EventOrganiser> follow = user.getFollowEventOrganisers();
+       follow.add(eo);
+       user.setFollowEventOrganisers(follow);
+        List<BusinessPartner> followers= eo.getBusinessPartnerFollowers();
+        followers.add(user);
+        eoRepository.save(eo);
+        return bpRepository.save(user);
+    }
+    @Transactional
+    public BusinessPartner unfollowEventOrganiser(BusinessPartner user, FollowRequest followEORequest) {
+       
+        EventOrganiser eo = eoController.getEventOrganiserById(followEORequest.getId());
+       List<EventOrganiser> follow = user.getFollowEventOrganisers();
+       follow.remove(eo);
+       user.setFollowEventOrganisers(follow);
+        List<BusinessPartner> followers= eo.getBusinessPartnerFollowers();
+        followers.remove(user);
+        eoRepository.save(eo);
+        return bpRepository.save(user);
+    }
 
 }

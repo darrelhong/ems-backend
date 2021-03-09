@@ -2,13 +2,18 @@ package com.is4103.backend.controller;
 
 import javax.validation.Valid;
 
+import com.is4103.backend.dto.FollowRequest;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
+import com.is4103.backend.model.Attendee;
 import com.is4103.backend.service.AttendeeService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +51,38 @@ public class AttendeeController {
             return new SignupResponse("success");
     }
 
+    @PreAuthorize("hasAnyRole('ATND')")
+    @PostMapping(value ="/followBP")
+    public ResponseEntity<Attendee> followBusinessPartner(@RequestBody @Valid FollowRequest followRequest){
+        Attendee user = atnService.getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        user = atnService.followBusinessPartner(user, followRequest);
+        return ResponseEntity.ok(user);
+    }
+
+    
+    @PreAuthorize("hasAnyRole('ATND')")
+    @PostMapping(value ="/unfollowBP")
+    public ResponseEntity<Attendee> unfollowBusinessPartner(@RequestBody @Valid FollowRequest followRequest){
+        Attendee user = atnService.getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        user = atnService.unfollowBusinessPartner(user, followRequest);
+        return ResponseEntity.ok(user);
+    }
+
+    @PreAuthorize("hasAnyRole('ATND')")
+    @PostMapping(value ="/followEO")
+    public ResponseEntity<Attendee> followEventOrganiser(@RequestBody @Valid FollowRequest followRequest){
+        Attendee user = atnService.getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        user = atnService.followEventOrganiser(user, followRequest);
+        return ResponseEntity.ok(user);
+    }
+
+    @PreAuthorize("hasAnyRole('ATND')")
+    @PostMapping(value ="/unfollowEO")
+    public ResponseEntity<Attendee> unfollowEventOrganiser(@RequestBody @Valid FollowRequest followRequest){
+        Attendee user = atnService.getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        user = atnService.unfollowEventOrganiser(user, followRequest);
+        return ResponseEntity.ok(user);
+    }
 
     
 }

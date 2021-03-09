@@ -19,6 +19,9 @@ import javax.persistence.InheritanceType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import lombok.Data;
 
 @Entity
@@ -59,7 +62,8 @@ public class User {
             @JoinColumn(name = "ROLE_ID") })
     private Set<Role> roles;
 
-    @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @Fetch(value = FetchMode.SUBSELECT)
     @ElementCollection(targetClass = Notification.class)
     private List<Notification> notifications;
 }
