@@ -85,8 +85,8 @@ public class EventController {
     @GetMapping(path = "/get-events")
     public Page<Event> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
-            @RequestParam(required = false) String sortDir) {
-        return eventService.getPublishedEvents(page, size, sort, sortDir);
+            @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword) {
+        return eventService.getPublishedEvents(page, size, sort, sortDir, keyword);
     }
 
     @GetMapping(path = "/search")
@@ -95,7 +95,7 @@ public class EventController {
     }
 
     @GetMapping("/delete/{id}")
-    public ResponseEntity<String>  deleteEvent(@PathVariable Long id) {
+    public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
         eventRepository.delete(eventService.getEventById(id));
         return ResponseEntity.ok("Success");
     }

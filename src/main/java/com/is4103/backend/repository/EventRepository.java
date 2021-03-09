@@ -20,5 +20,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 
     Page<Event> findByIsPublished(boolean isPublished, Pageable pageable);
 
+    Page<Event> findByNameContainingAndIsPublished(String name, boolean isPublished, Pageable pageable);
+
     List<Event> findByName(String name);
 }

@@ -33,17 +33,30 @@ public class EventService {
         return eventRepository.findByIsPublished(true, PageRequest.of(page, size));
     }
 
-    public Page<Event> getPublishedEvents(int page, int size, String sortBy, String sortDir) {
-        Sort sort;
+    public Page<Event> getPublishedEvents(int page, int size, String sortBy, String sortDir, String keyword) {
+        Sort sort = null;
         if (sortBy != null && sortDir != null) {
             if (sortDir.equals("desc")) {
                 sort = Sort.by(sortBy).descending();
             } else {
                 sort = Sort.by(sortBy).ascending();
             }
+        }
+        if (keyword != null) {
+            if (sort == null) {
+                return eventRepository.findByNameContainingAndIsPublished(keyword, true, PageRequest.of(page, size));
+            } else {
+                return eventRepository.findByNameContainingAndIsPublished(keyword, true,
+                        PageRequest.of(page, size, sort));
+            }
+
+        }
+        if (sort == null) {
+            return eventRepository.findByIsPublished(true, PageRequest.of(page, size));
+        } else {
             return eventRepository.findByIsPublished(true, PageRequest.of(page, size, sort));
         }
-        return eventRepository.findByIsPublished(true, PageRequest.of(page, size));
+
     }
 
     public List<Event> getAllEventsByOrganiser(Long oid) {
