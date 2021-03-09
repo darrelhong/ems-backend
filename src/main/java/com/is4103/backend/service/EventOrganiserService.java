@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
+import com.is4103.backend.dto.UploadBizSupportFileRequest;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
@@ -69,8 +70,7 @@ public class EventOrganiserService {
     }
 
     @Transactional
-    public EventOrganiser registerNewEventOrganiser(SignupRequest signupRequest, boolean enabled,
-            String bizsupportdocdownloadurl) {
+    public EventOrganiser registerNewEventOrganiser(SignupRequest signupRequest, boolean enabled) {
 
         EventOrganiser newEo = new EventOrganiser();
         newEo.setName(signupRequest.getName());
@@ -80,7 +80,7 @@ public class EventOrganiserService {
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         newEo.setRoles(roles);
-        newEo.setSupportDocsUrl(bizsupportdocdownloadurl);
+        //newEo.setSupportDocsUrl(bizsupportdocdownloadurl);
 
         if (enabled) {
             newEo.setEnabled(true);
@@ -179,6 +179,15 @@ public class EventOrganiserService {
         }
 
         return userRepository.save(user);
+    }
+
+    @Transactional
+    public EventOrganiser updateEoBizSupportUrl(EventOrganiser eo, String supportDocsUrl) {
+
+    
+        eo.setSupportDocsUrl(supportDocsUrl);
+    
+        return userRepository.save(eo);
     }
 
 

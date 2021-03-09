@@ -14,6 +14,7 @@ import com.is4103.backend.dto.RejectEventOrganiserDto;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
 import com.is4103.backend.dto.UpdateUserRequest;
+import com.is4103.backend.dto.UploadBizSupportFileRequest;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
@@ -90,8 +91,7 @@ public class EventOrganiserController {
     }
 
     @PostMapping(value = "/register")
-    public SignupResponse registerNewEventOrganiser(SignupRequest signupRequest,
-            @RequestParam("file") MultipartFile file) {
+    public SignupResponse registerNewEventOrganiser(@RequestBody @Valid SignupRequest signupRequest) {
 
         try {
 
@@ -100,12 +100,7 @@ public class EventOrganiserController {
                         "Account with email " + signupRequest.getEmail() + " already exists");
             } else {
 
-                String userEmail = signupRequest.getEmail();
-                System.out.println(userEmail);
-                String fileName = fileStorageService.storeFile(file, "bizsupportdoc", userEmail);
-                String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
-                        .path(fileName).toUriString();
-                eoService.registerNewEventOrganiser(signupRequest, false, fileDownloadUri);
+                eoService.registerNewEventOrganiser(signupRequest, false);
 
             }
 
@@ -117,10 +112,12 @@ public class EventOrganiserController {
 
     }
 
+
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/register/noverify")
     public EventOrganiser registerNewEventOrganiserNoVerify(@RequestBody @Valid SignupRequest signupRequest) {
-        return eoService.registerNewEventOrganiser(signupRequest, true, "");
+        return eoService.registerNewEventOrganiser(signupRequest, true);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -208,4 +205,55 @@ public class EventOrganiserController {
          
          return new UploadFileResponse(user.getProfilePic());
     }
+     @PreAuthorize("hasAnyRole('EVNTORG')")
+    @PostMapping(value = "/uploadbizdoc")
+    public UploadFileResponse uploadEoBizFile(UploadBizSupportFileRequest updateBizSupportFileRequest, @RequestParam(value ="bizSupportDoc") MultipartFile file) {
+
+        EventOrganiser user = (EventOrganiser) userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        System.out.println("file and user id");
+        System.out.println(user.getId());
+        System.out.println(file);
+        String fileDownloadUri = null;
+        String filename = null;
+        // verify user id
+        System.out.println("getRequestID");
+        System.out.println(updateBizSupportFileRequest.getId());
+        // if the request is not send by the correct user
+        if (updateBizSupportFileRequest.getId() != user.getId()) {
+            throw new AuthenticationServiceException("An error has occured");
+        }
+    
+        if(file != null){
+            System.out.println("file is not null");
+
+                filename = fileStorageService.storeFile(file, "bizsupportdoc", user.getEmail());
+
+            fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/").path(filename)
+                    .toUriString();
+
+            // if the user current has a biz doc, delete the file -> not need for biz doc as the naming is standardise
+            // if (user.getSupportDocsUrl() != null) {
+            //     String oldfilepath = user.getSupportDocsUrl();
+            //     String oldfileName = oldfilepath.substring(oldfilepath.lastIndexOf("/") + 1);
+            //     System.out.println("oldfileName");
+            //     System.out.println(oldfileName);
+            //     Path oldFilepath = Paths
+            //             .get(this.fileStorageProperties.getUploadDir() + "/bizSupportDocs/" + oldfileName)
+            //             .toAbsolutePath().normalize();
+            //     System.out.println("oldFilepath");
+            //     System.out.println(oldFilepath);
+            //     try {
+            //         Files.deleteIfExists(oldFilepath);
+            //     } catch (IOException e) {
+            //         // TODO Auto-generated catch block
+            //         e.printStackTrace();
+            //     }
+            //  }
+        }
+        user = eoService.updateEoBizSupportUrl(user, fileDownloadUri);
+        return new UploadFileResponse("success");
+        
+    }
+
+    
 }
