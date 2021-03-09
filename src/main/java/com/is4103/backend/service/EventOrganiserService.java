@@ -1,5 +1,7 @@
 package com.is4103.backend.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -165,6 +167,79 @@ public class EventOrganiserService {
         return eo.getEvents();
 
     }
+      public List<Event> getAllEventsByEoIdRoleStatus(Long eoId,String role, String status) {
+        EventOrganiser eo = getEventOrganiserById(eoId);
+        List<Event> eventlist = eventService.getAllEvents();
+        List<Event> filterEventList = new ArrayList<>();
+     
+        if(role.equals("guest") || role.equals("ATND") || role.equals("EVNTORG")){
+            if(status.equals("upcoming")){
+                filterEventList = new ArrayList<>();
+                for(int a = 0; a < eventlist.size();a++){
+                    Event eventItem = eventlist.get(a);
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+                    LocalDateTime now = LocalDateTime.now();
+             
+                    if(eventItem.getEventStatus().toString().equals("CREATED") && eventItem.isPublished() == true && (eventItem.getEventStartDate().isAfter(now) ||  eventItem.getEventStartDate().isEqual(now)) && (eventItem.getSaleStartDate().isAfter(now) || eventItem.getSaleStartDate().isEqual(now))){
+                        filterEventList.add(eventItem);
+                    }
+                }
+            
+            }else if(status.equals("current")){
+                   filterEventList = new ArrayList<>();
+                for(int a = 0; a < eventlist.size();a++){
+                    Event eventItem = eventlist.get(a);
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+                    LocalDateTime now = LocalDateTime.now();
+                    
+                    if(eventItem.getEventStatus().toString().equals("CREATED") && eventItem.isPublished() == true && (eventItem.getEventStartDate().isAfter(now) ||  eventItem.getEventStartDate().isEqual(now)) && (eventItem.getSaleStartDate().isBefore(now) || eventItem.getSaleStartDate().isEqual(now)) && (eventItem.getSalesEndDate().isAfter(now) || eventItem.getSalesEndDate().isEqual(now))){
+                     
+                        filterEventList.add(eventItem);
+                    }
+                }
+            }else if(status.equals("past")){
+                  filterEventList = new ArrayList<>();
+                for(int a = 0; a < eventlist.size();a++){
+                    Event eventItem = eventlist.get(a);
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+                    LocalDateTime now = LocalDateTime.now();
+                
+                    if(eventItem.getEventStatus().toString().equals("CREATED") && (eventItem.getEventEndDate().isBefore(now) ||  eventItem.getEventEndDate().isEqual(now))){
+                    
+                        filterEventList.add(eventItem);
+                    }
+                }
+            }
+
+        }else if(role.equals("BIZPTNR")){
+            if (status.equals("current")) {
+                        filterEventList = new ArrayList<>();
+                for(int a = 0; a < eventlist.size();a++){
+                    Event eventItem = eventlist.get(a);
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+                    LocalDateTime now = LocalDateTime.now();
+                    if(eventItem.getEventStatus().toString().equals("CREATED") && !eventItem.isHidden() && (eventItem.getEventStartDate().isAfter(now) || eventItem.getEventStartDate().isEqual(now))&& (eventItem.getSaleStartDate().isAfter(now) || eventItem.getSaleStartDate().isEqual(now)))
+                    
+                        filterEventList.add(eventItem);
+                    }
+                } else if (status.equals("past")) {
+                System.out.println("partner past");
+            filterEventList = new ArrayList<>();
+                for(int a = 0; a < eventlist.size();a++){
+                    Event eventItem = eventlist.get(a);
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+                    LocalDateTime now = LocalDateTime.now();
+                   if(eventItem.getEventStatus().toString().equals("CREATED") && (eventItem.getEventEndDate().isBefore(now) ||  eventItem.getEventEndDate().isEqual(now))){
+                    
+                        filterEventList.add(eventItem);
+                    }
+                }
+            }   
+       
+        }
+        return filterEventList;
+    }  
+    
 
     @Transactional
     public User updateEoProfile(User user, UpdateUserRequest updateUserRequest,String profilepicurl) {

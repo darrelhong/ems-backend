@@ -153,9 +153,18 @@ public class EventOrganiserController {
 
     @GetMapping(value = "/event/{eoId}")
     public List<Event> getAllEventsByEventOrgId(@PathVariable Long eoId) {
-        System.out.println("call get all event by eo id");
+      
         return eoService.getAllEventsByEoId(eoId);
     }
+
+    @GetMapping(value = "/event/{eoId}/{role}/{status}")
+    public List<Event> getAllEventsByEventOrgIdRoleStatus(@PathVariable Long eoId, @PathVariable String role,
+            @PathVariable String status) {
+        System.out.println("call getAllEventsByEventOrgIdRoleStatus");
+        return eoService.getAllEventsByEoIdRoleStatus(eoId,role,status);
+        
+    }
+    
     
     @PreAuthorize("hasAnyRole('EVNTORG')")
     @PostMapping(value = "/updateEoProfile")
