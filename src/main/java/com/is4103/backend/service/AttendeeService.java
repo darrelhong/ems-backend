@@ -47,6 +47,10 @@ public class AttendeeService {
         return atnRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
     }
 
+    public Attendee getAttendeeByEmail(String email) {
+        return atnRepository.findByEmail(email);
+    }
+
     @Transactional
     public Attendee registerNewAttendee(SignupRequest signupRequest, boolean enabled)
             throws UserAlreadyExistsException {
