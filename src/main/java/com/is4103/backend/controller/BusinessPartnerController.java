@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import com.is4103.backend.dto.DisabledAccountRequest;
 import com.is4103.backend.dto.FileStorageProperties;
 import com.is4103.backend.dto.FollowRequest;
+import com.is4103.backend.dto.PartnerSearchCriteria;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
 import com.is4103.backend.dto.UpdatePartnerRequest;
@@ -104,6 +105,19 @@ public class BusinessPartnerController {
 
         return new SignupResponse("success");
     }
+
+    @GetMapping(path = "/get-partners")
+    public Page<BusinessPartner> getPartners(@RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword) {
+        return bpService.getAllPartners(page, size, sort, sortDir, keyword);
+    }
+
+    @GetMapping(path = "/search")
+    public Page<BusinessPartner> search(PartnerSearchCriteria partnerSearchCriteria) {
+        return bpService.search(partnerSearchCriteria);
+    }
+
 
     @GetMapping(path = "/followers/{id}")
     public List<Attendee> getFollowers(@PathVariable Long id) {

@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import com.is4103.backend.dto.OrganiserSearchCriteria;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.dto.UploadBizSupportFileRequest;
@@ -20,6 +21,7 @@ import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
 import com.is4103.backend.repository.EventOrganiserRepository;
+import com.is4103.backend.repository.OrganiserSpecification;
 import com.is4103.backend.repository.UserRepository;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 import com.is4103.backend.util.errors.UserNotFoundException;
@@ -29,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -263,6 +266,43 @@ public class EventOrganiserService {
         eo.setSupportDocsUrl(supportDocsUrl);
     
         return userRepository.save(eo);
+    }
+
+    public Page<EventOrganiser> search(OrganiserSearchCriteria organiserSearchCriteria) {
+        return eoRepository.findAll(new OrganiserSpecification(organiserSearchCriteria),
+                organiserSearchCriteria.toPageRequest());
+    }
+
+    public Page<EventOrganiser> getOrganisers(int page, int size) {
+        // return eventRepository.findByEventStatus(EventStatus.PUBLISHED,
+        // PageRequest.of(page, size));
+        return eoRepository.findAll(PageRequest.of(page, size));
+    }
+
+    public Page<EventOrganiser> getAllOrganisers(int page, int size, String sortBy, String sortDir, String keyword) {
+        Sort sort = null;
+        if (sortBy != null && sortDir != null) {
+            if (sortDir.equals("desc")) {
+                sort = Sort.by(sortBy).descending();
+            } else {
+                sort = Sort.by(sortBy).ascending();
+            }
+        }
+        if (keyword != null) {
+            if (sort == null) {
+                return eoRepository.findByNameContaining(keyword,PageRequest.of(page, size));
+            } else {
+                return eoRepository.findByNameContaining(keyword,
+                        PageRequest.of(page, size, sort));
+            }
+
+        }
+        if (sort == null) {
+            return eoRepository.findAll(PageRequest.of(page, size));
+        } else {
+            return eoRepository.findAll(PageRequest.of(page, size, sort));
+        }
+
     }
 
 

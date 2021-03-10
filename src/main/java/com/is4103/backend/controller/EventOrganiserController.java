@@ -10,6 +10,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.is4103.backend.dto.FileStorageProperties;
+import com.is4103.backend.dto.OrganiserSearchCriteria;
 import com.is4103.backend.dto.RejectEventOrganiserDto;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
@@ -165,6 +166,19 @@ public class EventOrganiserController {
         
     }
     
+    @GetMapping(path = "/get-organisers")
+    public Page<EventOrganiser> getOrganisers(@RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword) {
+        return eoService.getAllOrganisers(page, size, sort, sortDir, keyword);
+    }
+
+    @GetMapping(path = "/search")
+    public Page<EventOrganiser> search(OrganiserSearchCriteria organiserSearchCriteria) {
+        return eoService.search(organiserSearchCriteria);
+    }
+
+
     
     @PreAuthorize("hasAnyRole('EVNTORG')")
     @PostMapping(value = "/updateEoProfile")

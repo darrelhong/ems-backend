@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 
 import com.is4103.backend.controller.EventOrganiserController;
 import com.is4103.backend.dto.FollowRequest;
+import com.is4103.backend.dto.PartnerSearchCriteria;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdatePartnerRequest;
 import com.is4103.backend.model.Attendee;
@@ -21,6 +22,7 @@ import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.repository.BusinessPartnerRepository;
 import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.repository.EventRepository;
+import com.is4103.backend.repository.PartnerSpecification;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
@@ -31,6 +33,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class BusinessPartnerService {
@@ -185,6 +188,43 @@ public class BusinessPartnerService {
         followers.remove(user);
         eoRepository.save(eo);
         return bpRepository.save(user);
+    }
+
+    public Page<BusinessPartner> getPartners(int page, int size) {
+        // return eventRepository.findByEventStatus(EventStatus.PUBLISHED,
+        // PageRequest.of(page, size));
+        return bpRepository.findAll(PageRequest.of(page, size));
+    }
+
+    public Page<BusinessPartner> getAllPartners(int page, int size, String sortBy, String sortDir, String keyword) {
+        Sort sort = null;
+        if (sortBy != null && sortDir != null) {
+            if (sortDir.equals("desc")) {
+                sort = Sort.by(sortBy).descending();
+            } else {
+                sort = Sort.by(sortBy).ascending();
+            }
+        }
+        if (keyword != null) {
+            if (sort == null) {
+                return bpRepository.findByNameContaining(keyword,PageRequest.of(page, size));
+            } else {
+                return bpRepository.findByNameContaining(keyword,
+                        PageRequest.of(page, size, sort));
+            }
+
+        }
+        if (sort == null) {
+            return bpRepository.findAll(PageRequest.of(page, size));
+        } else {
+            return bpRepository.findAll(PageRequest.of(page, size, sort));
+        }
+
+    }
+
+    public Page<BusinessPartner> search(PartnerSearchCriteria partnerSearchCriteria) {
+        return bpRepository.findAll(new PartnerSpecification(partnerSearchCriteria),
+                partnerSearchCriteria.toPageRequest());
     }
 
 }
