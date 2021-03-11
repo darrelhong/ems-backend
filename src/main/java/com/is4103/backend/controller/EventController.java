@@ -60,6 +60,7 @@ public class EventController {
         event.setName(createEventRequest.getName());
         event.setAddress(createEventRequest.getAddress());
         event.setDescriptions(createEventRequest.getDescriptions());
+        event.setSellingTicket(createEventRequest.isSellingTicket());
         event.setTicketPrice(createEventRequest.getTicketPrice());
         event.setTicketCapacity(createEventRequest.getTicketCapacity());
         event.setPhysical(createEventRequest.isPhysical());

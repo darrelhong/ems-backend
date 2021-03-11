@@ -62,6 +62,8 @@ public class Event {
     // @Column(nullable = false)
     private String descriptions;
 
+    private boolean isSellingTicket;
+    
     // @Column(nullable = true)
     private float ticketPrice;
 
