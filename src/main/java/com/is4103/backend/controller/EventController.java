@@ -83,6 +83,7 @@ public class EventController {
         return eventRepository.save(event);
     }
 
+    // updated to only get events that start current time
     @GetMapping(path = "/get-events")
     public Page<Event> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
