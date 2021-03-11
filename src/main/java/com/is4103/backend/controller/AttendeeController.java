@@ -39,7 +39,7 @@ public class AttendeeController {
         return atnService.getAllAttendees();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'ATND')")
+    // @PreAuthorize("hasAnyRole('ADMIN', 'ATND')")
     @GetMapping(path = "/{id}")
     public Attendee getAttendeeById(@PathVariable Long id) {
         return atnService.getAttendeeById(id);

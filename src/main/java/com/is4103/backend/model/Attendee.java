@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.JoinColumn;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.Transient;
 
 
 // import org.hibernate.mapping.Set;
@@ -37,6 +38,14 @@ public class Attendee extends User {
     @OneToMany(mappedBy = "attendee")
     @ElementCollection(targetClass = TicketTransaction.class)
     private List<TicketTransaction> ticketTransactions;
+
+     @Transient
+     @JsonIgnore
+     @Column(nullable = true)
+    @OneToMany(mappedBy = "attendee")
+    @ElementCollection(targetClass = Review.class)
+    private List<Review> reviews;
+
 
 
     @JsonIgnore
@@ -60,6 +69,14 @@ public class Attendee extends User {
 
     public void setCategoryPreferences(List<String> categoryPreferences) {
         this.categoryPreferences = categoryPreferences;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 
     public List<EventOrganiser> getFollowedEventOrgs() {

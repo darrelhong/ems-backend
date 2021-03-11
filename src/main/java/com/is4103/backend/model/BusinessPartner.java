@@ -56,6 +56,13 @@ public class BusinessPartner extends User {
     @ElementCollection(targetClass = Enquiry.class)
     private List<Enquiry> enquiries;
 
+    // @Transient
+    @JsonIgnore
+    @Column(nullable = true)
+    @OneToMany(mappedBy = "partner")
+    @ElementCollection(targetClass = Review.class)
+    private List<Review> reviews;
+
     public BusinessPartner() {
 
     }
@@ -91,6 +98,14 @@ public class BusinessPartner extends User {
 
     public void setAttendeeFollowers(List<Attendee> attendeeFollowers) {
         this.attendeeFollowers = attendeeFollowers;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 
     public List<EventBoothTransaction> getEventBoothTransactions() {
