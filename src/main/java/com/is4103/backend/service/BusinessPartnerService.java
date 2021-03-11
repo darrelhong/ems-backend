@@ -222,6 +222,45 @@ public class BusinessPartnerService {
 
     }
 
+    public Page<BusinessPartner> getAllPartnersCat(int page, int size, String sortBy, String sortDir, String keyword, String businessCategory) {
+        Sort sort = null;
+        if (sortBy != null && sortDir != null) {
+            if (sortDir.equals("desc")) {
+                sort = Sort.by(sortBy).descending();
+            } else {
+                sort = Sort.by(sortBy).ascending();
+            }
+        }
+        
+
+        if(businessCategory != null){
+            if (sort == null) {
+                System.out.println( "test " + bpRepository.findByBusinessCategoryContaining(businessCategory,PageRequest.of(page, size)));
+                return bpRepository.findByBusinessCategoryContaining(businessCategory,PageRequest.of(page, size));
+
+            } else {
+                return bpRepository.findByBusinessCategoryContaining(businessCategory,
+                        PageRequest.of(page, size, sort));
+            }
+        }
+        
+        if (keyword != null) {
+            if (sort == null) {
+                return bpRepository.findByNameContaining(keyword,PageRequest.of(page, size));
+            } else {
+                return bpRepository.findByNameContaining(keyword,
+                        PageRequest.of(page, size, sort));
+            }
+
+        }
+        if (sort == null) {
+            return bpRepository.findAll(PageRequest.of(page, size));
+        } else {
+            return bpRepository.findAll(PageRequest.of(page, size, sort));
+        }
+
+    }
+
     public Page<BusinessPartner> search(PartnerSearchCriteria partnerSearchCriteria) {
         return bpRepository.findAll(new PartnerSpecification(partnerSearchCriteria),
                 partnerSearchCriteria.toPageRequest());

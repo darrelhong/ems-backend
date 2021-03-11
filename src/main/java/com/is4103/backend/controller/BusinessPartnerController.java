@@ -113,6 +113,15 @@ public class BusinessPartnerController {
         return bpService.getAllPartners(page, size, sort, sortDir, keyword);
     }
 
+    
+    @GetMapping(path = "/get-partners-cat")
+    public Page<BusinessPartner> getPartnersCat(@RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword, @RequestParam(required = false) String businessCategory) {
+                System.out.println("catr" + businessCategory);
+        return bpService.getAllPartnersCat(page, size, sort, sortDir, keyword, businessCategory);
+    }
+
     @GetMapping(path = "/search")
     public Page<BusinessPartner> search(PartnerSearchCriteria partnerSearchCriteria) {
         return bpService.search(partnerSearchCriteria);

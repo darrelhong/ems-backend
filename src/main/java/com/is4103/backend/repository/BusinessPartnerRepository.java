@@ -14,5 +14,8 @@ public interface BusinessPartnerRepository extends JpaRepository<BusinessPartner
 
     Page<BusinessPartner> findByNameContaining(String name,  Pageable pageable);
 
+    Page<BusinessPartner> findByBusinessCategoryContaining(String businessCategory, Pageable pageable);
+
+    Page<BusinessPartner> findByNameContainingAndBusinessCategoryContaining(String name, String businessCategory, Pageable pageable);
     // Page<BusinessPartner> findAll(PartnerSpecification partnerSpecification, PageRequest pageRequest);
 }
