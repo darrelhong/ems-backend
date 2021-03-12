@@ -27,7 +27,7 @@ public class OrganiserSpecification implements Specification<EventOrganiser> {
     }
 
     @Override
-    public Predicate toPredicate(Root<Event> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+    public Predicate toPredicate(Root<EventOrganiser> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         List<Predicate> predicates = new ArrayList<Predicate>();
 
         if (criteria.getKeyword() != null) {
@@ -41,4 +41,6 @@ public class OrganiserSpecification implements Specification<EventOrganiser> {
             return null;
         }
     }
+
+
 }

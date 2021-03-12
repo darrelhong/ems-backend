@@ -25,7 +25,7 @@ public class PartnerSpecification implements Specification<BusinessPartner> {
     }
 
     @Override
-    public Predicate toPredicate(Root<Event> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+    public Predicate toPredicate(Root<BusinessPartner> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         List<Predicate> predicates = new ArrayList<Predicate>();
 
         if (criteria.getKeyword() != null) {
