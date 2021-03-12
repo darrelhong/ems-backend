@@ -14,10 +14,12 @@ import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.EventStatus;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
+import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.model.User;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventBoothTransaction;
 import com.is4103.backend.repository.RoleRepository;
+import com.is4103.backend.repository.TicketTransactionRepository;
 import com.is4103.backend.repository.UserRepository;
 import com.thedeanda.lorem.Lorem;
 import com.thedeanda.lorem.LoremIpsum;
@@ -54,6 +56,9 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Autowired
     private EventOrganiserRepository eventOrganiserRepository;
+
+    @Autowired
+    private TicketTransactionRepository ticketTransactionRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -554,6 +559,10 @@ public class DataInitRunner implements ApplicationRunner {
         eventRepository.save(event7);
         eventRepository.save(event8);
         eventRepository.save(event9);
+
+        TicketTransaction ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event);
+        ticketTransactionRepository.save(ttransaction);
 
         List<Event> eoEvents = new ArrayList<>();
         // eoEvents = eventOrg.getEvents();

@@ -39,12 +39,10 @@ public class Event {
 
     @JsonView(EventViews.Private.class)
     @ManyToMany(fetch = FetchType.LAZY)
-    @ElementCollection(targetClass = BusinessPartner.class)
     private List<BusinessPartner> favouriteBusinessPartners;
 
     @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
-    @ElementCollection(targetClass = EventBoothTransaction.class)
     @JsonIgnoreProperties("event")
     private List<EventBoothTransaction> eventBoothTransactions;
 
@@ -53,9 +51,9 @@ public class Event {
     @JsonIgnoreProperties("event")
     private List<Booth> booths;
 
+    @JsonIgnoreProperties("event")
     @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
-    @ElementCollection(targetClass = TicketTransaction.class)
     private List<TicketTransaction> ticketTransactions;
 
     // @Column(nullable = false)
