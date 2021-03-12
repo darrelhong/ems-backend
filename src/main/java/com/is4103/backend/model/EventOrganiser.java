@@ -20,7 +20,7 @@ import java.util.List;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = false)
-@JsonView(EventViews.Private.class)
+@JsonView({ EventViews.Private.class, EventViews.Public.class })
 public class EventOrganiser extends User {
 
     @Column(nullable = false)
