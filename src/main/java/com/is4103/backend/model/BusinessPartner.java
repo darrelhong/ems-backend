@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 
 // import org.hibernate.mapping.Set;
 
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-
+@JsonView(EventViews.Private.class)
 public class BusinessPartner extends User {
 
     @Column(nullable = true)

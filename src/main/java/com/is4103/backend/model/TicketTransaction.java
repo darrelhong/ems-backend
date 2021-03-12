@@ -8,7 +8,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 @Entity
+@JsonView(EventViews.Private.class)
 public class TicketTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

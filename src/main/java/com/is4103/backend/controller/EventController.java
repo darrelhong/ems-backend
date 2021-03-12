@@ -3,10 +3,12 @@ package com.is4103.backend.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.is4103.backend.dto.CreateEventRequest;
 import com.is4103.backend.dto.EventSearchCriteria;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
+import com.is4103.backend.model.EventViews;
 import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.service.EventService;
@@ -40,6 +42,13 @@ public class EventController {
         return eventService.getAllEvents();
     }
 
+    @JsonView(EventViews.Public.class)
+    @GetMapping("/public/{id}")
+    public Event getEventByIdPublic(@PathVariable Long id) {
+        return eventService.getEventById(id);
+    }
+
+    @JsonView(EventViews.Private.class)
     @GetMapping("/{id}")
     public Event getEventById(@PathVariable Long id) {
         return eventService.getEventById(id);
