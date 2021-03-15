@@ -43,7 +43,7 @@ public class Booth {
     };
 
     public Booth(Double price, Double length, Double width, Event event) {
-        super();
+        this();
         this.price = price;
         this.length = length;
         this.width = width;
@@ -51,7 +51,7 @@ public class Booth {
     }
 
     public Booth(Double price, Double length, Double width) {
-        super();
+        this();
         this.price = price;
         this.length = length;
         this.width = width;

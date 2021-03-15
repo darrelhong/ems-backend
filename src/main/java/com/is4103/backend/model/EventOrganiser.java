@@ -58,11 +58,11 @@ public class EventOrganiser extends User {
     private List<Enquiry> enquiries;
 
     public EventOrganiser() {
-
+        super();
     }
 
     public EventOrganiser(List<Attendee> attendeeFollowers, List<BusinessPartner> businessPartnerFollowers) {
-        super();
+        this();
         this.attendeeFollowers = attendeeFollowers;
         this.businessPartnerFollowers = businessPartnerFollowers;
 

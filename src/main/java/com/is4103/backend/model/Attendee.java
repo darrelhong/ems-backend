@@ -40,12 +40,12 @@ public class Attendee extends User {
     private Set<BusinessPartner> followedBusinessPartners = new HashSet<>();
 
     public Attendee() {
-
+        super();
     }
 
     public Attendee(List<String> categoryPreferences, List<EventOrganiser> followedEventOrgs,
             Set<BusinessPartner> followedBusinessPartners) {
-        super();
+        this();
         this.categoryPreferences = categoryPreferences;
         this.followedEventOrganisers = followedEventOrgs;
         this.followedBusinessPartners = followedBusinessPartners;

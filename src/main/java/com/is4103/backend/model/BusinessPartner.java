@@ -59,12 +59,12 @@ public class BusinessPartner extends User {
     private List<Enquiry> enquiries;
 
     public BusinessPartner() {
-
+        super();
     }
 
     public BusinessPartner(String businessCategory, List<Event> favouriteEventList,
             List<EventBoothTransaction> eventBoothTransactions, List<EventOrganiser> followEventOrganisers) {
-        super();
+        this();
         this.businessCategory = businessCategory;
         this.favouriteEventList = favouriteEventList;
         this.eventBoothTransactions = eventBoothTransactions;
