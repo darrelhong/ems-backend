@@ -29,6 +29,11 @@ public class ReviewController {
         return reviewService.getReviewsByEventId(id);
     }
 
+    @GetMapping(path = "/eo/{id}")
+    public List<Review> getReviewsByEO(@PathVariable Long id){
+        return reviewService.getReviewsByEO(id);
+    }
+
     @PostMapping(value = "/create")
     public Review createNewReview(@RequestBody @Valid CreateReview reviewRequest) {
         return reviewService.createNewReview(reviewRequest);

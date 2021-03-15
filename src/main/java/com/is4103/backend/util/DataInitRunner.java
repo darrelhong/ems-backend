@@ -146,7 +146,7 @@ public class DataInitRunner implements ApplicationRunner {
         bp.setPassword(passwordEncoder.encode("password"));
         bp.setEnabled(true);
         bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
-        bp.setBusinessCategory("Travel");
+        bp.setBusinessCategory("Home & Garden");
 
         // set follow eo list for bp
         List<EventOrganiser> following = new ArrayList<>();
