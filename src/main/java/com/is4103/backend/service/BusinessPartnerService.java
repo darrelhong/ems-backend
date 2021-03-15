@@ -244,6 +244,8 @@ public class BusinessPartnerService {
             }
         }
         
+
+        
         if (keyword != null) {
             if (sort == null) {
                 return bpRepository.findByNameContaining(keyword,PageRequest.of(page, size));
