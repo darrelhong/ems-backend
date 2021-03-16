@@ -267,20 +267,23 @@ public class UserController {
     @PreAuthorize("hasAnyRole('EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping(value = "/enquiry")
     public ResponseEntity sendEnquiry(@RequestBody @Valid SendEnquiryRequest sendEnquiryRequest) {
-        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        User sender = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         // verify user id
-        System.out.println(user.getEmail());
-        System.out.println(sendEnquiryRequest.getSenderEmail());
-        if (!(sendEnquiryRequest.getSenderEmail().equals(user.getEmail()))){
+        //System.out.println(user.getEmail());
+       System.out.println(sendEnquiryRequest.getSenderEmail());
+        User receiver = userService.getUserByEmail(sendEnquiryRequest.getReceiverEmail());
+        System.out.println("receiver email");
+        System.out.println(receiver.getEmail());
+        if (!(sendEnquiryRequest.getSenderEmail().equals(sender.getEmail())) || receiver == null ){
             throw new AuthenticationServiceException("An error has occured");
         }else{
         
         if(sendEnquiryRequest.getEventId() != null){
             Event event = eventService.getEventById(sendEnquiryRequest.getEventId());
             String eventName = event.getName();
-            userService.sendEnquiry(sendEnquiryRequest, eventName);
+            userService.sendEnquiry(sendEnquiryRequest, eventName, sender, receiver);
         }else{
-            userService.sendEnquiry(sendEnquiryRequest, "");
+            userService.sendEnquiry(sendEnquiryRequest, "", sender,receiver);
         }
       
    

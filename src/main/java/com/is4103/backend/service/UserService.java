@@ -303,7 +303,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void sendEnquiry(SendEnquiryRequest sendEnquiry,String eventName) {
+    public void sendEnquiry(SendEnquiryRequest sendEnquiry,String eventName,User sender, User receiver) {
       
         String subject = "";
         String recipientAddress = sendEnquiry.getReceiverEmail();
@@ -317,10 +317,14 @@ public class UserService {
         String message = sendEnquiry.getContent();
 
         SimpleMailMessage email = new SimpleMailMessage();
+
         email.setFrom(fromEmail);
         email.setTo(recipientAddress);
         email.setSubject(subject);
-        email.setText("You have received the following enquiry message from " + sendEnquiry.getSenderEmail() + "\r\n\r\n"+ "\"" + message +"\""+ " " + "\r\n\r\n" +"Please reply to the above email address.");
+        email.setText("Dear " +receiver.getName()+ "," + "\r\n\r\n"+
+        "You have received the following enquiry message from " + sender.getName() +":"+ 
+        "\r\n\r\n" + "\"" + message +"\""+ " " + 
+        "\r\n\r\n" + "<b>"+ "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" +"<b>" + "Please direct your reply to "+ sender.getName() +" at " + sendEnquiry.getSenderEmail() + "</b>");
         // cc the person who submitted the enquiry.
         email.setCc(sendEnquiry.getSenderEmail());
         javaMailSender.send(email);
