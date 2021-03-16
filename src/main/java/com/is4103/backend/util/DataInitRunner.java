@@ -12,6 +12,7 @@ import com.is4103.backend.model.Booth;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.EventStatus;
+import com.is4103.backend.model.PaymentStatus;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.TicketTransaction;
@@ -561,6 +562,11 @@ public class DataInitRunner implements ApplicationRunner {
         eventRepository.save(event9);
 
         TicketTransaction ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ticketTransactionRepository.save(ttransaction);
+
+        ttransaction = new TicketTransaction();
         ttransaction.setEvent(event);
         ticketTransactionRepository.save(ttransaction);
 

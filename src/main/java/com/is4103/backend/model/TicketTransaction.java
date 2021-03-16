@@ -30,4 +30,8 @@ public class TicketTransaction {
 
     @ManyToOne
     private Attendee attendee;
+
+    public TicketTransaction() {
+        this.paymentStatus = PaymentStatus.PENDING;
+    }
 }
