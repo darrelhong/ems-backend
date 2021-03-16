@@ -255,4 +255,26 @@ public class UserController {
         System.out.println("test ");
         return userService.disableUser(userId);
     }
+
+
+    @PostMapping(value = "/enquiry")
+    public ResponseEntity sendEnquiry(@RequestBody @Valid SendEnquiryRequest sendEnquiryRequest) {
+        // return
+        try {
+
+            if (userService.emailExists(signupRequest.getEmail())) {
+                throw new UserAlreadyExistsException(
+                        "Account with email " + signupRequest.getEmail() + " already exists");
+            } else {
+
+                bpService.registerNewBusinessPartner(signupRequest, false);
+
+            }
+
+        } catch (UserAlreadyExistsException userAlrExistException) {
+            return new SignupResponse("alreadyExisted");
+        }
+
+        return new SignupResponse("success");
+    }
 }

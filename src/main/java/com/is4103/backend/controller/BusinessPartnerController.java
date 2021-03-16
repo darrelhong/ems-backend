@@ -220,6 +220,7 @@ public class BusinessPartnerController {
         return new UploadFileResponse(user.getProfilePic());
     }
 
+    
 
 
 }
