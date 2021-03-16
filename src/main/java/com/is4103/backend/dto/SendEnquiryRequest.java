@@ -7,6 +7,11 @@ import com.is4103.backend.util.validation.ValidEmail;
 
 import org.springframework.lang.Nullable;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class SendEnquiryRequest {
     @NotNull
     @NotEmpty
@@ -22,5 +27,7 @@ public class SendEnquiryRequest {
     private String subject;
     @Nullable
     private String content;
+    @Nullable
+    private Long eventId;
     
 }
