@@ -29,6 +29,7 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(EventViews.Basic.class)
     private long eid;
 
     @ManyToOne
@@ -57,6 +58,7 @@ public class Event {
     private List<TicketTransaction> ticketTransactions;
 
     // @Column(nullable = false)
+    @JsonView(EventViews.Basic.class)
     private String name;
 
     // @Column(nullable = false)

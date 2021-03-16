@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import lombok.Data;
@@ -26,9 +27,12 @@ public class TicketTransaction {
     private PaymentStatus paymentStatus;
 
     @ManyToOne
+    @JsonView(EventViews.Basic.class)
     private Event event;
 
     @ManyToOne
+    @JsonIgnoreProperties({ "categoryPreferences", "followedEventOrganisers", "ticketTransactions",
+            "followedBusinessPartners", "description", "enabled", "address", "roles", "notifications" })
     private Attendee attendee;
 
     public TicketTransaction() {
