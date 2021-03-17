@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import com.is4103.backend.dto.BoardcastMessageRequest;
 import com.is4103.backend.dto.FileStorageProperties;
 import com.is4103.backend.dto.OrganiserSearchCriteria;
 import com.is4103.backend.dto.RejectEventOrganiserDto;
@@ -43,7 +43,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.is4103.backend.dto.UploadFileResponse;
 
-import net.bytebuddy.asm.Advice.Return;
 
 @RestController
 @RequestMapping(path = "/organiser")
@@ -260,6 +259,23 @@ public class EventOrganiserController {
         user = eoService.updateEoBizSupportUrl(user, fileDownloadUri);
         return new UploadFileResponse("success");
         
+    }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @PostMapping(value = "/boardcast")
+    public ResponseEntity sendEnquiry(@RequestBody @Valid BoardcastMessageRequest boardcastMessageRequest) {
+        User sender = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        // verify user id
+        // if current user is null
+        if (sender == null) {
+            throw new AuthenticationServiceException("An error has occured");
+        } else {
+
+            eoService.boardcastMessage(sender,boardcastMessageRequest);
+
+            }
+
+        return ResponseEntity.ok("Success");
     }
 
     

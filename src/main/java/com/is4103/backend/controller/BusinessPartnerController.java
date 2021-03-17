@@ -208,7 +208,7 @@ public class BusinessPartnerController {
                 try {
                     Files.deleteIfExists(oldFilepath);
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
+                    
                     e.printStackTrace();
                 }
 

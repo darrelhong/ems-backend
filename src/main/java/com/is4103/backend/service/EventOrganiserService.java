@@ -7,8 +7,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.mail.internet.InternetAddress;
 import javax.transaction.Transactional;
 
+import com.is4103.backend.dto.BoardcastMessageRequest;
 import com.is4103.backend.dto.OrganiserSearchCriteria;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
@@ -16,9 +18,11 @@ import com.is4103.backend.dto.UploadBizSupportFileRequest;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
+import com.is4103.backend.model.EventBoothTransaction;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
+import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.model.User;
 import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.repository.OrganiserSpecification;
@@ -28,15 +32,25 @@ import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EventOrganiserService {
+
+    @Value("${backend.from.email}")
+    private String fromEmail;
+
+    @Autowired
+    private JavaMailSender javaMailSender;
+
     @Autowired
     private EventOrganiserRepository eoRepository;
 
@@ -311,6 +325,97 @@ public class EventOrganiserService {
             return eoRepository.findAll(PageRequest.of(page, size, sort));
         }
 
+    }
+
+
+    public List<BusinessPartner> getEventBps(List<EventBoothTransaction> eventBoothTransactionList){
+          List<BusinessPartner> eventBpList = new ArrayList<>();
+          for(int i = 0;i < eventBoothTransactionList.size();i++){
+                EventBoothTransaction transItem = eventBoothTransactionList.get(i);
+                if(transItem.getPaymentStatus().equals("Completed")){
+                    eventBpList.add(transItem.getBusinessPartner());
+                }
+            }
+            return eventBpList;
+    }
+
+
+    public List<Attendee> getEventAtts(List<TicketTransaction> eventTicketTransactionList){
+          List<Attendee> eventAttList = new ArrayList<>();
+          for(int i = 0;i < eventTicketTransactionList.size();i++){
+                TicketTransaction transItem = eventTicketTransactionList.get(i);
+                if(transItem.getPaymentStatus().equals("Completed")){
+                    eventAttList.add(transItem.getAttendee());
+                }
+            }
+            return eventAttList;
+    }
+        
+    public void boardcastMessage(User eo, BoardcastMessageRequest boardcastMessageRequest) {
+
+        String subject = boardcastMessageRequest.getSubject();
+        String boardcastOption = boardcastMessageRequest.getBoardcastOption();
+        List<String> emailList = new ArrayList<>();
+        Event event = eventService.getEventById(boardcastMessageRequest.getEventId());
+        List<EventBoothTransaction> eventBoothTransactionList = new ArrayList<>();
+        eventBoothTransactionList = event.getEventBoothTransactions();
+        List<TicketTransaction> eventTicketTransactionList = new ArrayList<>();
+        eventTicketTransactionList = event.getTicketTransactions();
+        if(boardcastOption.equals("Allbp")){
+        
+          List<BusinessPartner> eventBpList = new ArrayList<>();
+          eventBpList = this.getEventBps(eventBoothTransactionList);
+
+        for(BusinessPartner bp:eventBpList){
+           emailList.add(bp.getEmail());
+        } 
+            
+            
+        }else if(boardcastOption.equals("AllAtt")){
+              
+          List<Attendee> eventAttList = new ArrayList<>();
+          eventAttList = this.getEventAtts(eventTicketTransactionList);
+
+        for(Attendee att:eventAttList){
+           emailList.add(att.getEmail());
+        } 
+            
+
+        }else if(boardcastOption.equals("Both")){
+            List<BusinessPartner> eventBpList = new ArrayList<>();
+            eventBpList = this.getEventBps(eventBoothTransactionList);    
+            List<Attendee> eventAttList = new ArrayList<>();
+            eventAttList = this.getEventAtts(eventTicketTransactionList);
+
+        for(BusinessPartner bp:eventBpList){
+           emailList.add(bp.getEmail());
+        } 
+            
+        for(Attendee att:eventAttList){
+           emailList.add(att.getEmail());
+        } 
+            
+        }
+
+
+        String message = boardcastMessageRequest.getContent();
+
+        SimpleMailMessage email = new SimpleMailMessage();
+        
+        String [] mailArray = emailList.toArray(new String[0]);
+        System.out.println("mailArray");
+        System.out.println(mailArray);
+        email.setFrom(fromEmail);
+        email.setTo(mailArray);
+        email.setSubject(subject);
+        email.setText("You have received the following message from " + eo.getName() + ":" + "\r\n\r\n" + "\""
+                + message + "\"" + " " + "\r\n\r\n" + "<b>"
+                + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>"
+                + "Please direct your reply to " + eo.getName() + " at " + eo.getEmail() + "</b>");
+        // cc the person who submitted the enquiry.
+        email.setCc(eo.getEmail());
+        javaMailSender.send(email);
+    }
     }
 
 
