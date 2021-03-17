@@ -136,6 +136,14 @@ public class EventOrganiserService {
         return eo.getVipList();
     }
 
+    public boolean isBpInVipList(Long eoId,Long bpId){
+        EventOrganiser eo = getEventOrganiserById(eoId);
+        BusinessPartner bp = bpService.getBusinessPartnerById(bpId);
+        List<BusinessPartner> current = eo.getVipList();
+        boolean isBpPresent = current.contains(bp);
+        return isBpPresent;
+    }
+
     public List<BusinessPartner> getAllVips(Long eoId) {
         EventOrganiser eo = getEventOrganiserById(eoId);
         return eo.getVipList();

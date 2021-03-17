@@ -41,4 +41,6 @@ public class OrganiserSpecification implements Specification<EventOrganiser> {
             return null;
         }
     }
+
+
 }
