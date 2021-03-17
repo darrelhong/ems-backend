@@ -106,6 +106,7 @@ public class BusinessPartnerController {
         return new SignupResponse("success");
     }
 
+
     @GetMapping(path = "/get-partners")
     public Page<BusinessPartner> getPartners(@RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
@@ -117,9 +118,9 @@ public class BusinessPartnerController {
     @GetMapping(path = "/get-partners-cat")
     public Page<BusinessPartner> getPartnersCat(@RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
-            @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword, @RequestParam(required = false) String businessCategory) {
-                System.out.println("catr" + businessCategory);
-        return bpService.getAllPartnersCat(page, size, sort, sortDir, keyword, businessCategory);
+            @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword, @RequestParam(required = false) String businessCategory, @RequestParam(required = false) String clear) {
+            System.out.println("clear" + clear);
+        return bpService.getAllPartnersCat(page, size, sort, sortDir, keyword, businessCategory, clear);
     }
 
     @GetMapping(path = "/search")
