@@ -4,6 +4,7 @@ import com.is4103.backend.controller.BusinessPartnerController;
 import com.is4103.backend.controller.EventOrganiserController;
 import com.is4103.backend.dto.FollowRequest;
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.dto.UpdateAttendeeRequest;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
@@ -65,6 +66,10 @@ public class AttendeeService {
         return atnRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
     }
 
+    public Attendee getAttendeeByEmail(String email) {
+        return atnRepository.findByEmail(email);
+    }
+
     @Transactional
     public Attendee registerNewAttendee(SignupRequest signupRequest, boolean enabled)
             throws UserAlreadyExistsException {
@@ -98,9 +103,17 @@ public class AttendeeService {
 
         return atn;
     }
+    
+    @Transactional
+    public Attendee updateAttendee(Attendee user, UpdateAttendeeRequest updateAttendeeRequest) {
 
-    public Attendee getAttendeeByEmail(String email) {
-        return atnRepository.findByEmail(email);
+        user.setName(updateAttendeeRequest.getName());
+        user.setDescription(updateAttendeeRequest.getDescription());
+        user.setAddress(updateAttendeeRequest.getAddress());
+        user.setPhonenumber(updateAttendeeRequest.getPhonenumber());
+        user.setCategoryPreferences(updateAttendeeRequest.getCategoryPreferences());
+
+        return atnRepository.save(user);
     }
 
     @Transactional
@@ -157,11 +170,4 @@ public class AttendeeService {
         eoRepository.save(eo);
         return atnRepository.save(user);
     }
-
-
-
-
-
-
-    
 }
