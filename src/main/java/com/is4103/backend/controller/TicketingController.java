@@ -4,6 +4,9 @@ import javax.validation.Valid;
 
 import com.is4103.backend.dto.ticketing.CheckoutDto;
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
+import com.is4103.backend.model.Attendee;
+import com.is4103.backend.model.User;
+import com.is4103.backend.service.AttendeeService;
 import com.is4103.backend.service.TicketingService;
 import com.is4103.backend.util.errors.TicketCapacityExceededException;
 import com.is4103.backend.util.errors.ticketing.CheckoutException;
@@ -11,6 +14,7 @@ import com.stripe.exception.StripeException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,11 +29,17 @@ public class TicketingController {
     @Autowired
     private TicketingService ticketingService;
 
-    @PostMapping(value = "/{id}")
-    public ResponseEntity<CheckoutResponse> createTransaction(@PathVariable Long id,
-            @RequestBody @Valid CheckoutDto checkoutDto) {
+    @Autowired
+    private AttendeeService attendeeService;
+
+    @PostMapping(value = "/checkout")
+    public ResponseEntity<CheckoutResponse> createTransaction(@RequestBody @Valid CheckoutDto checkoutDto) {
+        Attendee attendee = attendeeService
+                .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
         try {
-            CheckoutResponse result = ticketingService.createTransaction(id, checkoutDto.getTicketQty());
+            CheckoutResponse result = ticketingService.createTransaction(checkoutDto.getEventId(),
+                    checkoutDto.getTicketQty(), attendee);
 
             if (result != null) {
                 return ResponseEntity.ok(result);
@@ -40,4 +50,5 @@ public class TicketingController {
             throw new CheckoutException();
         }
     }
+
 }

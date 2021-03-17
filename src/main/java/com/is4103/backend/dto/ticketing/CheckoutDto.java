@@ -12,5 +12,8 @@ import lombok.Setter;
 public class CheckoutDto {
 
     @NotNull
+    private Long eventId;
+
+    @NotNull
     private Integer ticketQty;
 }
