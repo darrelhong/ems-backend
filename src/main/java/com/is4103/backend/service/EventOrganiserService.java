@@ -332,7 +332,7 @@ public class EventOrganiserService {
           List<BusinessPartner> eventBpList = new ArrayList<>();
           for(int i = 0;i < eventBoothTransactionList.size();i++){
                 EventBoothTransaction transItem = eventBoothTransactionList.get(i);
-                if(transItem.getPaymentStatus().equals("Completed")){
+                if(transItem.getPaymentStatus().toString().equals("COMPLETED")){
                     eventBpList.add(transItem.getBusinessPartner());
                 }
             }
@@ -344,7 +344,7 @@ public class EventOrganiserService {
           List<Attendee> eventAttList = new ArrayList<>();
           for(int i = 0;i < eventTicketTransactionList.size();i++){
                 TicketTransaction transItem = eventTicketTransactionList.get(i);
-                if(transItem.getPaymentStatus().equals("Completed")){
+                if(transItem.getPaymentStatus().toString().equals("COMPLETED")){
                     eventAttList.add(transItem.getAttendee());
                 }
             }

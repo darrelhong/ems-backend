@@ -18,7 +18,6 @@ public class BoardcastMessageRequest {
     @NotEmpty
     private String content;
     @NotNull
-    @NotEmpty
     private Long eventId;
     @NotNull
     @NotEmpty
