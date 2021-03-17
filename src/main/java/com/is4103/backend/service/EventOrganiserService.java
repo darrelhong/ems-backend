@@ -351,6 +351,7 @@ public class EventOrganiserService {
             return eventAttList;
     }
         
+    @Transactional
     public void boardcastMessage(User eo, BoardcastMessageRequest boardcastMessageRequest) {
 
         String subject = boardcastMessageRequest.getSubject();
@@ -397,7 +398,6 @@ public class EventOrganiserService {
             
         }
 
-
         String message = boardcastMessageRequest.getContent();
 
         SimpleMailMessage email = new SimpleMailMessage();
@@ -416,8 +416,6 @@ public class EventOrganiserService {
         email.setCc(eo.getEmail());
         javaMailSender.send(email);
     }
-    }
-
 
 }
 
