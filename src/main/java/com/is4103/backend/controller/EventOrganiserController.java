@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import com.is4103.backend.dto.BoardcastMessageRequest;
+import com.is4103.backend.dto.BroadcastMessageRequest;
 import com.is4103.backend.dto.FileStorageProperties;
 import com.is4103.backend.dto.OrganiserSearchCriteria;
 import com.is4103.backend.dto.RejectEventOrganiserDto;
@@ -260,10 +260,12 @@ public class EventOrganiserController {
         return new UploadFileResponse("success");
         
     }
+    
+ 
 
     @PreAuthorize("hasAnyRole('EVNTORG')")
     @PostMapping(value = "/boardcast")
-    public ResponseEntity sendEnquiry(@RequestBody @Valid BoardcastMessageRequest boardcastMessageRequest) {
+    public ResponseEntity sendEnquiry(@RequestBody @Valid BroadcastMessageRequest broadcastMessageRequest) {
         User sender = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         // verify user id
         // if current user is null
@@ -271,7 +273,7 @@ public class EventOrganiserController {
             throw new AuthenticationServiceException("An error has occured");
         } else {
 
-            eoService.boardcastMessage(sender,boardcastMessageRequest);
+            eoService.broadcastMessage(sender,broadcastMessageRequest);
 
             }
 

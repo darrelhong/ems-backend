@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class BoardcastMessageRequest {
+public class BroadcastMessageRequest {
 
     @NotNull
     @NotEmpty
@@ -21,7 +21,7 @@ public class BoardcastMessageRequest {
     private Long eventId;
     @NotNull
     @NotEmpty
-    private String boardcastOption;
+    private String broadcastOption;
 
 
 }

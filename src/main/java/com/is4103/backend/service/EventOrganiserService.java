@@ -10,7 +10,7 @@ import java.util.Set;
 import javax.mail.internet.InternetAddress;
 import javax.transaction.Transactional;
 
-import com.is4103.backend.dto.BoardcastMessageRequest;
+import com.is4103.backend.dto.BroadcastMessageRequest;
 import com.is4103.backend.dto.OrganiserSearchCriteria;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
@@ -332,7 +332,7 @@ public class EventOrganiserService {
           List<BusinessPartner> eventBpList = new ArrayList<>();
           for(int i = 0;i < eventBoothTransactionList.size();i++){
                 EventBoothTransaction transItem = eventBoothTransactionList.get(i);
-                if(transItem.getPaymentStatus().toString().equals("COMPLETED")){
+                if(!(transItem.getPaymentStatus().toString().equals("REFUNDED"))){
                     eventBpList.add(transItem.getBusinessPartner());
                 }
             }
@@ -344,7 +344,7 @@ public class EventOrganiserService {
           List<Attendee> eventAttList = new ArrayList<>();
           for(int i = 0;i < eventTicketTransactionList.size();i++){
                 TicketTransaction transItem = eventTicketTransactionList.get(i);
-                if(transItem.getPaymentStatus().toString().equals("COMPLETED")){
+                if(!(transItem.getPaymentStatus().toString().equals("REFUNDED"))){
                     eventAttList.add(transItem.getAttendee());
                 }
             }
@@ -352,17 +352,17 @@ public class EventOrganiserService {
     }
         
     @Transactional
-    public void boardcastMessage(User eo, BoardcastMessageRequest boardcastMessageRequest) {
+    public void broadcastMessage(User eo, BroadcastMessageRequest broadcastMessageRequest) {
 
-        String subject = boardcastMessageRequest.getSubject();
-        String boardcastOption = boardcastMessageRequest.getBoardcastOption();
+        String subject = broadcastMessageRequest.getSubject();
+        String broadcastOption = broadcastMessageRequest.getBroadcastOption();
         List<String> emailList = new ArrayList<>();
-        Event event = eventService.getEventById(boardcastMessageRequest.getEventId());
+        Event event = eventService.getEventById(broadcastMessageRequest.getEventId());
         List<EventBoothTransaction> eventBoothTransactionList = new ArrayList<>();
         eventBoothTransactionList = event.getEventBoothTransactions();
         List<TicketTransaction> eventTicketTransactionList = new ArrayList<>();
         eventTicketTransactionList = event.getTicketTransactions();
-        if(boardcastOption.equals("Allbp")){
+        if(broadcastOption.equals("Allbp")){
         
           List<BusinessPartner> eventBpList = new ArrayList<>();
           eventBpList = this.getEventBps(eventBoothTransactionList);
@@ -372,7 +372,7 @@ public class EventOrganiserService {
         } 
             
             
-        }else if(boardcastOption.equals("AllAtt")){
+        }else if(broadcastOption.equals("Allatt")){
               
           List<Attendee> eventAttList = new ArrayList<>();
           eventAttList = this.getEventAtts(eventTicketTransactionList);
@@ -382,7 +382,7 @@ public class EventOrganiserService {
         } 
             
 
-        }else if(boardcastOption.equals("Both")){
+        }else if(broadcastOption.equals("Both")){
             List<BusinessPartner> eventBpList = new ArrayList<>();
             eventBpList = this.getEventBps(eventBoothTransactionList);    
             List<Attendee> eventAttList = new ArrayList<>();
@@ -398,7 +398,7 @@ public class EventOrganiserService {
             
         }
 
-        String message = boardcastMessageRequest.getContent();
+        String message = broadcastMessageRequest.getContent();
 
         SimpleMailMessage email = new SimpleMailMessage();
         
