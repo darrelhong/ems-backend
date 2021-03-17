@@ -222,20 +222,28 @@ public class BusinessPartnerService {
 
     }
 
-    public Page<BusinessPartner> getAllPartnersCat(int page, int size, String sortBy, String sortDir, String keyword, String businessCategory) {
+   
+
+    public Page<BusinessPartner> getAllPartnersCat(int page, int size, String sortBy, String sortDir, String keyword, String businessCategory, String clear) {
+        
+      if(clear !=null && clear.equals("true")){
+        return bpRepository.findAll(PageRequest.of(page, size));
+
+      }else{
         Sort sort = null;
         if (sortBy != null && sortDir != null) {
             if (sortDir.equals("desc")) {
                 sort = Sort.by(sortBy).descending();
-            } else {
+            } else if (sortDir.equals("asc")) {
                 sort = Sort.by(sortBy).ascending();
             }
         }
         
+       
 
         if(businessCategory != null){
+           
             if (sort == null) {
-                System.out.println( "test " + bpRepository.findByBusinessCategoryContaining(businessCategory,PageRequest.of(page, size)));
                 return bpRepository.findByBusinessCategoryContaining(businessCategory,PageRequest.of(page, size));
 
             } else {
@@ -247,6 +255,7 @@ public class BusinessPartnerService {
 
         
         if (keyword != null) {
+            
             if (sort == null) {
                 return bpRepository.findByNameContaining(keyword,PageRequest.of(page, size));
             } else {
@@ -254,12 +263,18 @@ public class BusinessPartnerService {
                         PageRequest.of(page, size, sort));
             }
 
-        }
+        } 
+        
+        
+
         if (sort == null) {
             return bpRepository.findAll(PageRequest.of(page, size));
         } else {
+            
             return bpRepository.findAll(PageRequest.of(page, size, sort));
         }
+
+      }
 
     }
 

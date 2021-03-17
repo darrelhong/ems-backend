@@ -6,11 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface BusinessPartnerRepository extends JpaRepository<BusinessPartner, Long> {
+public interface BusinessPartnerRepository extends JpaRepository<BusinessPartner, Long>, JpaSpecificationExecutor<BusinessPartner>  {
     BusinessPartner findByEmail(String email);
 
-    // Page<BusinessPartner> findAll(Pageable pageable);
+    // Page<BusinessPartner> findAll(PartnerSpecification partnerSpecification, Pageable pageable );
 
     Page<BusinessPartner> findByNameContaining(String name,  Pageable pageable);
 
