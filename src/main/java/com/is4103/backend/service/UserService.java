@@ -9,6 +9,7 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 
 import com.is4103.backend.dto.DisabledAccountRequest;
+import com.is4103.backend.dto.SendEnquiryRequest;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.model.Admin;
@@ -300,5 +301,32 @@ public class UserService {
         User user = getUserById(id);
         user.setEnabled(false);
         return userRepository.save(user);
+    }
+
+    public void sendEnquiry(SendEnquiryRequest sendEnquiry,String eventName,User sender, User receiver) {
+      
+        String subject = "";
+        String recipientAddress = sendEnquiry.getReceiverEmail();
+   
+        if(!(eventName).equals("")){
+            subject = eventName +" - " + sendEnquiry.getSubject();
+        }else{
+            subject = sendEnquiry.getSubject();
+        }
+    
+        String message = sendEnquiry.getContent();
+
+        SimpleMailMessage email = new SimpleMailMessage();
+
+        email.setFrom(fromEmail);
+        email.setTo(recipientAddress);
+        email.setSubject(subject);
+        email.setText("Dear " +receiver.getName()+ "," + "\r\n\r\n"+
+        "You have received the following enquiry message from " + sender.getName() +":"+ 
+        "\r\n\r\n" + "\"" + message +"\""+ " " + 
+        "\r\n\r\n" + "<b>"+ "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" +"<b>" + "Please direct your reply to "+ sender.getName() +" at " + sendEnquiry.getSenderEmail() + "</b>");
+        // cc the person who submitted the enquiry.
+        email.setCc(sendEnquiry.getSenderEmail());
+        javaMailSender.send(email);
     }
 }

@@ -258,6 +258,11 @@ public class DataInitRunner implements ApplicationRunner {
         booths.add(new Booth(299.0, 6.3, 5.4, event));
         event.setBooths(booths);
 
+
+        // EventBoothTransaction transaction = new EventBoothTransaction();
+        // transaction.setEvent(event);
+        // eventBoothTransactionRepository.save(transaction);
+
         Event event2 = new Event();
         event2.setName("IT Fair 2021");
         event2.setAddress("Sembwang2");
