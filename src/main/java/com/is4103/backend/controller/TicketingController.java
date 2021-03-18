@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import com.is4103.backend.dto.ticketing.CheckoutDto;
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
+import com.is4103.backend.dto.ticketing.PaymentCompleteDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.service.AttendeeService;
 import com.is4103.backend.service.TicketingService;
@@ -50,4 +51,14 @@ public class TicketingController {
         }
     }
 
+    @PostMapping(value = "/payment-complete")
+    public ResponseEntity<String> paymentComplete(@RequestBody @Valid PaymentCompleteDto paymentCompleteDto) {
+        try {
+            ticketingService.paymentComplete(paymentCompleteDto.getTicketTransactionIds());
+            return ResponseEntity.ok("Success");
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return ResponseEntity.badRequest().body("An unknown error occured");
+        }
+    }
 }

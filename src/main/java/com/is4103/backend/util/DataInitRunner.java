@@ -570,11 +570,13 @@ public class DataInitRunner implements ApplicationRunner {
         ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
         Attendee atnd = attendeeService.getAttendeeByEmail("attendee@abc.com");
         ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
         ticketTransactionRepository.save(ttransaction);
 
         ttransaction = new TicketTransaction();
         ttransaction.setEvent(event);
         ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
         ticketTransactionRepository.save(ttransaction);
 
         List<Event> eoEvents = new ArrayList<>();
