@@ -22,6 +22,7 @@ import com.is4103.backend.model.EventBoothTransaction;
 import com.is4103.backend.repository.RoleRepository;
 import com.is4103.backend.repository.TicketTransactionRepository;
 import com.is4103.backend.repository.UserRepository;
+import com.is4103.backend.service.AttendeeService;
 import com.thedeanda.lorem.Lorem;
 import com.thedeanda.lorem.LoremIpsum;
 import com.is4103.backend.repository.EventOrganiserRepository;
@@ -63,6 +64,9 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AttendeeService attendeeService;
 
     private EventOrganiser eoTest;
 
@@ -564,10 +568,13 @@ public class DataInitRunner implements ApplicationRunner {
         TicketTransaction ttransaction = new TicketTransaction();
         ttransaction.setEvent(event);
         ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        Attendee atnd = attendeeService.getAttendeeByEmail("attendee@abc.com");
+        ttransaction.setAttendee(atnd);
         ticketTransactionRepository.save(ttransaction);
 
         ttransaction = new TicketTransaction();
         ttransaction.setEvent(event);
+        ttransaction.setAttendee(atnd);
         ticketTransactionRepository.save(ttransaction);
 
         List<Event> eoEvents = new ArrayList<>();

@@ -1,6 +1,5 @@
 package com.is4103.backend.controller;
 
-import java.io.Console;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -70,10 +69,8 @@ public class AttendeeController {
 
     @PreAuthorize("hasAnyRole('ATND')")
     @PostMapping(value = "/update")
-    public ResponseEntity<Attendee> updateAttendee(
-            @RequestBody @Valid UpdateAttendeeRequest updateAttendeeRequest) {
-        Attendee user = atnService
-                .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    public ResponseEntity<Attendee> updateAttendee(@RequestBody @Valid UpdateAttendeeRequest updateAttendeeRequest) {
+        Attendee user = atnService.getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
         // verify user id
         if (updateAttendeeRequest.getId() != user.getId()) {

@@ -44,10 +44,14 @@ public class AttendeeService {
     }
 
     public Attendee getAttendeeById(Long id) {
-        return atnRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
+        return atnRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Attendee not found"));
     }
 
-    public Attendee getAttendeeByEmail(String email) {
+    public Attendee getAttendeeByEmail(String email) throws UserNotFoundException {
+        Attendee attendee = atnRepository.findByEmail(email);
+        if (attendee == null) {
+            throw new UserNotFoundException("Attendee not found");
+        }
         return atnRepository.findByEmail(email);
     }
 

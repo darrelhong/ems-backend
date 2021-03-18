@@ -8,16 +8,19 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 // import org.hibernate.mapping.Set;
 
 @Entity
-
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class Attendee extends User {
 
     @Column(nullable = true)
@@ -31,7 +34,6 @@ public class Attendee extends User {
     private List<EventOrganiser> followedEventOrganisers;
 
     @OneToMany(mappedBy = "attendee")
-    @ElementCollection(targetClass = TicketTransaction.class)
     private List<TicketTransaction> ticketTransactions;
 
     @JsonIgnore

@@ -10,13 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonView;
 
 import lombok.Data;
 
 @Entity
 @Data
-@JsonView(EventViews.Private.class)
 public class TicketTransaction {
 
     @Id
@@ -27,12 +25,17 @@ public class TicketTransaction {
     private PaymentStatus paymentStatus;
 
     @ManyToOne
-    @JsonView(EventViews.Basic.class)
+    @JsonIgnoreProperties({ "eventOrganiser", "eventOrganiser", "eventBoothTransactions", "booths",
+            "ticketTransactions", "favouriteBusinessPartners", "address", "descriptions", "ticketPrice",
+            "ticketCapacity", "eventStartDate", "eventEndDate", "saleStartDate", "salesEndDate", "images",
+            "boothCapacity", "rating", "eventStatus", "hidden", "sellingTicket", "physical", "vip", "published",
+            "availableForSale" })
     private Event event;
 
     @ManyToOne
     @JsonIgnoreProperties({ "categoryPreferences", "followedEventOrganisers", "ticketTransactions",
-            "followedBusinessPartners", "description", "enabled", "address", "roles", "notifications" })
+            "followedBusinessPartners", "description", "enabled", "address", "roles", "notifications", "profilePic",
+            "email", "phonenumber", "followedEventOrgs" })
     private Attendee attendee;
 
     public TicketTransaction() {

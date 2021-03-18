@@ -5,10 +5,10 @@ import javax.validation.Valid;
 import com.is4103.backend.dto.ticketing.CheckoutDto;
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
 import com.is4103.backend.model.Attendee;
-import com.is4103.backend.model.User;
 import com.is4103.backend.service.AttendeeService;
 import com.is4103.backend.service.TicketingService;
 import com.is4103.backend.util.errors.TicketCapacityExceededException;
+import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.errors.ticketing.CheckoutException;
 import com.stripe.exception.StripeException;
 
@@ -18,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -34,10 +33,10 @@ public class TicketingController {
 
     @PostMapping(value = "/checkout")
     public ResponseEntity<CheckoutResponse> createTransaction(@RequestBody @Valid CheckoutDto checkoutDto) {
-        Attendee attendee = attendeeService
-                .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-
         try {
+            Attendee attendee = attendeeService
+                    .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
             CheckoutResponse result = ticketingService.createTransaction(checkoutDto.getEventId(),
                     checkoutDto.getTicketQty(), attendee);
 
@@ -45,7 +44,7 @@ public class TicketingController {
                 return ResponseEntity.ok(result);
             }
             throw new TicketCapacityExceededException();
-        } catch (StripeException e) {
+        } catch (StripeException | UserNotFoundException e) {
             System.out.println(e.getMessage());
             throw new CheckoutException();
         }
