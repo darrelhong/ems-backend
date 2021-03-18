@@ -1,11 +1,14 @@
 package com.is4103.backend.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import com.is4103.backend.dto.ticketing.CheckoutDto;
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
 import com.is4103.backend.dto.ticketing.PaymentCompleteDto;
 import com.is4103.backend.model.Attendee;
+import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.service.AttendeeService;
 import com.is4103.backend.service.TicketingService;
 import com.is4103.backend.util.errors.TicketCapacityExceededException;
@@ -52,13 +55,15 @@ public class TicketingController {
     }
 
     @PostMapping(value = "/payment-complete")
-    public ResponseEntity<String> paymentComplete(@RequestBody @Valid PaymentCompleteDto paymentCompleteDto) {
+    public ResponseEntity<List<TicketTransaction>> paymentComplete(
+            @RequestBody @Valid PaymentCompleteDto paymentCompleteDto) {
         try {
-            ticketingService.paymentComplete(paymentCompleteDto.getTicketTransactionIds());
-            return ResponseEntity.ok("Success");
+            List<TicketTransaction> response = ticketingService
+                    .paymentComplete(paymentCompleteDto.getTicketTransactionIds());
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            System.err.println(e.getMessage());
-            return ResponseEntity.badRequest().body("An unknown error occured");
+            throw new CheckoutException();
         }
     }
 }

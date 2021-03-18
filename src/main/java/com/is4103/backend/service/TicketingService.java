@@ -75,11 +75,14 @@ public class TicketingService {
         return null;
     }
 
-    public void paymentComplete(List<String> ids) throws TicketTransactionNotFoundException {
+    public List<TicketTransaction> paymentComplete(List<String> ids) throws TicketTransactionNotFoundException {
+        List<TicketTransaction> tickets = new ArrayList<>();
         for (String id : ids) {
             TicketTransaction tt = findById(id);
             tt.setPaymentStatus(PaymentStatus.COMPLETED);
             ttRepository.save(tt);
+            tickets.add(tt);
         }
+        return tickets;
     }
 }
