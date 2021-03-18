@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CheckoutResponse {
 
-    private String clientScret;
+    private String clientSecret;
 
     private List<TicketTransaction> tickets;
 }
