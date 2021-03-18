@@ -47,16 +47,18 @@ public class TicketingService {
                 tickets.add(tt);
             }
 
+            Double paymentAmount = (double) event.getTicketPrice() * ticketQty;
+
             // times hundered to convert to cents
-            Long paymentAmount = (long) event.getTicketPrice() * ticketQty * 100;
+            Long stripePaymentAmount = Double.valueOf(paymentAmount * 100).longValue();
 
             Stripe.apiKey = stripeApiKey;
 
             PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder().setCurrency("sgd")
-                    .setAmount(paymentAmount).build();
+                    .setAmount(stripePaymentAmount).build();
 
             PaymentIntent intent = PaymentIntent.create(createParams);
-            CheckoutResponse checkoutResponse = new CheckoutResponse(intent.getClientSecret(), tickets);
+            CheckoutResponse checkoutResponse = new CheckoutResponse(paymentAmount, intent.getClientSecret(), tickets);
             return checkoutResponse;
         }
         return null;

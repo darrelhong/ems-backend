@@ -13,7 +13,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CheckoutResponse {
 
+    private Double paymentAmount;
+
     private String clientSecret;
 
     private List<TicketTransaction> tickets;
+
 }
