@@ -11,6 +11,7 @@ import javax.mail.internet.InternetAddress;
 import javax.transaction.Transactional;
 
 import com.is4103.backend.dto.BroadcastMessageRequest;
+import com.is4103.backend.dto.BroadcastMessageToFollowersRequest;
 import com.is4103.backend.dto.OrganiserSearchCriteria;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
@@ -192,8 +193,34 @@ public class EventOrganiserService {
         return eo.getEvents();
 
     }
+
+      public List<Event> getValidBpEventsByEventOrgId(Long eoId) {
+
+        List<Event> eventlist = eventService.getAllEventsByOrganiser(eoId);
+        List<Event> validEventListForBp = new ArrayList<>();
+        for(Event event: eventlist){
+          if(event.getEventStatus().toString().equals("CREATED") && !event.isHidden()){
+            validEventListForBp.add(event);
+          }
+        }
+        return validEventListForBp;
+    }
+
+        public List<Event> getValidAttEventsByEventOrgId(Long eoId) {
+
+        List<Event> eventlist = eventService.getAllEventsByOrganiser(eoId);
+        List<Event> validEventListForAtt = new ArrayList<>();
+        for(Event event: eventlist){
+          if(event.getEventStatus().toString().equals("CREATED") && !event.isHidden() && event.isPublished()){
+            validEventListForAtt.add(event);
+          }
+        }
+        return validEventListForAtt;
+    }
+
+
+    
       public List<Event> getAllEventsByEoIdRoleStatus(Long eoId,String role, String status) {
-        EventOrganiser eo = getEventOrganiserById(eoId);
         List<Event> eventlist = eventService.getAllEvents();
         List<Event> filterEventList = new ArrayList<>();
      
@@ -379,8 +406,7 @@ public class EventOrganiserService {
 
         for(Attendee att:eventAttList){
            emailList.add(att.getEmail());
-        } 
-            
+        }    
 
         }else if(broadcastOption.equals("Both")){
             List<BusinessPartner> eventBpList = new ArrayList<>();
@@ -417,5 +443,70 @@ public class EventOrganiserService {
         javaMailSender.send(email);
     }
 
+
+      @Transactional
+    public void broadcastToFollowers(User eo, BroadcastMessageToFollowersRequest broadcastMessageToFollowersRequest) {
+
+        String subject = broadcastMessageToFollowersRequest.getSubject();
+        String broadcastOption = broadcastMessageToFollowersRequest.getBroadcastOption();
+        List<String> emailList = new ArrayList<>();
+    
+     
+        if(broadcastOption.equals("AllBpFollowers")){  
+       
+        List<BusinessPartner> BpFollowersList = new ArrayList<>();
+        BpFollowersList = this.getPartnerFollowersById(eo.getId());
+        for(BusinessPartner bp:BpFollowersList){
+           emailList.add(bp.getEmail());
+        }
+            
+            
+        }else if(broadcastOption.equals("AllAttFollowers")){
+
+        List<Attendee> AttFollowersList = new ArrayList<>();
+        AttFollowersList = this.getAttendeeFollowersById(eo.getId());
+
+        for(Attendee att:AttFollowersList){
+           emailList.add(att.getEmail());
+        }    
+
+        }else if(broadcastOption.equals("Both")){
+            List<BusinessPartner> BpFollowersList = new ArrayList<>();
+            BpFollowersList = this.getPartnerFollowersById(eo.getId()); 
+            List<Attendee> AttFollowersList = new ArrayList<>();
+            AttFollowersList = this.getAttendeeFollowersById(eo.getId());
+
+        for(BusinessPartner bp: BpFollowersList){
+           emailList.add(bp.getEmail());
+        } 
+            
+        for(Attendee att: AttFollowersList){
+           emailList.add(att.getEmail());
+        } 
+            
+        }
+
+        String message = broadcastMessageToFollowersRequest.getContent();
+
+        SimpleMailMessage email = new SimpleMailMessage();
+        
+        String [] mailArray = emailList.toArray(new String[0]);
+        System.out.println("mailArray");
+        System.out.println(mailArray);
+        email.setFrom(fromEmail);
+        email.setTo(mailArray);
+        email.setSubject(subject);
+        email.setText("You have received the following message from " + eo.getName() + ":" + "\r\n\r\n" + "\""
+                + message + "\"" + " " + "\r\n\r\n" + "<b>"
+                + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>"
+                + "Please direct your reply to " + eo.getName() + " at " + eo.getEmail() + "</b>");
+        // cc the person who submitted the enquiry.
+        email.setCc(eo.getEmail());
+        javaMailSender.send(email);
+    }
+
+
+
+    
 }
 

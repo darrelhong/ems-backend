@@ -221,6 +221,11 @@ public class BusinessPartnerController {
         return new UploadFileResponse(user.getProfilePic());
     }
 
+    @GetMapping(value = "/getAllEventByBpId/{bpId}")
+    public List<Event> getAllEventByBpId(@PathVariable Long bpId) {
+
+        return bpService.getAllEventsByBp(bpId);
+    }
     
 
 

@@ -20,6 +20,7 @@ import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.repository.BusinessPartnerRepository;
+import com.is4103.backend.repository.EventBoothTransactionRepository;
 import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.repository.PartnerSpecification;
@@ -61,6 +62,12 @@ public class BusinessPartnerService {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    private EventService eventService;
+
+    @Autowired
+    private EventBoothTransactionService eventBoothTransService;
 
     public List<BusinessPartner> getAllBusinessPartners() {
         return bpRepository.findAll();
@@ -281,6 +288,20 @@ public class BusinessPartnerService {
     public Page<BusinessPartner> search(PartnerSearchCriteria partnerSearchCriteria) {
         return bpRepository.findAll(new PartnerSpecification(partnerSearchCriteria),
                 partnerSearchCriteria.toPageRequest());
+    }
+
+    public List<Event> getAllEventsByBp(Long id) {
+     
+        List<EventBoothTransaction> eventTransList = eventBoothTransService.getAllEventBoothTransactions();
+        List<Event> eventList = new ArrayList<>();
+        for(EventBoothTransaction trans: eventTransList ){
+            if(!(trans.getPaymentStatus().toString().equals("REFUNDED")) && trans.getBusinessPartner().getId() == id){
+            Event event = new Event();
+            event = eventService.getEventById(trans.getEid());
+            eventList.add(event);
+            }
+        }
+        return eventList; 
     }
 
 }
