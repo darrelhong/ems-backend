@@ -139,11 +139,6 @@ public class BusinessPartnerController {
         return bpService.getFollowingById(id);
     }
 
-    @GetMapping(value = "/getAllEventByBpId/{bpId}")
-    public List<Event> getAllEventByBpId(@PathVariable Long bpId) {
-
-        return bpService.getAllEventsByBp(bpId);
-    }
 
     @PreAuthorize("hasAnyRole('BIZPTNR')")
     @PostMapping(value ="/followEO")
