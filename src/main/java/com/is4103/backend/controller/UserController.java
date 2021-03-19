@@ -15,12 +15,10 @@ import com.is4103.backend.dto.LoginResponse;
 import com.is4103.backend.dto.LoginUserResponse;
 import com.is4103.backend.dto.ResetPasswordDto;
 import com.is4103.backend.dto.SignupRequest;
-import com.is4103.backend.dto.UpdatePartnerRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
-import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.service.RoleService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.errors.InvalidTokenException;
@@ -32,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -74,7 +71,8 @@ public class UserController {
     @Autowired
     private RoleService roleService;
 
-    ModelMapper modelMapper = new ModelMapper();
+    @Autowired
+    private ModelMapper modelMapper;
 
     @GetMapping(path = "/all")
     public List<User> getAllUsers() {
