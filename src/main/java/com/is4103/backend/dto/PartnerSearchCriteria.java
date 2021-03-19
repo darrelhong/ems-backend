@@ -15,6 +15,7 @@ public class PartnerSearchCriteria {
     String sortDir;
 
     String keyword;
+    String clear;
 
     public PageRequest toPageRequest() {
         if (sort != null && sortDir != null) {
