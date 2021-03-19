@@ -12,6 +12,7 @@ import com.is4103.backend.dto.ChangePasswordResponse;
 import com.is4103.backend.dto.DisabledAccountRequest;
 import com.is4103.backend.dto.LoginRequest;
 import com.is4103.backend.dto.LoginResponse;
+import com.is4103.backend.dto.LoginUserResponse;
 import com.is4103.backend.dto.ResetPasswordDto;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdatePartnerRequest;
@@ -26,6 +27,7 @@ import com.is4103.backend.util.errors.InvalidTokenException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -72,6 +74,8 @@ public class UserController {
     @Autowired
     private RoleService roleService;
 
+    ModelMapper modelMapper = new ModelMapper();
+
     @GetMapping(path = "/all")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
@@ -102,7 +106,8 @@ public class UserController {
         headers.add("Set-Cookie", ResponseCookie.from("token", token).maxAge(3600)
                 // .httpOnly(true)
                 .path("/").build().toString());
-        return ResponseEntity.ok().headers(headers).body(new LoginResponse(new AuthToken(token), user));
+        return ResponseEntity.ok().headers(headers)
+                .body(new LoginResponse(new AuthToken(token), modelMapper.map(user, LoginUserResponse.class)));
     }
 
     @GetMapping(value = "/refreshtoken")
@@ -188,8 +193,7 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EVNTORG', 'BIZPTNR', 'ATND')")
     @PostMapping("/change-password")
-    public ChangePasswordResponse changePassword(
-            @RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
+    public ChangePasswordResponse changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
 
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
