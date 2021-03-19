@@ -97,20 +97,6 @@ public class BusinessPartnerService {
 
     }
 
-    public List<Event> getAllEventsByBp(Long id) {
-     
-        List<EventBoothTransaction> eventTransList = eventBoothTransService.getAllEventBoothTransactions();
-        List<Event> eventList = new ArrayList<>();
-        for(EventBoothTransaction trans: eventTransList ){
-            if(!(trans.getPaymentStatus().toString().equals("REFUNDED")) && trans.getBusinessPartner().getId() == id){
-            Event event = new Event();
-            event = eventService.getEventById(trans.getEvent().getEid());
-            eventList.add(event);
-            }
-        }
-        return eventList; 
-    }
-
     public Page<BusinessPartner> getBusinessPartnersPage(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return bpRepository.findAll(pageRequest);
