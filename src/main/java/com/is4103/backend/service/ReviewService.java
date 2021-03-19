@@ -1,5 +1,7 @@
 package com.is4103.backend.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,6 +78,16 @@ public class ReviewService {
         review.setRating(reviewRequest.getRating());
         review.setReviewText(reviewRequest.getReview());
         review.setEvent(event);
+        LocalDateTime now = LocalDateTime.now();
+
+        System.out.println("Before : " + now);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
+        String formatDateTime = now.format(formatter);
+        review.setReviewDateTime(formatDateTime);
+
+        System.out.println("After : " + formatDateTime);
         if (reviewRequest.getAttendeeId() != 0L) {
             Attendee attendee = atnController.getAttendeeById(reviewRequest.getAttendeeId());
             System.out.println("is attendee" + attendee);

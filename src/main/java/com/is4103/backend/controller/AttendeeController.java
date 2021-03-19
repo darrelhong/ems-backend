@@ -10,6 +10,8 @@ import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
 import com.is4103.backend.dto.UpdateAttendeeRequest;
 import com.is4103.backend.model.Attendee;
+import com.is4103.backend.model.BusinessPartner;
+import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.service.AttendeeService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
@@ -50,6 +52,16 @@ public class AttendeeController {
         return atnService.getAttendeeById(id);
     }
 
+    @GetMapping(path = "listFollowingBP/{id}")
+    public List<BusinessPartner> getFollowingBP(@PathVariable Long id) {
+        return atnService.getFollowingBp(id);
+    }
+
+    @GetMapping(path = "listFollowingEo/{id}")
+    public List<EventOrganiser> getFollowingEo(@PathVariable Long id) {
+        return atnService.getFollowingEo(id);
+    }
+
     @PostMapping(value = "/register")
     public SignupResponse registerNewAttendee(@RequestBody @Valid SignupRequest signupRequest) {
         // return
@@ -70,6 +82,8 @@ public class AttendeeController {
 
         return new SignupResponse("success");
     }
+
+
     
     @PreAuthorize("hasAnyRole('ATND')")
     @PostMapping(value ="/followBP")
