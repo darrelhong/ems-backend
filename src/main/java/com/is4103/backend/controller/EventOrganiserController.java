@@ -264,8 +264,8 @@ public class EventOrganiserController {
  
 
     @PreAuthorize("hasAnyRole('EVNTORG')")
-    @PostMapping(value = "/boardcast")
-    public ResponseEntity sendEnquiry(@RequestBody @Valid BroadcastMessageRequest broadcastMessageRequest) {
+    @PostMapping(value = "/broadcast")
+    public ResponseEntity broadcastMessage(@RequestBody @Valid BroadcastMessageRequest broadcastMessageRequest) {
         User sender = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         // verify user id
         // if current user is null

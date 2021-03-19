@@ -404,7 +404,9 @@ public class EventOrganiserService {
         
         String [] mailArray = emailList.toArray(new String[0]);
         System.out.println("mailArray");
-        System.out.println(mailArray);
+        for (int i = 0; i < mailArray.length; i++) {
+            System.out.println(mailArray[i]);
+        }
         email.setFrom(fromEmail);
         email.setTo(mailArray);
         email.setSubject(subject);
