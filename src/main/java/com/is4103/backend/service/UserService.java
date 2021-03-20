@@ -81,6 +81,10 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public <T> T getUserByEmail(String email, Class<T> type) {
+        return userRepository.findByEmail(email, type);
+    }
+
     // d. might be better to split this into respective controllers for organiser,
     // partner etc
 

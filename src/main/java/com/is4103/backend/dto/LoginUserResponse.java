@@ -4,21 +4,22 @@ import java.util.Set;
 
 import com.is4103.backend.model.Role;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+public interface LoginUserResponse {
+    Long getId();
 
-@Getter
-@Setter
-@NoArgsConstructor
-public class LoginUserResponse {
-    private Long id;
-    private String name;
-    private String description;
-    private String profilePic;
-    private String email;
-    private Boolean enabled;
-    private String phonenumber;
-    private String address;
-    private Set<Role> roles;
+    String getName();
+
+    String getDescription();
+
+    String getProfilePic();
+
+    String getEmail();
+
+    Boolean getEnabled();
+
+    String getPhonenumber();
+
+    String getAddress();
+
+    Set<Role> getRoles();
 }

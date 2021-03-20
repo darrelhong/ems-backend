@@ -25,7 +25,6 @@ import com.is4103.backend.util.errors.InvalidTokenException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -71,9 +70,6 @@ public class UserController {
     @Autowired
     private RoleService roleService;
 
-    @Autowired
-    private ModelMapper modelMapper;
-
     @GetMapping(path = "/all")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
@@ -92,7 +88,7 @@ public class UserController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // verify user has requested role
-        User user = userService.getUserByEmail(authentication.getName());
+        LoginUserResponse user = userService.getUserByEmail(authentication.getName(), LoginUserResponse.class);
         Role loginRole = roleService.findByRoleEnum(RoleEnum.valueOf(role.toUpperCase()));
         Set<Role> userRoles = user.getRoles();
 
@@ -104,8 +100,7 @@ public class UserController {
         headers.add("Set-Cookie", ResponseCookie.from("token", token).maxAge(3600)
                 // .httpOnly(true)
                 .path("/").build().toString());
-        return ResponseEntity.ok().headers(headers)
-                .body(new LoginResponse(new AuthToken(token), modelMapper.map(user, LoginUserResponse.class)));
+        return ResponseEntity.ok().headers(headers).body(new LoginResponse(new AuthToken(token), user));
     }
 
     @GetMapping(value = "/refreshtoken")
