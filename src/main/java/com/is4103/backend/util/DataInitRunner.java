@@ -565,10 +565,52 @@ public class DataInitRunner implements ApplicationRunner {
         eventRepository.save(event8);
         eventRepository.save(event9);
 
+        Event previous = new Event();
+        previous.setName("Previous event");
+        previous.setAddress("some location string");
+        previous.setDescriptions("lorem ipsum dolor sit amet");
+        previous.setPhysical(true);
+        previous.setEventStartDate(LocalDateTime.now().minusMonths(1));
+        previous.setEventEndDate(LocalDateTime.now().minusWeeks(3));
+        previous.setSellingTicket(true);
+        previous.setTicketPrice(24);
+        previous.setTicketCapacity(99);
+        previous.setSaleStartDate(LocalDateTime.now().minusMonths(1).minusWeeks(2));
+        previous.setSalesEndDate(LocalDateTime.now().minusMonths(1).minusWeeks(1));
+        previous.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/previous-event/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/previous-event/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/previous-event/image-3.jpg"));
+        previous.setBoothCapacity(305);
+        previous.setRating(5);
+        previous.setEventStatus(EventStatus.CREATED);
+        previous.setHidden(false);
+        previous.setPublished(true);
+        eventRepository.save(previous);
+
+        Attendee atnd = attendeeService.getAttendeeByEmail("attendee@abc.com");
         TicketTransaction ttransaction = new TicketTransaction();
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(previous);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
+        ticketTransactionRepository.save(ttransaction);
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(previous);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
+        ticketTransactionRepository.save(ttransaction);
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(previous);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
+        ticketTransactionRepository.save(ttransaction);
+
+        ttransaction = new TicketTransaction();
         ttransaction.setEvent(event);
         ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
-        Attendee atnd = attendeeService.getAttendeeByEmail("attendee@abc.com");
         ttransaction.setAttendee(atnd);
         ttransaction.setStripePaymentId("test_id");
         ticketTransactionRepository.save(ttransaction);
