@@ -23,6 +23,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -97,6 +98,6 @@ public class TicketingService {
     }
 
     public <T> Collection<T> getTicketTransactionsAttendee(Attendee attendee, Class<T> type) {
-        return ttRepository.findByAttendee(attendee, type);
+        return ttRepository.findByAttendee(attendee, type, Sort.by("dateTimeOrdered").descending());
     }
 }
