@@ -1,6 +1,7 @@
 package com.is4103.backend.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -8,6 +9,7 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
+import com.is4103.backend.dto.ticketing.TicketTransactionDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.PaymentStatus;
@@ -34,6 +36,9 @@ public class TicketingService {
 
     @Autowired
     private EventService eventService;
+
+    @Autowired
+    private AttendeeService attendeeService;
 
     public TicketTransaction findById(String id) throws TicketTransactionNotFoundException {
         return ttRepository.findById(UUID.fromString(id))
@@ -84,5 +89,10 @@ public class TicketingService {
             tickets.add(tt);
         }
         return tickets;
+    }
+
+    public <T> Collection<T> getTicketTransactionsById(Long id, Class<T> type) {
+        Attendee attendee = attendeeService.getAttendeeById(id);
+        return ttRepository.findByAttendee(attendee, type);
     }
 }

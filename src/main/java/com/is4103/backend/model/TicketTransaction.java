@@ -14,8 +14,6 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.type.UUIDCharType;
 
 import lombok.Data;
 

@@ -1,5 +1,6 @@
 package com.is4103.backend.controller;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -7,6 +8,7 @@ import javax.validation.Valid;
 import com.is4103.backend.dto.ticketing.CheckoutDto;
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
 import com.is4103.backend.dto.ticketing.PaymentCompleteDto;
+import com.is4103.backend.dto.ticketing.TicketTransactionDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.service.AttendeeService;
@@ -21,7 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -65,5 +68,10 @@ public class TicketingController {
         } catch (Exception e) {
             throw new CheckoutException();
         }
+    }
+
+    @GetMapping(value = "/attendee/{id}")
+    public ResponseEntity<Collection<TicketTransactionDto>> getTicketTransactionsById(@PathVariable Long id) {
+        return ResponseEntity.ok(ticketingService.getTicketTransactionsById(id, TicketTransactionDto.class));
     }
 }
