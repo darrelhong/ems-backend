@@ -1,5 +1,6 @@
 package com.is4103.backend.repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -21,4 +22,9 @@ public interface TicketTransactionRepository extends JpaRepository<TicketTransac
 
     <T> Collection<T> findByAttendee(Attendee attendee, Class<T> type, Sort sort);
 
+    <T> Collection<T> findByAttendeeAndEvent_EventStartDateAfter(Attendee attendee, LocalDateTime now, Class<T> type,
+            Sort sort);
+
+    <T> Collection<T> findByAttendeeAndEvent_EventStartDateBefore(Attendee attendee, LocalDateTime now, Class<T> type,
+            Sort sort);
 }

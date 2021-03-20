@@ -1,15 +1,12 @@
 package com.is4103.backend.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-import javax.transaction.Transactional;
-
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
-import com.is4103.backend.dto.ticketing.TicketTransactionDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.PaymentStatus;
@@ -97,7 +94,14 @@ public class TicketingService {
         return ttRepository.findByAttendee(attendee, type);
     }
 
-    public <T> Collection<T> getTicketTransactionsAttendee(Attendee attendee, Class<T> type) {
-        return ttRepository.findByAttendee(attendee, type, Sort.by("dateTimeOrdered").descending());
+    public <T> Collection<T> getTicketTransactionsAttendee(Attendee attendee, String period, Class<T> type) {
+        if (period.equals("upcoming")) {
+            return ttRepository.findByAttendeeAndEvent_EventStartDateAfter(attendee, LocalDateTime.now(), type,
+                    Sort.by("dateTimeOrdered").descending());
+        } else if (period.equals("previous")) {
+            return ttRepository.findByAttendeeAndEvent_EventStartDateBefore(attendee, LocalDateTime.now(), type,
+                    Sort.by("dateTimeOrdered").descending());
+        }
+        return new ArrayList<>();
     }
 }

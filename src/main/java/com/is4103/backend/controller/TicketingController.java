@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -79,9 +80,16 @@ public class TicketingController {
 
     @PreAuthorize("hasRole('ATND')")
     @GetMapping(value = "/attendee")
-    public ResponseEntity<Collection<TicketTransactionDto>> getTicketTransactionsAttendee() {
+    public ResponseEntity<Collection<TicketTransactionDto>> getTicketTransactionsAttendee(
+            @RequestParam(name = "period", defaultValue = "upcoming") String period) {
         Attendee attendee = attendeeService
                 .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        return ResponseEntity.ok(ticketingService.getTicketTransactionsAttendee(attendee, TicketTransactionDto.class));
+        Collection<TicketTransactionDto> result = ticketingService.getTicketTransactionsAttendee(attendee, period,
+                TicketTransactionDto.class);
+
+        if (result.isEmpty()) {
+            return ResponseEntity.badRequest().body(result);
+        }
+        return ResponseEntity.ok(result);
     }
 }
