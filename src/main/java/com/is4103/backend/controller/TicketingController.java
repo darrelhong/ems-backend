@@ -7,7 +7,7 @@ import javax.validation.Valid;
 
 import com.is4103.backend.dto.ticketing.CheckoutDto;
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
-import com.is4103.backend.dto.ticketing.PaymentCompleteDto;
+import com.is4103.backend.dto.ticketing.TransactionListDto;
 import com.is4103.backend.dto.ticketing.TicketTransactionDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.TicketTransaction;
@@ -16,6 +16,7 @@ import com.is4103.backend.service.TicketingService;
 import com.is4103.backend.util.errors.TicketCapacityExceededException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.errors.ticketing.CheckoutException;
+import com.is4103.backend.util.errors.ticketing.TicketTransactionNotFoundException;
 import com.stripe.exception.StripeException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,15 +62,22 @@ public class TicketingController {
 
     @PostMapping(value = "/payment-complete")
     public ResponseEntity<List<TicketTransaction>> paymentComplete(
-            @RequestBody @Valid PaymentCompleteDto paymentCompleteDto) {
+            @RequestBody @Valid TransactionListDto transactionListDto) {
         try {
             List<TicketTransaction> response = ticketingService
-                    .paymentComplete(paymentCompleteDto.getTicketTransactionIds());
+                    .paymentComplete(transactionListDto.getTicketTransactionIds());
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             throw new CheckoutException();
         }
+    }
+
+    @PostMapping(value = "/cancel")
+    public ResponseEntity<?> cancelCheckout(@RequestBody @Valid TransactionListDto transactionListDto)
+            throws TicketTransactionNotFoundException {
+        ticketingService.cancelCheckout(transactionListDto.getTicketTransactionIds());
+        return ResponseEntity.ok("Success");
     }
 
     @PreAuthorize("hasRole('ADMIN')")

@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PaymentCompleteDto {
+public class TransactionListDto {
 
     @NotNull
     @NotEmpty

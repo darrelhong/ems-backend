@@ -89,6 +89,13 @@ public class TicketingService {
         return tickets;
     }
 
+    public void cancelCheckout(List<String> ids) throws TicketTransactionNotFoundException {
+        for (String id : ids) {
+            TicketTransaction tt = findById(id);
+            ttRepository.delete(tt);
+        }
+    }
+
     public <T> Collection<T> getTicketTransactionsById(Long id, Class<T> type) {
         Attendee attendee = attendeeService.getAttendeeById(id);
         return ttRepository.findByAttendee(attendee, type);
