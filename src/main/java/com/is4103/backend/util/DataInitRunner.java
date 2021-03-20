@@ -566,6 +566,7 @@ public class DataInitRunner implements ApplicationRunner {
         eventRepository.save(event9);
 
         Event previous = new Event();
+        previous.setEventOrganiser(eventOrg);
         previous.setName("Previous event");
         previous.setAddress("some location string");
         previous.setDescriptions("lorem ipsum dolor sit amet");
