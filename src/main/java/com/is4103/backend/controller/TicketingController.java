@@ -20,6 +20,7 @@ import com.stripe.exception.StripeException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -70,8 +71,17 @@ public class TicketingController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = "/attendee/{id}")
     public ResponseEntity<Collection<TicketTransactionDto>> getTicketTransactionsById(@PathVariable Long id) {
         return ResponseEntity.ok(ticketingService.getTicketTransactionsById(id, TicketTransactionDto.class));
+    }
+
+    @PreAuthorize("hasRole('ATND')")
+    @GetMapping(value = "/attendee")
+    public ResponseEntity<Collection<TicketTransactionDto>> getTicketTransactionsAttendee() {
+        Attendee attendee = attendeeService
+                .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        return ResponseEntity.ok(ticketingService.getTicketTransactionsAttendee(attendee, TicketTransactionDto.class));
     }
 }

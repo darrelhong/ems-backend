@@ -95,4 +95,8 @@ public class TicketingService {
         Attendee attendee = attendeeService.getAttendeeById(id);
         return ttRepository.findByAttendee(attendee, type);
     }
+
+    public <T> Collection<T> getTicketTransactionsAttendee(Attendee attendee, Class<T> type) {
+        return ttRepository.findByAttendee(attendee, type);
+    }
 }
