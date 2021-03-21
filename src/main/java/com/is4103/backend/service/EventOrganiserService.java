@@ -221,7 +221,8 @@ public class EventOrganiserService {
 
     
       public List<Event> getAllEventsByEoIdRoleStatus(Long eoId,String role, String status) {
-        List<Event> eventlist = eventService.getAllEvents();
+        //List<Event> eventlist = eventService.getAllEvents();
+        List<Event> eventlist = eventService.getAllEventsByOrganiser(eoId);
         List<Event> filterEventList = new ArrayList<>();
      
         if(role.equals("guest") || role.equals("ATND") || role.equals("EVNTORG")){
