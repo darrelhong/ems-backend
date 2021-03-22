@@ -68,7 +68,6 @@ public class BusinessPartner extends User {
         super();
     }
 
-
     public BusinessPartner(String businessCategory, List<Event> favouriteEventList,
             List<EventBoothTransaction> eventBoothTransactions, List<EventOrganiser> followEventOrganisers) {
         this();

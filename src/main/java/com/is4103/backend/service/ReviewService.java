@@ -78,6 +78,7 @@ public class ReviewService {
         review.setRating(reviewRequest.getRating());
         review.setReviewText(reviewRequest.getReview());
         review.setEvent(event);
+
         LocalDateTime now = LocalDateTime.now();
 
         System.out.println("Before : " + now);
@@ -88,6 +89,7 @@ public class ReviewService {
         review.setReviewDateTime(formatDateTime);
 
         System.out.println("After : " + formatDateTime);
+
         if (reviewRequest.getAttendeeId() != 0L) {
             Attendee attendee = atnController.getAttendeeById(reviewRequest.getAttendeeId());
             System.out.println("is attendee" + attendee);

@@ -58,10 +58,8 @@ public class Attendee extends User {
     public Attendee() {
         super();
     }
-
-
     public Attendee(List<String> categoryPreferences, List<EventOrganiser> followedEventOrgs, List<BusinessPartner> followedBusinessPartners) {
-       this();
+        this();
         this.categoryPreferences = categoryPreferences;
         this.followedEventOrganisers = followedEventOrgs;
         this.followedBusinessPartners = followedBusinessPartners;

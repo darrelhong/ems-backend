@@ -271,7 +271,8 @@ public class EventOrganiserService {
                     Event eventItem = eventlist.get(a);
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
                     LocalDateTime now = LocalDateTime.now();
-                    if(eventItem.getEventStatus().toString().equals("CREATED") && !eventItem.isHidden() && (eventItem.getEventStartDate().isAfter(now) || eventItem.getEventStartDate().isEqual(now))&& (eventItem.getSaleStartDate().isAfter(now) || eventItem.getSaleStartDate().isEqual(now)))
+
+                    if(eventItem.getEventStatus().toString().equals("CREATED") && !eventItem.isHidden() && (eventItem.getEventStartDate().isAfter(now) ||  eventItem.getEventStartDate().isEqual(now)) && (eventItem.getSaleStartDate().isBefore(now) || eventItem.getSaleStartDate().isEqual(now)) && (eventItem.getSalesEndDate().isAfter(now) || eventItem.getSalesEndDate().isEqual(now)))
                     
                         filterEventList.add(eventItem);
                     }
@@ -287,7 +288,20 @@ public class EventOrganiserService {
                         filterEventList.add(eventItem);
                     }
                 }
-            }   
+
+            } else if(status.equals("upcoming")){
+                filterEventList = new ArrayList<>();
+                for(int a = 0; a < eventlist.size();a++){
+                    Event eventItem = eventlist.get(a);
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+                    LocalDateTime now = LocalDateTime.now();
+             
+                    if(eventItem.getEventStatus().toString().equals("CREATED") && !eventItem.isHidden() == true && (eventItem.getEventStartDate().isAfter(now) ||  eventItem.getEventStartDate().isEqual(now)) && (eventItem.getSaleStartDate().isAfter(now) || eventItem.getSaleStartDate().isEqual(now))){
+                        filterEventList.add(eventItem);
+                    }
+                }
+            
+            }
        
         }
         return filterEventList;

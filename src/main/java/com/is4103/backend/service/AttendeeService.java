@@ -127,7 +127,6 @@ public class AttendeeService {
         return atn;
     }
     
-
     @Transactional
     public Attendee updateAttendee(Attendee user, UpdateAttendeeRequest updateAttendeeRequest) {
         user.setName(updateAttendeeRequest.getName());
@@ -138,7 +137,6 @@ public class AttendeeService {
 
         return atnRepository.save(user);
     }
-
 
     @Transactional
     public Attendee followBusinessPartner(Attendee user, FollowRequest followRequest) {
@@ -194,5 +192,5 @@ public class AttendeeService {
         eoRepository.save(eo);
         return atnRepository.save(user);
     }
-
+  
 }

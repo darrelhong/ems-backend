@@ -61,7 +61,9 @@ public class DataInitRunner implements ApplicationRunner {
     private EventOrganiserRepository eventOrganiserRepository;
 
     @Autowired
+
     private BusinessPartnerRepository partnerRepository;
+
     private TicketTransactionRepository ticketTransactionRepository;
 
 
@@ -663,6 +665,7 @@ public class DataInitRunner implements ApplicationRunner {
     }
 
     private void createDemoEvents() {
+
         Lorem lorem = LoremIpsum.getInstance();
          Random rand = new Random();
 
