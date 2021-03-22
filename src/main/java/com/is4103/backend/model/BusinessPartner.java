@@ -16,6 +16,9 @@ import javax.persistence.UniqueConstraint;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 // import org.hibernate.mapping.Set;
 
 import java.util.ArrayList;
@@ -34,19 +37,15 @@ public class BusinessPartner extends User {
     @ElementCollection(targetClass = Event.class)
     private List<Event> favouriteEventList;
 
-    @JsonIgnore
-    @Column(nullable = true)
-    @ElementCollection(targetClass = Attendee.class)
-    @ManyToMany(cascade = CascadeType.MERGE)
-    // @JoinTable(name="followed_BusinessPartners", joinColumns=
-    // @JoinColumn(name="business_partner_id"), inverseJoinColumns =
-    // @JoinColumn(name="attendee_id"))
-    private Set<Attendee> attendeeFollowers = new HashSet<>();
 
     @JsonIgnore
     @Column(nullable = true)
     @ManyToMany
-    @ElementCollection(targetClass = EventOrganiser.class)
+    private List<Attendee> attendeeFollowers;
+
+    @JsonIgnore
+    @Column(nullable = true)
+    @ManyToMany(mappedBy="businessPartnerFollowers")
     private List<EventOrganiser> followEventOrganisers;
 
     @Transient
@@ -58,9 +57,17 @@ public class BusinessPartner extends User {
     @ElementCollection(targetClass = Enquiry.class)
     private List<Enquiry> enquiries;
 
+    // @Transient
+    @JsonIgnore
+    @Column(nullable = true)
+    @OneToMany(mappedBy = "partner")
+    @ElementCollection(targetClass = Review.class)
+    private List<Review> reviews;
+
     public BusinessPartner() {
         super();
     }
+
 
     public BusinessPartner(String businessCategory, List<Event> favouriteEventList,
             List<EventBoothTransaction> eventBoothTransactions, List<EventOrganiser> followEventOrganisers) {
@@ -69,6 +76,7 @@ public class BusinessPartner extends User {
         this.favouriteEventList = favouriteEventList;
         this.eventBoothTransactions = eventBoothTransactions;
         this.followEventOrganisers = followEventOrganisers;
+        this.attendeeFollowers = attendeeFollowers;
     }
 
     public String getBusinessCategory() {
@@ -87,12 +95,20 @@ public class BusinessPartner extends User {
         this.favouriteEventList = favouriteEventList;
     }
 
-    public Set<Attendee> getAttendeeFollowers() {
+    public List<Attendee> getAttendeeFollowers() {
         return attendeeFollowers;
     }
 
-    public void setAttendeeFollowers(Set<Attendee> attendeeFollowers) {
+    public void setAttendeeFollowers(List<Attendee> attendeeFollowers) {
         this.attendeeFollowers = attendeeFollowers;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 
     public List<EventBoothTransaction> getEventBoothTransactions() {

@@ -17,8 +17,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonView;
+
 
 import lombok.Data;
 
@@ -56,6 +59,15 @@ public class Event {
     @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     private List<TicketTransaction> ticketTransactions;
+
+    // @Transient
+    @JsonIgnore
+    @Column(nullable = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
+    @ElementCollection(targetClass = Review.class)
+    private List<Review> reviews;
+
+
 
     // @Column(nullable = false)
     @JsonView(EventViews.Basic.class)
@@ -121,4 +133,6 @@ public class Event {
         }
         return false;
     }
+
+    
 }

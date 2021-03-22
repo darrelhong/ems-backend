@@ -1,5 +1,6 @@
 package com.is4103.backend.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,10 +9,15 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.Transient;
+
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,31 +29,39 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class Attendee extends User {
 
+
     @Column(nullable = true)
     @ElementCollection(targetClass = String.class)
     private List<String> categoryPreferences;
 
     @Column(nullable = true)
     @JsonIgnore
-    @ElementCollection(targetClass = EventOrganiser.class)
-    @ManyToMany(mappedBy = "attendeeFollowers")
-    private List<EventOrganiser> followedEventOrganisers;
+    @ManyToMany
+    private List<EventOrganiser> followedEventOrganisers = new ArrayList<>();
 
     @OneToMany(mappedBy = "attendee")
     private List<TicketTransaction> ticketTransactions;
 
+     @Transient
+     @JsonIgnore
+     @Column(nullable = true)
+    @OneToMany(mappedBy = "attendee")
+    @ElementCollection(targetClass = Review.class)
+    private List<Review> reviews;
+
+
+
     @JsonIgnore
-    @ManyToMany(mappedBy = "attendeeFollowers", cascade = CascadeType.MERGE)
-    @ElementCollection(targetClass = BusinessPartner.class)
-    private Set<BusinessPartner> followedBusinessPartners = new HashSet<>();
+    @ManyToMany
+    private List<BusinessPartner> followedBusinessPartners;
 
     public Attendee() {
         super();
     }
 
-    public Attendee(List<String> categoryPreferences, List<EventOrganiser> followedEventOrgs,
-            Set<BusinessPartner> followedBusinessPartners) {
-        this();
+
+    public Attendee(List<String> categoryPreferences, List<EventOrganiser> followedEventOrgs, List<BusinessPartner> followedBusinessPartners) {
+       this();
         this.categoryPreferences = categoryPreferences;
         this.followedEventOrganisers = followedEventOrgs;
         this.followedBusinessPartners = followedBusinessPartners;
@@ -61,6 +75,14 @@ public class Attendee extends User {
         this.categoryPreferences = categoryPreferences;
     }
 
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
     public List<EventOrganiser> getFollowedEventOrgs() {
         return followedEventOrganisers;
     }
@@ -69,11 +91,11 @@ public class Attendee extends User {
         this.followedEventOrganisers = followedEventOrgs;
     }
 
-    public Set<BusinessPartner> getFollowedBusinessPartners() {
+    public List<BusinessPartner> getFollowedBusinessPartners() {
         return followedBusinessPartners;
     }
 
-    public void setFollowedBusinessPartners(Set<BusinessPartner> followedBusinessPartners) {
+    public void setFollowedBusinessPartners(List<BusinessPartner> followedBusinessPartners) {
         this.followedBusinessPartners = followedBusinessPartners;
     }
 

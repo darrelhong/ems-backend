@@ -20,4 +20,8 @@ public class UploadFileResponse {
         this.size = size;
     }
 
+    public UploadFileResponse( String fileDownloadUri) {
+        this.fileDownloadUri = fileDownloadUri;
+    }
+
 }

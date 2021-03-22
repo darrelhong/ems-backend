@@ -14,11 +14,18 @@ import com.is4103.backend.dto.LoginRequest;
 import com.is4103.backend.dto.LoginResponse;
 import com.is4103.backend.dto.LoginUserResponse;
 import com.is4103.backend.dto.ResetPasswordDto;
+import com.is4103.backend.dto.SendEnquiryRequest;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
+
+import com.is4103.backend.model.BusinessPartner;
+import com.is4103.backend.model.Event;
+import com.is4103.backend.service.EventOrganiserService;
+import com.is4103.backend.service.EventService;
+
 import com.is4103.backend.service.RoleService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.errors.InvalidTokenException;
@@ -69,6 +76,10 @@ public class UserController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private EventService eventService;
+
 
     @GetMapping(path = "/all")
     public List<User> getAllUsers() {
@@ -251,5 +262,34 @@ public class UserController {
     public User disableStatus(@PathVariable Long userId) {
         System.out.println("test ");
         return userService.disableUser(userId);
+    }
+
+    @PreAuthorize("hasAnyRole('EVNTORG', 'BIZPTNR', 'ATND')")
+    @PostMapping(value = "/enquiry")
+    public ResponseEntity sendEnquiry(@RequestBody @Valid SendEnquiryRequest sendEnquiryRequest) {
+        User sender = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        // verify user id
+        //System.out.println(user.getEmail());
+       System.out.println(sendEnquiryRequest.getSenderEmail());
+        User receiver = userService.getUserByEmail(sendEnquiryRequest.getReceiverEmail());
+        System.out.println("receiver email");
+        System.out.println(receiver.getEmail());
+        if (!(sendEnquiryRequest.getSenderEmail().equals(sender.getEmail())) || receiver == null ){
+            throw new AuthenticationServiceException("An error has occured");
+        }else{
+        
+        if(sendEnquiryRequest.getEventId() != null){
+            Event event = eventService.getEventById(sendEnquiryRequest.getEventId());
+            String eventName = event.getName();
+            userService.sendEnquiry(sendEnquiryRequest, eventName, sender, receiver);
+        }else{
+            userService.sendEnquiry(sendEnquiryRequest, "", sender,receiver);
+        }
+      
+   
+       
+        }
+
+        return ResponseEntity.ok("Success");
     }
 }
