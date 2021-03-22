@@ -40,6 +40,8 @@ public class CreateEventRequest {
 
     private String website;
 
+    private boolean isSellingTicket;
+
     private float ticketPrice;
 
     private int ticketCapacity;

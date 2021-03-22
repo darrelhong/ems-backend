@@ -10,6 +10,10 @@ On frontend, page routes are protected by checking if there is a `token` cookie 
 
 View API docs at http://localhost:8080/api/swagger-ui/index.html?configUrl=/api/v3/api-docs/swagger-config
 
+## Stripe
+
+To specify Stripe secret key, add `stripe.apikey=XXXXXX` as an environment variable
+
 ## Running the Database
 Port number: 3307
 `mysql -P 3307 --protocol=tcp -u root -p`

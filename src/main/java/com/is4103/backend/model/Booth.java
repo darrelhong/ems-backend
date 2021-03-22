@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import lombok.Data;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import javax.persistence.Column;
 
 @Entity
 @Data
+@JsonView(EventViews.Private.class)
 public class Booth {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +43,7 @@ public class Booth {
     };
 
     public Booth(Double price, Double length, Double width, Event event) {
-        super();
+        this();
         this.price = price;
         this.length = length;
         this.width = width;
@@ -48,7 +51,7 @@ public class Booth {
     }
 
     public Booth(Double price, Double length, Double width) {
-        super();
+        this();
         this.price = price;
         this.length = length;
         this.width = width;

@@ -39,12 +39,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // Enable CORS disable CSRF
         http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers("/test/**", "/greeting",
-                        "/user/register/**", "/organiser/register/**", "/partner/register/**", "/attendee/register/**",
-                        "/user/login/**", "/user/reset-password/**",
+                .antMatchers("/test/**", "/greeting", "/user/register/**", "/organiser/register/**",
+                        "/partner/register/**", "/attendee/register/**", "/user/login/**", "/user/reset-password/**",
                         "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/user/{\\d+}", "/downloadFile/**",
                         "/organiser/event/{\\d+}", "/partner/followers/{\\d+}", "/partner/following/{\\d+}",
-                        "/organiser/attendeeFollowers/{\\d+}", "/organiser/partnerFollowers/{\\d+}","/organiser/event/{\\d+}/**", "/review/eo/{\\d+}", "/review/{\\d+}")
+                        "/organiser/attendeeFollowers/{\\d+}", "/organiser/partnerFollowers/{\\d+}","/organiser/event/{\\d+}/**", "/review/eo/{\\d+}", "/review/{\\d+}", "/event/public/**")
+
                 .permitAll()
                 // can also be used to protected routes
                 .antMatchers("/user/userping").hasRole("USER").antMatchers("/user/adminping").hasRole("ADMIN")

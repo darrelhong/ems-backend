@@ -19,10 +19,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Transient;
 
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 // import org.hibernate.mapping.Set;
 
 @Entity
-
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class Attendee extends User {
 
 
@@ -36,7 +40,6 @@ public class Attendee extends User {
     private List<EventOrganiser> followedEventOrganisers = new ArrayList<>();
 
     @OneToMany(mappedBy = "attendee")
-    @ElementCollection(targetClass = TicketTransaction.class)
     private List<TicketTransaction> ticketTransactions;
 
      @Transient
@@ -53,11 +56,12 @@ public class Attendee extends User {
     private List<BusinessPartner> followedBusinessPartners;
 
     public Attendee() {
-
+        super();
     }
 
+
     public Attendee(List<String> categoryPreferences, List<EventOrganiser> followedEventOrgs, List<BusinessPartner> followedBusinessPartners) {
-        super();
+       this();
         this.categoryPreferences = categoryPreferences;
         this.followedEventOrganisers = followedEventOrgs;
         this.followedBusinessPartners = followedBusinessPartners;

@@ -10,6 +10,7 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,6 +20,7 @@ import java.util.List;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = false)
+@JsonView({ EventViews.Private.class, EventViews.Public.class })
 public class EventOrganiser extends User {
 
     @Column(nullable = false)
@@ -54,11 +56,11 @@ public class EventOrganiser extends User {
     private List<Enquiry> enquiries;
 
     public EventOrganiser() {
-
+        super();
     }
 
     public EventOrganiser(List<Attendee> attendeeFollowers, List<BusinessPartner> businessPartnerFollowers) {
-        super();
+        this();
         this.attendeeFollowers = attendeeFollowers;
         this.businessPartnerFollowers = businessPartnerFollowers;
 

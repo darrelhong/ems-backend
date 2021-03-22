@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-
+@JsonView(EventViews.Private.class)
 public class BusinessPartner extends User {
 
     @Column(nullable = true)
@@ -64,11 +65,13 @@ public class BusinessPartner extends User {
     private List<Review> reviews;
 
     public BusinessPartner() {
-
-    }
-    
-    public BusinessPartner(String businessCategory, List<Event> favouriteEventList, List<EventBoothTransaction> eventBoothTransactions,List<EventOrganiser> followEventOrganisers, List<Attendee> attendeeFollowers ) {
         super();
+    }
+
+
+    public BusinessPartner(String businessCategory, List<Event> favouriteEventList,
+            List<EventBoothTransaction> eventBoothTransactions, List<EventOrganiser> followEventOrganisers) {
+        this();
         this.businessCategory = businessCategory;
         this.favouriteEventList = favouriteEventList;
         this.eventBoothTransactions = eventBoothTransactions;

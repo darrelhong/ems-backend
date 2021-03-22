@@ -33,18 +33,17 @@ public class Token {
     private Date expiryDate;
 
     public Token() {
-        super();
     }
 
     public Token(final String token) {
-        super();
+        this();
 
         this.token = token;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 
     public Token(final String token, final User user) {
-        super();
+        this();
 
         this.token = token;
         this.user = user;
