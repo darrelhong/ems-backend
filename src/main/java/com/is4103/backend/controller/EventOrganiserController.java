@@ -58,7 +58,7 @@ public class EventOrganiserController {
 
     @Autowired
     private FileStorageProperties fileStorageProperties;
-
+    
     // @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
     public List<EventOrganiser> getAllEventOrganisers() {

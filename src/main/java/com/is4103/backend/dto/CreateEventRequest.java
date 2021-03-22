@@ -38,6 +38,9 @@ public class CreateEventRequest {
     @NotEmpty
     private String descriptions;
 
+    @ElementCollection(targetClass = String.class)
+    private List<String> categories;
+
     private String website;
 
     private boolean isSellingTicket;
@@ -71,6 +74,8 @@ public class CreateEventRequest {
     @ElementCollection(targetClass = String.class)
     private List<String> images;
 
+    private float boothPrice;
+    
     @NotNull
     @NotEmpty
     private int boothCapacity;

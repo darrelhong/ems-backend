@@ -13,6 +13,9 @@ import com.is4103.backend.model.EventBoothTransaction;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.model.EventViews;
+import com.is4103.backend.model.SellerApplication;
+import com.is4103.backend.model.SellerApplicationStatus;
+import com.is4103.backend.model.SellerProfile;
 import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.service.EventService;
@@ -103,6 +106,7 @@ public class EventController {
         event.setName(createEventRequest.getName());
         event.setAddress(createEventRequest.getAddress());
         event.setDescriptions(createEventRequest.getDescriptions());
+        event.setCategories(createEventRequest.getCategories());
         event.setSellingTicket(createEventRequest.isSellingTicket());
         event.setTicketPrice(createEventRequest.getTicketPrice());
         event.setTicketCapacity(createEventRequest.getTicketCapacity());
@@ -143,5 +147,20 @@ public class EventController {
     public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
         eventRepository.delete(eventService.getEventById(id));
         return ResponseEntity.ok("Success");
+    }
+
+    @GetMapping("/seller-profiles/{id}")
+    public List<SellerProfile> getSellerProfiles(@PathVariable Long id) {
+        return eventRepository.findById(id).get().getSellerProfiles();
+    }
+
+    @GetMapping("/new-applications/{id}")
+    public List<SellerApplication> getNewAppliationsFromEvent(@PathVariable Long id) {
+        List<SellerApplication> newApplications = eventRepository
+        .findById(id)
+        .get()
+        .getSellerApplications();
+        newApplications.removeIf(application -> (application.getSellerApplicationStatus() != SellerApplicationStatus.PENDING));
+        return newApplications;
     }
 }
