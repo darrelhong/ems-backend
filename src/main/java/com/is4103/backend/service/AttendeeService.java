@@ -75,9 +75,9 @@ public class AttendeeService {
         return atnRepository.findByEmail(email);
     }
 
-    public Attendee getAttendeeByEmail(String email) {
-        return atnRepository.findByEmail(email);
-    }
+    // public Attendee getAttendeeByEmail(String email) {
+    //     return atnRepository.findByEmail(email);
+    // }
 
     public List<BusinessPartner> getFollowingBp(Long id) {
         Attendee attendee = getAttendeeById(id);
