@@ -9,6 +9,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.is4103.backend.dto.BroadcastMessageRequest;
+import com.is4103.backend.dto.BroadcastMessageToFollowersRequest;
 import com.is4103.backend.dto.FileStorageProperties;
 import com.is4103.backend.dto.OrganiserSearchCriteria;
 import com.is4103.backend.dto.RejectEventOrganiserDto;
@@ -164,6 +165,21 @@ public class EventOrganiserController {
         return eoService.getAllEventsByEoId(eoId);
     }
 
+
+    @GetMapping(value = "/getVaildEventForBp/{eoId}")
+    public List<Event> getValidBpEventsByEventOrgId(@PathVariable Long eoId) {
+      
+        return eoService.getValidBpEventsByEventOrgId(eoId);
+    }
+
+
+    @GetMapping(value = "/getVaildEventForAtt/{eoId}")
+    public List<Event> getValidAttEventsByEventOrgId(@PathVariable Long eoId) {
+      
+        return eoService.getValidAttEventsByEventOrgId(eoId);
+    }
+
+
     @GetMapping(value = "/event/{eoId}/{role}/{status}")
     public List<Event> getAllEventsByEventOrgIdRoleStatus(@PathVariable Long eoId, @PathVariable String role,
             @PathVariable String status) {
@@ -264,7 +280,7 @@ public class EventOrganiserController {
  
 
     @PreAuthorize("hasAnyRole('EVNTORG')")
-    @PostMapping(value = "/boardcast")
+    @PostMapping(value = "/broadcastEmailEnquiry")
     public ResponseEntity sendEnquiry(@RequestBody @Valid BroadcastMessageRequest broadcastMessageRequest) {
         User sender = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         // verify user id
@@ -280,5 +296,24 @@ public class EventOrganiserController {
         return ResponseEntity.ok("Success");
     }
 
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @PostMapping(value = "/broadcastEmailToFollowers")
+    public ResponseEntity sendEmailToFollowers(@RequestBody @Valid BroadcastMessageToFollowersRequest broadcastMessageToFollowersRequest) {
+        User sender = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        // verify user id
+        // if current user is null
+        if (sender == null) {
+            throw new AuthenticationServiceException("An error has occured");
+        } else {
+
+            eoService.broadcastToFollowers(sender,broadcastMessageToFollowersRequest);
+
+            }
+
+        return ResponseEntity.ok("Success");
+    }
+
     
+
 }
