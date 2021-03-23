@@ -19,7 +19,8 @@ import com.is4103.backend.dto.UploadBizSupportFileRequest;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
-import com.is4103.backend.model.EventBoothTransaction;
+// import com.is4103.backend.model.EventBoothTransaction;
+import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
@@ -343,7 +344,6 @@ public class EventOrganiserService {
     public EventOrganiser updateEoBizSupportUrl(EventOrganiser eo, String supportDocsUrl) {
 
         eo.setSupportDocsUrl(supportDocsUrl);
-
         return userRepository.save(eo);
     }
 
@@ -371,8 +371,7 @@ public class EventOrganiserService {
             if (sort == null) {
                 return eoRepository.findByNameContaining(keyword, PageRequest.of(page, size));
             } else {
-                return eoRepository.findByNameContaining(keyword,
-                        PageRequest.of(page, size, sort));
+                return eoRepository.findByNameContaining(keyword, PageRequest.of(page, size, sort));
             }
 
         }
@@ -384,10 +383,22 @@ public class EventOrganiserService {
 
     }
 
-    public List<BusinessPartner> getEventBps(List<EventBoothTransaction> eventBoothTransactionList) {
+    // public List<BusinessPartner> getEventBps(List<EventBoothTransaction>
+    // eventBoothTransactionList){
+    // List<BusinessPartner> eventBpList = new ArrayList<>();
+    // for(int i = 0;i < eventBoothTransactionList.size();i++){
+    // EventBoothTransaction transItem = eventBoothTransactionList.get(i);
+    // if(!(transItem.getPaymentStatus().toString().equals("REFUNDED"))){
+    // eventBpList.add(transItem.getBusinessPartner());
+    // }
+    // }
+    // return eventBpList;
+    // }
+
+    public List<BusinessPartner> getEventBps(List<SellerApplication> eventBoothTransactionList) {
         List<BusinessPartner> eventBpList = new ArrayList<>();
         for (int i = 0; i < eventBoothTransactionList.size(); i++) {
-            EventBoothTransaction transItem = eventBoothTransactionList.get(i);
+            SellerApplication transItem = eventBoothTransactionList.get(i);
             if (!(transItem.getPaymentStatus().toString().equals("REFUNDED"))) {
                 eventBpList.add(transItem.getBusinessPartner());
             }
@@ -413,8 +424,9 @@ public class EventOrganiserService {
         String broadcastOption = broadcastMessageRequest.getBroadcastOption();
         List<String> emailList = new ArrayList<>();
         Event event = eventService.getEventById(broadcastMessageRequest.getEventId());
-        List<EventBoothTransaction> eventBoothTransactionList = new ArrayList<>();
-        eventBoothTransactionList = event.getEventBoothTransactions();
+        List<SellerApplication> eventBoothTransactionList = new ArrayList<>();
+        // List<EventBoothTransaction> eventBoothTransactionList = new ArrayList<>();
+        eventBoothTransactionList = event.getSellerApplications();
         List<TicketTransaction> eventTicketTransactionList = new ArrayList<>();
         eventTicketTransactionList = event.getTicketTransactions();
         if (broadcastOption.equals("Allbp")) {
@@ -463,8 +475,8 @@ public class EventOrganiserService {
         email.setFrom(fromEmail);
         email.setTo(mailArray);
         email.setSubject(subject);
-        email.setText("You have received the following message from " + eo.getName() + ":" + "\r\n\r\n" + "\""
-                + message + "\"" + " " + "\r\n\r\n" + "<b>"
+        email.setText("You have received the following message from " + eo.getName() + ":" + "\r\n\r\n" + "\"" + message
+                + "\"" + " " + "\r\n\r\n" + "<b>"
                 + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>"
                 + "Please direct your reply to " + eo.getName() + " at " + eo.getEmail() + "</b>");
         // cc the person who submitted the enquiry.
@@ -522,8 +534,8 @@ public class EventOrganiserService {
         email.setFrom(fromEmail);
         email.setTo(mailArray);
         email.setSubject(subject);
-        email.setText("You have received the following message from " + eo.getName() + ":" + "\r\n\r\n" + "\""
-                + message + "\"" + " " + "\r\n\r\n" + "<b>"
+        email.setText("You have received the following message from " + eo.getName() + ":" + "\r\n\r\n" + "\"" + message
+                + "\"" + " " + "\r\n\r\n" + "<b>"
                 + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>"
                 + "Please direct your reply to " + eo.getName() + " at " + eo.getEmail() + "</b>");
         // cc the person who submitted the enquiry.

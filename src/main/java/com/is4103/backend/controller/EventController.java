@@ -9,7 +9,6 @@ import com.is4103.backend.dto.EventSearchCriteria;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
-import com.is4103.backend.model.EventBoothTransaction;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.model.EventViews;
@@ -61,35 +60,50 @@ public class EventController {
         return eventService.getEventById(id);
     }
 
+    //  @GetMapping("/getAllBpByEvent/{id}")
+    //  public List<BusinessPartner> getEventBps(@PathVariable Long id) {
+    //  List<BusinessPartner> eventBpList = new ArrayList<>();
+    //  List<EventBoothTransaction> eventBoothTransactionList = new ArrayList<>();
+    //  Event event = this.getEventById(id);
+    //  eventBoothTransactionList = event.getEventBoothTransactions();
+    //  for (int i = 0; i < eventBoothTransactionList.size(); i++) {
+    //  EventBoothTransaction transItem = eventBoothTransactionList.get(i);
+    //  if (!(transItem.getPaymentStatus().toString().equals("REFUNDED"))) {
+    //  eventBpList.add(transItem.getBusinessPartner());
+    //     }
+    //  }
+    //  return eventBpList;
+    //  }
+
     @GetMapping("/getAllBpByEvent/{id}")
     public List<BusinessPartner> getEventBps(@PathVariable Long id) {
-        List<BusinessPartner> eventBpList = new ArrayList<>();
-        List<EventBoothTransaction> eventBoothTransactionList = new ArrayList<>();
-        Event event = this.getEventById(id);
-        eventBoothTransactionList = event.getEventBoothTransactions();
-        for (int i = 0; i < eventBoothTransactionList.size(); i++) {
-            EventBoothTransaction transItem = eventBoothTransactionList.get(i);
-            if (!(transItem.getPaymentStatus().toString().equals("REFUNDED"))) {
-                eventBpList.add(transItem.getBusinessPartner());
-            }
-        }
-        return eventBpList;
+    List<BusinessPartner> eventBpList = new ArrayList<>();
+    List<SellerApplication> eventBoothTransactionList = new ArrayList<>();
+    Event event = this.getEventById(id);
+    eventBoothTransactionList = event.getSellerApplications();
+    for (int i = 0; i < eventBoothTransactionList.size(); i++) {
+    SellerApplication transItem = eventBoothTransactionList.get(i);
+    if (!(transItem.getPaymentStatus().toString().equals("REFUNDED"))) {
+    eventBpList.add(transItem.getBusinessPartner());
+       }
+    }
+    return eventBpList;
     }
 
-    @GetMapping("/getAllAttByEvent/{id}")
-    public List<Attendee> getEventAtts(@PathVariable Long id) {
-        List<Attendee> eventAttList = new ArrayList<>();
-        List<TicketTransaction> eventTicketTransactionList = new ArrayList<>();
-        Event event = this.getEventById(id);
-        eventTicketTransactionList = event.getTicketTransactions();
-        for (int i = 0; i < eventTicketTransactionList.size(); i++) {
-            TicketTransaction transItem = eventTicketTransactionList.get(i);
-            if (!(transItem.getPaymentStatus().toString().equals("REFUNDED"))) {
-                eventAttList.add(transItem.getAttendee());
-            }
-        }
-        return eventAttList;
-    }
+     @GetMapping("/getAllAttByEvent/{id}")
+     public List<Attendee> getEventAtts(@PathVariable Long id) {
+         List<Attendee> eventAttList = new ArrayList<>();
+         List<TicketTransaction> eventTicketTransactionList = new ArrayList<>();
+         Event event = this.getEventById(id);
+         eventTicketTransactionList = event.getTicketTransactions();
+         for (int i = 0; i < eventTicketTransactionList.size(); i++) {
+             TicketTransaction transItem = eventTicketTransactionList.get(i);
+             if (!(transItem.getPaymentStatus().toString().equals("REFUNDED"))) {
+                 eventAttList.add(transItem.getAttendee());
+             }
+         }
+         return eventAttList;
+     }
 
     @GetMapping("/{oid}/all")
     public List<Event> getAllEventsByOrganiser(@PathVariable Long oid) {

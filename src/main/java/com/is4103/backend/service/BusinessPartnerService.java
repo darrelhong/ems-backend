@@ -18,15 +18,14 @@ import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
+import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.repository.BusinessPartnerRepository;
-import com.is4103.backend.repository.EventBoothTransactionRepository;
 import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.repository.PartnerSpecification;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
-import com.is4103.backend.service.EventService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -67,7 +66,7 @@ public class BusinessPartnerService {
     private EventService eventService;
 
     @Autowired
-    private EventBoothTransactionService eventBoothTransService;
+    private SellerApplicationService sellerApplicationService;
 
     public List<BusinessPartner> getAllBusinessPartners() {
         return bpRepository.findAll();
@@ -286,17 +285,17 @@ public class BusinessPartnerService {
     }
 
     public List<Event> getAllEventsByBp(Long id) {
-
-        List<EventBoothTransaction> eventTransList = eventBoothTransService.getAllEventBoothTransactions();
+        List<SellerApplication> eventTransList = sellerApplicationService.getAllSellerApplications();
         List<Event> eventList = new ArrayList<>();
-        for (EventBoothTransaction trans : eventTransList) {
-            if (!(trans.getPaymentStatus().toString().equals("REFUNDED")) && trans.getBusinessPartner().getId() == id) {
-                Event event = new Event();
-                event = eventService.getEventById(trans.getEid());
-                eventList.add(event);
+        for(SellerApplication trans: eventTransList ){
+            if(!(trans.getPaymentStatus().toString().equals("REFUNDED")) && trans.getBusinessPartner().getId() == id){
+            // Event event = new Event();
+            // event = eventService.getEventById(trans.getEid());
+            // event = eventService.getEventById(trans.getEid());
+            // eventList.add(event);
+            eventList.add(trans.getEvent());
             }
         }
         return eventList;
     }
-
 }
