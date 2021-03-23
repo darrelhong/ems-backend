@@ -1,5 +1,6 @@
 package com.is4103.backend.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.is4103.backend.dto.EventSearchCriteria;
@@ -35,6 +36,8 @@ public class EventService {
 
     public Page<Event> getPublishedEvents(int page, int size, String sortBy, String sortDir, String keyword) {
         Sort sort = null;
+        LocalDateTime now = LocalDateTime.now();
+
         if (sortBy != null && sortDir != null) {
             if (sortDir.equals("desc")) {
                 sort = Sort.by(sortBy).descending();
@@ -44,17 +47,19 @@ public class EventService {
         }
         if (keyword != null) {
             if (sort == null) {
-                return eventRepository.findByNameContainingAndIsPublished(keyword, true, PageRequest.of(page, size));
+                return eventRepository.findByNameContainingAndIsPublishedAndEventStartDateGreaterThan(keyword, true,
+                        now, PageRequest.of(page, size));
             } else {
-                return eventRepository.findByNameContainingAndIsPublished(keyword, true,
-                        PageRequest.of(page, size, sort));
+                return eventRepository.findByNameContainingAndIsPublishedAndEventStartDateGreaterThan(keyword, true,
+                        now, PageRequest.of(page, size, sort));
             }
 
         }
         if (sort == null) {
-            return eventRepository.findByIsPublished(true, PageRequest.of(page, size));
+            return eventRepository.findByIsPublishedAndEventStartDateGreaterThan(true, now, PageRequest.of(page, size));
         } else {
-            return eventRepository.findByIsPublished(true, PageRequest.of(page, size, sort));
+            return eventRepository.findByIsPublishedAndEventStartDateGreaterThan(true, now,
+                    PageRequest.of(page, size, sort));
         }
 
     }

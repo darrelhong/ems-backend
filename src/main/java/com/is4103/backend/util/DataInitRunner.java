@@ -16,11 +16,14 @@ import com.is4103.backend.model.EventStatus;
 import com.is4103.backend.model.PaymentStatus;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
+import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.model.User;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventBoothTransaction;
 import com.is4103.backend.repository.RoleRepository;
+import com.is4103.backend.repository.TicketTransactionRepository;
 import com.is4103.backend.repository.UserRepository;
+import com.is4103.backend.service.AttendeeService;
 import com.thedeanda.lorem.Lorem;
 import com.thedeanda.lorem.LoremIpsum;
 import com.is4103.backend.repository.BusinessPartnerRepository;
@@ -60,9 +63,14 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Autowired
     private BusinessPartnerRepository partnerRepository;
+    private TicketTransactionRepository ticketTransactionRepository;
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AttendeeService attendeeService;
 
     private EventOrganiser eoTest;
 
@@ -245,6 +253,9 @@ public class DataInitRunner implements ApplicationRunner {
         LocalDateTime salesStart1 = LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime salesEnd1 = LocalDateTime.of(2021, Month.APRIL, 2, 9, 0).plusDays(15).plusHours(2 % 3);
 
+        event.setSellingTicket(true);
+        event.setTicketPrice(24);
+        event.setTicketCapacity(99);
         event.setSaleStartDate(salesStart1);
         event.setSalesEndDate(salesEnd1);
         event.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
@@ -278,6 +289,9 @@ public class DataInitRunner implements ApplicationRunner {
         LocalDateTime salesStart = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime salesEnd = LocalDateTime.of(2021, Month.APRIL, 10, 9, 0).plusDays(15).plusHours(2 % 3);
 
+        event2.setSellingTicket(true);
+        event2.setTicketPrice(24);
+        event2.setTicketCapacity(99);
         event2.setSaleStartDate(salesStart);
         event2.setSalesEndDate(salesEnd);
         event2.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-1.jpg",
@@ -302,6 +316,9 @@ public class DataInitRunner implements ApplicationRunner {
 
         LocalDateTime salesStart3 = LocalDateTime.of(2021, Month.FEBRUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime salesEnd3 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+        event3.setSellingTicket(true);
+        event3.setTicketPrice(24);
+        event3.setTicketCapacity(99);
         event3.setSaleStartDate(salesStart3);
         event3.setSalesEndDate(salesEnd3);
         event3.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-1.jpg",
@@ -328,6 +345,9 @@ public class DataInitRunner implements ApplicationRunner {
         LocalDateTime salesStart4 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime salesEnd4 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(15).plusHours(2 % 3);
 
+        event4.setSellingTicket(true);
+        event4.setTicketPrice(24);
+        event4.setTicketCapacity(99);
         event4.setSaleStartDate(salesStart4);
         event4.setSalesEndDate(salesEnd4);
 
@@ -354,6 +374,9 @@ public class DataInitRunner implements ApplicationRunner {
         LocalDateTime salesStart4_1 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime salesEnd4_1 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(15).plusHours(2 % 3);
 
+        event4_1.setSellingTicket(true);
+        event4_1.setTicketPrice(24);
+        event4_1.setTicketCapacity(99);
         event4_1.setSaleStartDate(salesStart4_1);
         event4_1.setSalesEndDate(salesEnd4_1);
 
@@ -380,6 +403,9 @@ public class DataInitRunner implements ApplicationRunner {
         LocalDateTime salesStart4_2 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime salesEnd4_2 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(15).plusHours(2 % 3);
 
+        event4_2.setSellingTicket(true);
+        event4_2.setTicketPrice(24);
+        event4_2.setTicketCapacity(99);
         event4_2.setSaleStartDate(salesStart4_2);
         event4_2.setSalesEndDate(salesEnd4_2);
 
@@ -406,6 +432,9 @@ public class DataInitRunner implements ApplicationRunner {
         LocalDateTime salesStart4_3 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime salesEnd4_3 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(15).plusHours(2 % 3);
 
+        event4_3.setSellingTicket(true);
+        event4_3.setTicketPrice(24);
+        event4_3.setTicketCapacity(99);
         event4_3.setSaleStartDate(salesStart4_3);
         event4_3.setSalesEndDate(salesEnd4_3);
 
@@ -423,12 +452,15 @@ public class DataInitRunner implements ApplicationRunner {
         event5.setAddress("Sembwang 5");
         event5.setDescriptions("Some description 5");
         event5.setPhysical(false);
-        LocalDateTime eventStart5 = LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
-        LocalDateTime eventEnd5 = LocalDateTime.of(2021, Month.JANUARY, 2, 9, 0).plusDays(15).plusHours(2 % 3);
+        LocalDateTime eventStart5 = LocalDateTime.of(2021, Month.MARCH, 28, 9, 0).plusDays(2).plusHours(2 % 3);
+        LocalDateTime eventEnd5 = LocalDateTime.of(2021, Month.MARCH, 30, 15, 0).plusDays(15).plusHours(2 % 3);
         event5.setEventStartDate(eventStart5);
         event5.setEventEndDate(eventEnd5);
         LocalDateTime salesStart5 = LocalDateTime.of(2020, Month.DECEMBER, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime salesEnd5 = LocalDateTime.of(2020, Month.DECEMBER, 2, 9, 0).plusDays(15).plusHours(2 % 3);
+        event5.setSellingTicket(true);
+        event5.setTicketPrice(24);
+        event5.setTicketCapacity(99);
         event5.setSaleStartDate(salesStart5);
         event5.setSalesEndDate(salesEnd5);
         event5.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 8 + "/image-1.jpg",
@@ -448,6 +480,9 @@ public class DataInitRunner implements ApplicationRunner {
         event6.setPhysical(false);
         event6.setEventStartDate(LocalDateTime.now());
         event6.setEventEndDate(LocalDateTime.now());
+        event6.setSellingTicket(true);
+        event6.setTicketPrice(24);
+        event6.setTicketCapacity(99);
         event6.setSaleStartDate(LocalDateTime.now());
         event6.setSalesEndDate(LocalDateTime.now());
         event6.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 9 + "/image-1.jpg",
@@ -467,6 +502,9 @@ public class DataInitRunner implements ApplicationRunner {
         event7.setPhysical(false);
         event7.setEventStartDate(LocalDateTime.now());
         event7.setEventEndDate(LocalDateTime.now());
+        event7.setSellingTicket(true);
+        event7.setTicketPrice(24);
+        event7.setTicketCapacity(99);
         event7.setSaleStartDate(LocalDateTime.now());
         event7.setSalesEndDate(LocalDateTime.now());
         event7.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 10 + "/image-1.jpg",
@@ -486,6 +524,9 @@ public class DataInitRunner implements ApplicationRunner {
         event8.setPhysical(false);
         event8.setEventStartDate(LocalDateTime.now());
         event8.setEventEndDate(LocalDateTime.now());
+        event8.setSellingTicket(true);
+        event8.setTicketPrice(24);
+        event8.setTicketCapacity(99);
         event8.setSaleStartDate(LocalDateTime.now());
         event8.setSalesEndDate(LocalDateTime.now());
         event8.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 11 + "/image-1.jpg",
@@ -505,6 +546,9 @@ public class DataInitRunner implements ApplicationRunner {
         event9.setPhysical(false);
         event9.setEventStartDate(LocalDateTime.now());
         event9.setEventEndDate(LocalDateTime.now());
+        event9.setSellingTicket(true);
+        event9.setTicketPrice(24);
+        event9.setTicketCapacity(99);
         event9.setSaleStartDate(LocalDateTime.now());
         event9.setSalesEndDate(LocalDateTime.now());
         event9.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 12 + "/image-1.jpg",
@@ -544,13 +588,69 @@ public class DataInitRunner implements ApplicationRunner {
         eventRepository.save(event8);
         eventRepository.save(event9);
 
+        Event previous = new Event();
+        previous.setEventOrganiser(eventOrg);
+        previous.setName("Previous event");
+        previous.setAddress("some location string");
+        previous.setDescriptions("lorem ipsum dolor sit amet");
+        previous.setPhysical(true);
+        previous.setEventStartDate(LocalDateTime.now().minusMonths(1));
+        previous.setEventEndDate(LocalDateTime.now().minusWeeks(3));
+        previous.setSellingTicket(true);
+        previous.setTicketPrice(24);
+        previous.setTicketCapacity(99);
+        previous.setSaleStartDate(LocalDateTime.now().minusMonths(1).minusWeeks(2));
+        previous.setSalesEndDate(LocalDateTime.now().minusMonths(1).minusWeeks(1));
+        previous.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/previous-event/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/previous-event/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/previous-event/image-3.jpg"));
+        previous.setBoothCapacity(305);
+        previous.setRating(5);
+        previous.setEventStatus(EventStatus.CREATED);
+        previous.setHidden(false);
+        previous.setPublished(true);
+        eventRepository.save(previous);
+
+        Attendee atnd = attendeeService.getAttendeeByEmail("attendee@abc.com");
+        TicketTransaction ttransaction = new TicketTransaction();
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(previous);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
+        ticketTransactionRepository.save(ttransaction);
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(previous);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
+        ticketTransactionRepository.save(ttransaction);
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(previous);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
+        ticketTransactionRepository.save(ttransaction);
+
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
+        ticketTransactionRepository.save(ttransaction);
+
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
+        ticketTransactionRepository.save(ttransaction);
+
         List<Event> eoEvents = new ArrayList<>();
         // eoEvents = eventOrg.getEvents();
         eoEvents.add(event);
         eoEvents.add(event2);
         eventOrg.setEvents(eoEvents);
-        event.setImages(Arrays.asList(
-                "https://storage.googleapis.com/ems-images/events/event-1/image-1.jpg",
+        event.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-1/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-2/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-3/image-3.jpg"));
 
@@ -574,7 +674,7 @@ public class DataInitRunner implements ApplicationRunner {
     }
 
     private void createDemoEvents() {
-        // Lorem lorem = LoremIpsum.getInstance();
+        Lorem lorem = LoremIpsum.getInstance();
          Random rand = new Random();
 
         EventOrganiser eo = eoRepository.findByEmail("organiser@abc.com");
@@ -583,19 +683,19 @@ public class DataInitRunner implements ApplicationRunner {
             e.setName("Event " + i);
             e.setEventOrganiser(eo);
             e.setAddress("Singapore");
-            e.setDescriptions("description testtestest");
+            e.setDescriptions(lorem.getWords(5, 20));
+            e.setSellingTicket(true);
             e.setTicketPrice(Math.round(rand.nextFloat() * 20));
             e.setTicketCapacity(rand.nextInt(100));
             e.setPhysical(true);
-            LocalDateTime eventStart = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(i).plusHours(i % 3);
+            LocalDateTime eventStart = LocalDateTime.of(2021, Month.MARCH, 30, 9, 0).plusDays(i).plusHours(i % 3);
             e.setEventStartDate(eventStart);
             e.setEventEndDate(
-                    LocalDateTime.of(2021, Month.MARCH, 2, 17, 30).plusDays(rand.nextInt(5)).minusHours(i % 2));
+                    LocalDateTime.of(2021, Month.MARCH, 31, 17, 30).plusDays(rand.nextInt(5)).minusHours(i % 2));
             e.setSaleStartDate(LocalDateTime.now());
             e.setSalesEndDate(eventStart.minusDays(2));
 
-            e.setImages(Arrays.asList(
-                    "https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg",
+            e.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg",
                     "https://storage.googleapis.com/ems-images/events/event-" + i + "/image-2.jpg",
                     "https://storage.googleapis.com/ems-images/events/event-" + i + "/image-3.jpg"));
             e.setBoothCapacity(rand.nextInt(50));

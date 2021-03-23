@@ -3,6 +3,7 @@ package com.is4103.backend.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.is4103.backend.dto.CreateEventRequest;
 import com.is4103.backend.dto.EventSearchCriteria;
 import com.is4103.backend.model.Attendee;
@@ -11,6 +12,7 @@ import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventBoothTransaction;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.TicketTransaction;
+import com.is4103.backend.model.EventViews;
 import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.service.EventService;
@@ -44,6 +46,13 @@ public class EventController {
         return eventService.getAllEvents();
     }
 
+    @JsonView(EventViews.Public.class)
+    @GetMapping("/public/{id}")
+    public Event getEventByIdPublic(@PathVariable Long id) {
+        return eventService.getEventById(id);
+    }
+
+    @JsonView(EventViews.Private.class)
     @GetMapping("/{id}")
     public Event getEventById(@PathVariable Long id) {
         return eventService.getEventById(id);
@@ -94,6 +103,7 @@ public class EventController {
         event.setName(createEventRequest.getName());
         event.setAddress(createEventRequest.getAddress());
         event.setDescriptions(createEventRequest.getDescriptions());
+        event.setSellingTicket(createEventRequest.isSellingTicket());
         event.setTicketPrice(createEventRequest.getTicketPrice());
         event.setTicketCapacity(createEventRequest.getTicketCapacity());
         event.setPhysical(createEventRequest.isPhysical());
@@ -116,6 +126,7 @@ public class EventController {
         return eventRepository.save(event);
     }
 
+    // updated to only get events that start current time
     @GetMapping(path = "/get-events")
     public Page<Event> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,

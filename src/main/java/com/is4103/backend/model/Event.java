@@ -20,47 +20,46 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.Transient;
+import com.fasterxml.jackson.annotation.JsonView;
+
 
 import lombok.Data;
 
 @Entity
 @Data
+@JsonView(EventViews.Public.class)
 public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(EventViews.Basic.class)
     private long eid;
 
     @ManyToOne
     @JsonIgnoreProperties({ "events", "approved", "approvalMessage", "supportDocsUrl", "vipList", "attendeeFollowers",
             "businessPartnerFollowers", "enquiries", "description", "profilePic", "email", "enabled", "phonenumber",
-            "address", "roles", "notifications"
-    })
+            "address", "roles", "notifications" })
     private EventOrganiser eventOrganiser;
 
+    @JsonView(EventViews.Private.class)
     @ManyToMany(fetch = FetchType.LAZY)
-    @ElementCollection(targetClass = BusinessPartner.class)
     private List<BusinessPartner> favouriteBusinessPartners;
 
     @Transient
+    @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
-    @ElementCollection(targetClass = EventBoothTransaction.class)
     @JsonIgnoreProperties("event")
     private List<EventBoothTransaction> eventBoothTransactions;
 
     @Transient
+    @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @JsonIgnoreProperties("event")
     private List<Booth> booths;
 
-    @Transient
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
-    @ElementCollection(targetClass = TicketTransaction.class)
-    private List<TicketTransaction> ticketTransactions;
 
     @Transient
     @JsonIgnore
-    @Column(nullable = true)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @ElementCollection(targetClass = Review.class)
     private List<Review> reviews;
@@ -68,6 +67,7 @@ public class Event {
 
 
     // @Column(nullable = false)
+    @JsonView(EventViews.Basic.class)
     private String name;
 
     // @Column(nullable = false)
@@ -75,6 +75,8 @@ public class Event {
 
     // @Column(nullable = false)
     private String descriptions;
+
+    private boolean isSellingTicket;
 
     // @Column(nullable = true)
     private float ticketPrice;
@@ -124,8 +126,7 @@ public class Event {
 
     public boolean isAvailableForSale() {
         if (this.saleStartDate != null && this.salesEndDate != null) {
-            return LocalDateTime.now().isAfter(this.saleStartDate)
-                    && LocalDateTime.now().isBefore(this.salesEndDate);
+            return LocalDateTime.now().isAfter(this.saleStartDate) && LocalDateTime.now().isBefore(this.salesEndDate);
         }
         return false;
     }

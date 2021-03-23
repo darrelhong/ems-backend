@@ -6,12 +6,16 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonView;
+
 import lombok.Data;
 
 import lombok.Data;
 
 @Entity
 @Data
+@JsonView(EventViews.Private.class)
 public class EventBoothTransaction {
     @Id
     @GeneratedValue

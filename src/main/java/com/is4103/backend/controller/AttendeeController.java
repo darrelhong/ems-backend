@@ -125,6 +125,7 @@ public class AttendeeController {
         Attendee user = atnService
                 .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
+
         // verify user id
         if (updateAttendeeRequest.getId() != user.getId()) {
             throw new AuthenticationServiceException("An error has occured");

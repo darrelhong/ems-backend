@@ -64,7 +64,15 @@ public class AttendeeService {
     }
 
     public Attendee getAttendeeById(Long id) {
-        return atnRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
+        return atnRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Attendee not found"));
+    }
+
+    public Attendee getAttendeeByEmail(String email) throws UserNotFoundException {
+        Attendee attendee = atnRepository.findByEmail(email);
+        if (attendee == null) {
+            throw new UserNotFoundException("Attendee not found");
+        }
+        return atnRepository.findByEmail(email);
     }
 
     public Attendee getAttendeeByEmail(String email) {
@@ -119,9 +127,9 @@ public class AttendeeService {
         return atn;
     }
     
+
     @Transactional
     public Attendee updateAttendee(Attendee user, UpdateAttendeeRequest updateAttendeeRequest) {
-
         user.setName(updateAttendeeRequest.getName());
         user.setDescription(updateAttendeeRequest.getDescription());
         user.setAddress(updateAttendeeRequest.getAddress());
@@ -130,6 +138,7 @@ public class AttendeeService {
 
         return atnRepository.save(user);
     }
+
 
     @Transactional
     public Attendee followBusinessPartner(Attendee user, FollowRequest followRequest) {
@@ -185,4 +194,5 @@ public class AttendeeService {
         eoRepository.save(eo);
         return atnRepository.save(user);
     }
+
 }

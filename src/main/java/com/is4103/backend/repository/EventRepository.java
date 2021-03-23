@@ -1,5 +1,6 @@
 package com.is4103.backend.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.is4103.backend.model.Event;
@@ -23,4 +24,10 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     Page<Event> findByNameContainingAndIsPublished(String name, boolean isPublished, Pageable pageable);
 
     List<Event> findByName(String name);
+
+    Page<Event> findByIsPublishedAndEventStartDateGreaterThan(boolean isPublished, LocalDateTime eventStartDate,
+            Pageable pageable);
+
+    Page<Event> findByNameContainingAndIsPublishedAndEventStartDateGreaterThan(String name, boolean isPublished,
+            LocalDateTime eventStartDate, Pageable pageable);
 }
