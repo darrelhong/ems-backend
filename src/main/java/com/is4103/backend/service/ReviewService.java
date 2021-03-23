@@ -51,75 +51,87 @@ public class ReviewService {
     private BusinessPartnerController bpController;
 
     public List<Review> getReviewsByEventId(Long id) {
+        // Event event = eventController.getEventById(id);
+        // List<Review> filteredReviews = new ArrayList<>();
+        // List<Review> reviews = reviewRepository.findAll();
+        // for(int i=0; i<reviews.size(); i++){
+        // if(reviews.get(i).getEvent().getEid() == id){
+        // filteredReviews.add(reviews.get(i));
+        // }
+        // }
+
+        // return filteredReviews;
         Event event = eventController.getEventById(id);
+        // List<Review> reviews = reviewRepository.findByEvent(event);
+        // return reviews;
         return reviewRepository.findByEvent(event);
-        
 
     }
 
-    public List<Review> getReviewsByEO(Long id){
-        // EventOrganiser organiser = eventOrganiserController.getEventOrganiserById(id);
+    public List<Review> getReviewsByEO(Long id) {
+        // EventOrganiser organiser =
+        // eventOrganiserController.getEventOrganiserById(id);
         List<Event> events = eventController.getAllEventsByOrganiser(id);
-        
-        List<Review> reviews = new ArrayList<>();
-        for(int i=0; i<events.size(); i++){
-            if(events.get(i).getReviews()!=null){
-            List<Review> eventReviews = events.get(i).getReviews();
-            for(int h=0; h<eventReviews.size();h++){
-                reviews.add(eventReviews.get(h));
+        // List<Review> reviews = new ArrayList<>();
+        // for (int i = 0; i < events.size(); i++) {
+        //     System.out.println(events.get(i).getReviews() + "events " + events.get(i).getEid());
+        //     if (events.get(i).getReviews() != null) {
+        //         System.out.println("in reviews" + events.get(i).getReviews());
+        //         List<Review> eventReviews = events.get(i).getReviews();
+        //         for (int h = 0; h < eventReviews.size(); h++) {
+        //             reviews.add(eventReviews.get(h));
+        //         }
+        //     }
+        // }
+        // return reviews;
+        List<Review> filteredReviews = new ArrayList<>();
+        List<Review> reviews = reviewRepository.findAll();
+        for(int i =0; i<reviews.size(); i++){
+            for(int h=0; h<events.size();h++){
+                if(reviews.get(i).getEvent().getEid() == events.get(h).getEid()){
+                    filteredReviews.add(reviews.get(i));
+                }
             }
         }
-        }
 
-        return reviews;
+        return filteredReviews;
     }
 
     @Transactional
     public Review createNewReview(CreateReview reviewRequest) {
         Event event = eventController.getEventById(reviewRequest.getEventId());
-
+        System.out.println(event + "event");
         Review review = new Review();
         review.setRating(reviewRequest.getRating());
         review.setReviewText(reviewRequest.getReview());
         review.setEvent(event);
-        LocalDateTime now = LocalDateTime.now();
+        if (reviewRequest.getAttendeeId() != 0L) {
+            Attendee attendee = atnController.getAttendeeById(reviewRequest.getAttendeeId());
 
-        System.out.println("Before : " + now);
+            review.setAttendee(attendee);
+        } else {
+            BusinessPartner partner = bpController.getBusinessPartnerById(reviewRequest.getPartnerId());
+
+            review.setPartner(partner);
+        }
+        LocalDateTime now = LocalDateTime.now();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
         String formatDateTime = now.format(formatter);
         review.setReviewDateTime(formatDateTime);
-
-        System.out.println("After : " + formatDateTime);
-        if (reviewRequest.getAttendeeId() != 0L) {
-            Attendee attendee = atnController.getAttendeeById(reviewRequest.getAttendeeId());
-            System.out.println("is attendee" + attendee);
-
-            review.setAttendee(attendee);
-        } else {
-            BusinessPartner partner = bpController.getBusinessPartnerById(reviewRequest.getPartnerId());
-            System.out.println("is partner" + partner);
-
-            review.setPartner(partner);
-        }
         review = reviewRepository.save(review);
-
-        if (event.getReviews() == null || event.getReviews().isEmpty()) {
-
+        if (event.getReviews() == null) {
             List<Review> eventReviews = new ArrayList<>();
             eventReviews.add(review);
             event.setReviews(eventReviews);
-
             eoRepository.save(event);
-
         } else {
-
-            List<Review> eventReviews = event.getReviews();
+            List<Review> eventReviews = new ArrayList<>();
+            eventReviews= event.getReviews();
             eventReviews.add(review);
             event.setReviews(eventReviews);
             eoRepository.save(event);
-
         }
 
         if (reviewRequest.getAttendeeId() != 0L) {

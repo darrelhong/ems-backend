@@ -7,6 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
@@ -20,14 +23,17 @@ public class Review {
 
     private int rating;
     
+
     @ManyToOne
     private Attendee attendee;
-
+    
+  
     @ManyToOne
     private BusinessPartner partner;
 
     private String reviewText;
 
+    
     @ManyToOne
     private Event event;
 

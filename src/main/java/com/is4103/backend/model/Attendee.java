@@ -46,7 +46,7 @@ public class Attendee extends User {
      @JsonIgnore
      @Column(nullable = true)
     @OneToMany(mappedBy = "attendee")
-    @ElementCollection(targetClass = Review.class)
+    // @ElementCollection(targetClass = Review.class)
     private List<Review> reviews;
 
 

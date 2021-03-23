@@ -57,17 +57,24 @@ public class Event {
     @JsonIgnoreProperties("event")
     private List<Booth> booths;
 
-
-    @Transient
-    @JsonIgnore
+    @JsonIgnoreProperties("event")
+    @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
-    @ElementCollection(targetClass = Review.class)
+    private List<TicketTransaction> ticketTransactions;
+
+    // @JsonIgnore
+    @Transient
+    @JsonIgnoreProperties("event")
+    // @JsonView(EventViews.Private.class)
+    @Column(nullable = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
+    // @ElementCollection(targetClass = Review.class)
     private List<Review> reviews;
 
 
 
     // @Column(nullable = false)
-    @JsonView(EventViews.Basic.class)
+    // @JsonView(EventViews.Basic.class)
     private String name;
 
     // @Column(nullable = false)

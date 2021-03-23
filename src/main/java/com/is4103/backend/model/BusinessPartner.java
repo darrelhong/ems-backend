@@ -57,11 +57,11 @@ public class BusinessPartner extends User {
     @ElementCollection(targetClass = Enquiry.class)
     private List<Enquiry> enquiries;
 
-    // @Transient
+    //  @Transient
     @JsonIgnore
     @Column(nullable = true)
     @OneToMany(mappedBy = "partner")
-    @ElementCollection(targetClass = Review.class)
+    // @ElementCollection(targetClass = Review.class)
     private List<Review> reviews;
 
     public BusinessPartner() {
@@ -70,7 +70,7 @@ public class BusinessPartner extends User {
 
 
     public BusinessPartner(String businessCategory, List<Event> favouriteEventList,
-            List<EventBoothTransaction> eventBoothTransactions, List<EventOrganiser> followEventOrganisers) {
+            List<EventBoothTransaction> eventBoothTransactions, List<EventOrganiser> followEventOrganisers, List<Attendee> attendeeFollowers) {
         this();
         this.businessCategory = businessCategory;
         this.favouriteEventList = favouriteEventList;
