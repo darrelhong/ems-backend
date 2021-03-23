@@ -868,28 +868,9 @@ public class DataInitRunner implements ApplicationRunner {
         // 4 TYPES OF APPLICATION TYPES
         for (int count = 0; count < 4; count++) {
 
-            // SellerApplicationStatus sellerApplicationStatus;
-            // PaymentStatus paymentStatus;
-
-            // switch (count) {
-            // case 0:
-            // sellerApplicationStatus = SellerApplicationStatus.APPROVED;
-            // paymentStatus = PaymentStatus.PENDING;
-            // break;
-            // case 1: // IN THIS CASE ITS CONFIRMED, WE CAN MAKE SELLERPROFILES FOR THIS
-            // CASE
-            // sellerApplicationStatus = SellerApplicationStatus.CONFIRMED;
-            // paymentStatus = PaymentStatus.COMPLETED;
-            // break;
-            // case 2:
-            // sellerApplicationStatus = SellerApplicationStatus.REJECTED;
-            // paymentStatus = PaymentStatus.PENDING;
-            // break;
-            // default:
-            // sellerApplicationStatus = SellerApplicationStatus.PENDING;
-            // paymentStatus = PaymentStatus.PENDING;
-            // }
-
+            // THE STATUS ARRAYS ARE TO SHOW THE 4 DIFFERENT SCENARIOS OF PAYMENTSTATUS AND
+            // APPLICATIONSTATUS
+            // LATER WHEN I CREATE APPLICATIONS I'LL USE THE DIFFERENT COMBINATIONS
             SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
                     SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.REJECTED,
                     SellerApplicationStatus.PENDING };
@@ -912,7 +893,8 @@ public class DataInitRunner implements ApplicationRunner {
                 // application.setPaymentStatus(paymentStatus);
                 application.setPaymentStatus(paymentStatusArray[count]);
                 if (count == 1) {
-                    // createBoothsAndProfiles(firstEvent, bp);
+                    // FOR NUMBER 1, THAT IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
+                    // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
                     SellerProfile profile = new SellerProfile();
                     profile.setEvent(firstEvent);
                     profile.setBusinessPartner(bp);
@@ -964,7 +946,8 @@ public class DataInitRunner implements ApplicationRunner {
                     application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
                     application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
                     if (statusTypeIndex == 1) {
-                        // createBoothsAndProfiles(e, randomBp);
+                        // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
+                        // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
                         SellerProfile profile = new SellerProfile();
                         profile.setEvent(e);
                         profile.setBusinessPartner(randomBp);
