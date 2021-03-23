@@ -217,8 +217,7 @@ public class BusinessPartnerService {
             if (sort == null) {
                 return bpRepository.findByNameContaining(keyword, PageRequest.of(page, size));
             } else {
-                return bpRepository.findByNameContaining(keyword,
-                        PageRequest.of(page, size, sort));
+                return bpRepository.findByNameContaining(keyword, PageRequest.of(page, size, sort));
             }
 
         }
@@ -262,8 +261,7 @@ public class BusinessPartnerService {
                 if (sort == null) {
                     return bpRepository.findByNameContaining(keyword, PageRequest.of(page, size));
                 } else {
-                    return bpRepository.findByNameContaining(keyword,
-                            PageRequest.of(page, size, sort));
+                    return bpRepository.findByNameContaining(keyword, PageRequest.of(page, size, sort));
                 }
 
             }
@@ -287,13 +285,13 @@ public class BusinessPartnerService {
     public List<Event> getAllEventsByBp(Long id) {
         List<SellerApplication> eventTransList = sellerApplicationService.getAllSellerApplications();
         List<Event> eventList = new ArrayList<>();
-        for(SellerApplication trans: eventTransList ){
-            if(!(trans.getPaymentStatus().toString().equals("REFUNDED")) && trans.getBusinessPartner().getId() == id){
-            // Event event = new Event();
-            // event = eventService.getEventById(trans.getEid());
-            // event = eventService.getEventById(trans.getEid());
-            // eventList.add(event);
-            eventList.add(trans.getEvent());
+        for (SellerApplication trans : eventTransList) {
+            if (!(trans.getPaymentStatus().toString().equals("REFUNDED")) && trans.getBusinessPartner().getId() == id) {
+                // Event event = new Event();
+                // event = eventService.getEventById(trans.getEid());
+                // event = eventService.getEventById(trans.getEid());
+                // eventList.add(event);
+                eventList.add(trans.getEvent());
             }
         }
         return eventList;
