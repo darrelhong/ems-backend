@@ -227,6 +227,13 @@ public class BusinessPartnerController {
 
         return bpService.getAllEventsByBp(bpId);
     }
+
+
+    @GetMapping(value = "/events/{bpId}/{role}/{status}")
+    public List<Event> getAllEventByBpIdStatus(@PathVariable Long bpId, @PathVariable String role, @PathVariable String status) {
+
+        return bpService.getAllEventsByBpIdStatus(bpId, role ,status);
+    }
     
 
 

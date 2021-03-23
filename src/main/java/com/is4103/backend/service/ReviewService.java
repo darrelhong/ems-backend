@@ -60,13 +60,17 @@ public class ReviewService {
     public List<Review> getReviewsByEO(Long id){
         // EventOrganiser organiser = eventOrganiserController.getEventOrganiserById(id);
         List<Event> events = eventController.getAllEventsByOrganiser(id);
+        
         List<Review> reviews = new ArrayList<>();
         for(int i=0; i<events.size(); i++){
+            if(events.get(i).getReviews()!=null){
             List<Review> eventReviews = events.get(i).getReviews();
             for(int h=0; h<eventReviews.size();h++){
                 reviews.add(eventReviews.get(h));
             }
         }
+        }
+
         return reviews;
     }
 

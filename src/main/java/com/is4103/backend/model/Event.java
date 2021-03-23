@@ -42,20 +42,23 @@ public class Event {
     @ElementCollection(targetClass = BusinessPartner.class)
     private List<BusinessPartner> favouriteBusinessPartners;
 
+    @Transient
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @ElementCollection(targetClass = EventBoothTransaction.class)
     @JsonIgnoreProperties("event")
     private List<EventBoothTransaction> eventBoothTransactions;
 
+    @Transient
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @JsonIgnoreProperties("event")
     private List<Booth> booths;
 
+    @Transient
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @ElementCollection(targetClass = TicketTransaction.class)
     private List<TicketTransaction> ticketTransactions;
 
-    // @Transient
+    @Transient
     @JsonIgnore
     @Column(nullable = true)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")

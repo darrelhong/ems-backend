@@ -9,9 +9,11 @@ import java.util.Random;
 import javax.transaction.Transactional;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.Booth;
+import com.is4103.backend.model.BoothApplicationStatus;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.EventStatus;
+import com.is4103.backend.model.PaymentStatus;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
@@ -556,9 +558,19 @@ public class DataInitRunner implements ApplicationRunner {
         event.setEventOrganiser(eo);
         eventRepository.save(event);
 
+        BusinessPartner bp = partnerRepository.findByEmail("partner@abc.com");
+        
         EventBoothTransaction transaction = new EventBoothTransaction();
         transaction.setEvent(event);
+        transaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        transaction.setBoothApplicationstatus(BoothApplicationStatus.APPROVED);
+        transaction.setBusinessPartner(bp);
         eventBoothTransactionRepository.save(transaction);
+
+        List<EventBoothTransaction> transactions = new ArrayList<>(); 
+        transactions.add(transaction);
+        bp.setEventBoothTransactions(transactions);
+        partnerRepository.save(bp);
     }
 
     private void createDemoEvents() {
