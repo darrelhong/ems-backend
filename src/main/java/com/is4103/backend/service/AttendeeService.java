@@ -37,7 +37,7 @@ public class AttendeeService {
 
     @Autowired
     private EventOrganiserRepository eoRepository;
-    
+
     @Autowired
     private EventOrganiserController eoController;
 
@@ -72,12 +72,8 @@ public class AttendeeService {
         if (attendee == null) {
             throw new UserNotFoundException("Attendee not found");
         }
-        return atnRepository.findByEmail(email);
+        return attendee;
     }
-
-    // public Attendee getAttendeeByEmail(String email) {
-    //     return atnRepository.findByEmail(email);
-    // }
 
     public List<BusinessPartner> getFollowingBp(Long id) {
         Attendee attendee = getAttendeeById(id);
@@ -126,7 +122,7 @@ public class AttendeeService {
 
         return atn;
     }
-    
+
     @Transactional
     public Attendee updateAttendee(Attendee user, UpdateAttendeeRequest updateAttendeeRequest) {
         user.setName(updateAttendeeRequest.getName());
@@ -140,12 +136,12 @@ public class AttendeeService {
 
     @Transactional
     public Attendee followBusinessPartner(Attendee user, FollowRequest followRequest) {
-       
+
         BusinessPartner bp = bpController.getBusinessPartnerById(followRequest.getId());
-       List<BusinessPartner> follow = user.getFollowedBusinessPartners();
-       follow.add(bp);
-       user.setFollowedBusinessPartners(follow);
-        List<Attendee> followers= bp.getAttendeeFollowers();
+        List<BusinessPartner> follow = user.getFollowedBusinessPartners();
+        follow.add(bp);
+        user.setFollowedBusinessPartners(follow);
+        List<Attendee> followers = bp.getAttendeeFollowers();
         followers.add(user);
         bpRepository.save(bp);
         return atnRepository.save(user);
@@ -153,28 +149,25 @@ public class AttendeeService {
 
     @Transactional
     public Attendee unfollowBusinessPartner(Attendee user, FollowRequest followRequest) {
-       
+
         BusinessPartner bp = bpController.getBusinessPartnerById(followRequest.getId());
-       List<BusinessPartner> follow = user.getFollowedBusinessPartners();
-       follow.remove(bp);
-       user.setFollowedBusinessPartners(follow);
-        List<Attendee> followers= bp.getAttendeeFollowers();
+        List<BusinessPartner> follow = user.getFollowedBusinessPartners();
+        follow.remove(bp);
+        user.setFollowedBusinessPartners(follow);
+        List<Attendee> followers = bp.getAttendeeFollowers();
         followers.remove(user);
         bpRepository.save(bp);
         return atnRepository.save(user);
     }
 
-
-
-
     @Transactional
     public Attendee followEventOrganiser(Attendee user, FollowRequest followRequest) {
-       
+
         EventOrganiser eo = eoController.getEventOrganiserById(followRequest.getId());
         List<EventOrganiser> follow = user.getFollowedEventOrgs();
         follow.add(eo);
         user.setFollowedEventOrgs(follow);
-        List<Attendee> followers= eo.getAttendeeFollowers();
+        List<Attendee> followers = eo.getAttendeeFollowers();
         followers.add(user);
         eoRepository.save(eo);
         return atnRepository.save(user);
@@ -182,15 +175,15 @@ public class AttendeeService {
 
     @Transactional
     public Attendee unfollowEventOrganiser(Attendee user, FollowRequest followRequest) {
-       
+
         EventOrganiser eo = eoController.getEventOrganiserById(followRequest.getId());
         List<EventOrganiser> follow = user.getFollowedEventOrgs();
         follow.remove(eo);
         user.setFollowedEventOrgs(follow);
-        List<Attendee> followers= eo.getAttendeeFollowers();
+        List<Attendee> followers = eo.getAttendeeFollowers();
         followers.remove(user);
         eoRepository.save(eo);
         return atnRepository.save(user);
     }
-  
+
 }
