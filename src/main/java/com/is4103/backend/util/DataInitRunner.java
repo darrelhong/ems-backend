@@ -2,7 +2,6 @@ package com.is4103.backend.util;
 
 import java.util.Set;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Random;
@@ -26,8 +25,6 @@ import com.is4103.backend.repository.RoleRepository;
 import com.is4103.backend.repository.TicketTransactionRepository;
 import com.is4103.backend.repository.UserRepository;
 import com.is4103.backend.repository.SellerApplicationRepository;
-import com.is4103.backend.service.BusinessPartnerService;
-import com.is4103.backend.service.SellerApplicationService;
 import com.is4103.backend.service.AttendeeService;
 import com.thedeanda.lorem.Lorem;
 import com.thedeanda.lorem.LoremIpsum;
@@ -35,11 +32,9 @@ import com.is4103.backend.repository.BusinessPartnerRepository;
 import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.repository.BoothRepository;
-import com.is4103.backend.repository.BusinessPartnerRepository;
 import com.is4103.backend.repository.SellerProfileRepository;
 import com.is4103.backend.repository.ProductRepository;
 
-import org.apache.catalina.core.ApplicationFilterConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -83,12 +78,7 @@ public class DataInitRunner implements ApplicationRunner {
     private ProductRepository productRepository;
 
     @Autowired
-    private BusinessPartnerService businessPartnerService;
-
-    private BusinessPartnerRepository partnerRepository;
-
     private TicketTransactionRepository ticketTransactionRepository;
-
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -208,8 +198,7 @@ public class DataInitRunner implements ApplicationRunner {
         this.eoTest.setBusinessPartnerFollowers(followersBP);
         userRepository.save(this.eoTest);
 
-
-        //create attendee
+        // create attendee
         Attendee atn = new Attendee();
         atn.setEmail("attendee@abc.com");
         atn.setName("first attendee");
@@ -222,12 +211,10 @@ public class DataInitRunner implements ApplicationRunner {
         category.add("Healthcare");
         atn.setCategoryPreferences(category);
         // atn.addfollowBP(businesspartner);
-        List<BusinessPartner> bpFollowing= new ArrayList<>();
+        List<BusinessPartner> bpFollowing = new ArrayList<>();
         bpFollowing.add(bp);
         atn.setFollowedBusinessPartners(bpFollowing);
         userRepository.save(atn);
- 
-        
 
         // create second attendee
         Attendee atnTwo = new Attendee();
@@ -242,8 +229,8 @@ public class DataInitRunner implements ApplicationRunner {
         atnTwo.setFollowedBusinessPartners(bpFollowing);
         userRepository.save(atnTwo);
 
-        //set atn and atn2 follow bp list 
-        
+        // set atn and atn2 follow bp list
+
         // Set<BusinessPartner> followBp = new HashSet<>();
         // followBp.add(bp);
         // atn.setFollowedBusinessPartners(followBp);
@@ -251,15 +238,13 @@ public class DataInitRunner implements ApplicationRunner {
         // userRepository.save(atn);
         // userRepository.save(atnTwo);
 
-        //set bp followers list 
+        // set bp followers list
         List<Attendee> followers = new ArrayList<>();
         followers.add(atn);
         followers.add(atnTwo);
         bp.setAttendeeFollowers(followers);
-        userRepository.save(bp);    
+        userRepository.save(bp);
 
-           
-        
         for (int i = 2; i <= 11; i++) {
             bp = new BusinessPartner();
             bp.setEmail("partner" + i + "@abc.com");
@@ -269,7 +254,6 @@ public class DataInitRunner implements ApplicationRunner {
             userRepository.save(bp);
         }
 
-        
     }
 
     // Testing Methods
@@ -311,7 +295,6 @@ public class DataInitRunner implements ApplicationRunner {
         // booths.add(new Booth(199.0, 5.0, 4.5, event));
         // booths.add(new Booth(299.0, 6.3, 5.4, event));
         // event.setBooths(booths);
-
 
         // EventBoothTransaction transaction = new EventBoothTransaction();
         // transaction.setEvent(event);
@@ -730,7 +713,7 @@ public class DataInitRunner implements ApplicationRunner {
     private void createDemoEvents() {
 
         Lorem lorem = LoremIpsum.getInstance();
-         Random rand = new Random();
+        Random rand = new Random();
 
         EventOrganiser eo = eoRepository.findByEmail("organiser@abc.com");
         for (int i = 0; i < 25; i++) {
@@ -796,43 +779,47 @@ public class DataInitRunner implements ApplicationRunner {
 
     // @Transactional
     // private void createBoothsAndProfiles(Event event, BusinessPartner bp) {
-    //     Random rand = new Random();
-    //     Lorem lorem = LoremIpsum.getInstance();
+    // Random rand = new Random();
+    // Lorem lorem = LoremIpsum.getInstance();
 
-    //     // CREATING BOOTH PROFILES
-    //     SellerProfile profile = new SellerProfile();
-    //     profile.setEvent(event);
-    //     // BusinessPartner bp = businessPartnerRepository.findById(id).get();
-    //     // List<Product> bpProducts = businessPartnerService.getPartnerProducts(id);
-    //     List<Product> bpProducts = productRepository.findProductsByBusinessPartner(bp.getId());
-    //     profile.setBusinessPartner(bp);
-    //     profile.setDescription(lorem.getWords(5, 20));
-    //     profile.setBrochureImages(
-    //             Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
-    //                     "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
-    //                     "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
-    //     sellerProfileRepository.save(profile);
+    // // CREATING BOOTH PROFILES
+    // SellerProfile profile = new SellerProfile();
+    // profile.setEvent(event);
+    // // BusinessPartner bp = businessPartnerRepository.findById(id).get();
+    // // List<Product> bpProducts = businessPartnerService.getPartnerProducts(id);
+    // List<Product> bpProducts =
+    // productRepository.findProductsByBusinessPartner(bp.getId());
+    // profile.setBusinessPartner(bp);
+    // profile.setDescription(lorem.getWords(5, 20));
+    // profile.setBrochureImages(
+    // Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 1 +
+    // "/image-1.jpg",
+    // "https://storage.googleapis.com/ems-images/events/event-" + 2 +
+    // "/image-2.jpg",
+    // "https://storage.googleapis.com/ems-images/events/event-" + 3 +
+    // "/image-3.jpg"));
+    // sellerProfileRepository.save(profile);
 
-    //     // CREATING 3 BOOTHS
-    //     for (int i = 1; i < 4; i++) {
-    //         Booth b = new Booth();
+    // // CREATING 3 BOOTHS
+    // for (int i = 1; i < 4; i++) {
+    // Booth b = new Booth();
 
-    //         // setting random set of products
-    //         bp.getProducts().size();
-    //         // List<Product> bpProducts= bp.getProducts();
-    //         List<Product> sellerProfileProducts = new ArrayList<>();
-    //         int numberOfProducts = rand.nextInt(bpProducts.size());
-    //         for (int j = 0; j < numberOfProducts; j++) {
-    //             sellerProfileProducts.add(bpProducts.get(j));
-    //         }
-    //         ;
-    //         b.setProducts(sellerProfileProducts);
-    //         b.setBoothNumber(i);
-    //         b.setDescription(lorem.getWords(5, 20));
-    //         b.setSellerProfile(sellerProfileRepository.findById(1L).get());
-    //         boothRepository.save(b);
-    //     }
-    //     ;
+    // // setting random set of products
+    // bp.getProducts().size();
+    // // List<Product> bpProducts= bp.getProducts();
+    // List<Product> sellerProfileProducts = new ArrayList<>();
+    // int numberOfProducts = rand.nextInt(bpProducts.size());
+    // for (int j = 0; j < numberOfProducts; j++) {
+    // sellerProfileProducts.add(bpProducts.get(j));
+    // }
+    // ;
+    // b.setProducts(sellerProfileProducts);
+    // b.setBoothNumber(i);
+    // b.setDescription(lorem.getWords(5, 20));
+    // b.setSellerProfile(sellerProfileRepository.findById(1L).get());
+    // boothRepository.save(b);
+    // }
+    // ;
     // }
 
     @Transactional
@@ -886,20 +873,21 @@ public class DataInitRunner implements ApplicationRunner {
 
             // switch (count) {
             // case 0:
-            //     sellerApplicationStatus = SellerApplicationStatus.APPROVED;
-            //     paymentStatus = PaymentStatus.PENDING;
-            //     break;
-            // case 1: // IN THIS CASE ITS CONFIRMED, WE CAN MAKE SELLERPROFILES FOR THIS CASE
-            //     sellerApplicationStatus = SellerApplicationStatus.CONFIRMED;
-            //     paymentStatus = PaymentStatus.COMPLETED;
-            //     break;
+            // sellerApplicationStatus = SellerApplicationStatus.APPROVED;
+            // paymentStatus = PaymentStatus.PENDING;
+            // break;
+            // case 1: // IN THIS CASE ITS CONFIRMED, WE CAN MAKE SELLERPROFILES FOR THIS
+            // CASE
+            // sellerApplicationStatus = SellerApplicationStatus.CONFIRMED;
+            // paymentStatus = PaymentStatus.COMPLETED;
+            // break;
             // case 2:
-            //     sellerApplicationStatus = SellerApplicationStatus.REJECTED;
-            //     paymentStatus = PaymentStatus.PENDING;
-            //     break;
+            // sellerApplicationStatus = SellerApplicationStatus.REJECTED;
+            // paymentStatus = PaymentStatus.PENDING;
+            // break;
             // default:
-            //     sellerApplicationStatus = SellerApplicationStatus.PENDING;
-            //     paymentStatus = PaymentStatus.PENDING;
+            // sellerApplicationStatus = SellerApplicationStatus.PENDING;
+            // paymentStatus = PaymentStatus.PENDING;
             // }
 
             SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
@@ -933,7 +921,7 @@ public class DataInitRunner implements ApplicationRunner {
                             "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
                             "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
                             "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
-                   SellerProfile savedProfile = sellerProfileRepository.save(profile);
+                    SellerProfile savedProfile = sellerProfileRepository.save(profile);
 
                     // BOOTH SETUP FOR EACH PROFILE
                     for (int k = 1; k < 4; k++) {

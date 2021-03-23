@@ -3,7 +3,6 @@ package com.is4103.backend.service;
 import com.is4103.backend.util.errors.MyFileNotFoundException;
 import com.is4103.backend.util.errors.FileStorageException;
 import com.is4103.backend.dto.FileStorageProperties;
-import com.is4103.backend.dto.SignupRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -18,16 +17,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
-import com.is4103.backend.model.User;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 public class FileStorageService {
 
     private Path fileStorageLocation;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private FileStorageProperties fileStorageProperties;

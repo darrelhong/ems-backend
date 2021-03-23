@@ -77,7 +77,7 @@ public class FileController {
             }
         }
 
-      //  user = userService.updateProfilePic(user, fileDownloadUri);
+        // user = userService.updateProfilePic(user, fileDownloadUri);
 
         return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
     }
@@ -85,7 +85,7 @@ public class FileController {
     @PostMapping("/uploadEventImage")
     public UploadFileResponse uploadEventImage(@RequestParam("file") MultipartFile file,
             @RequestParam(name = "eid", defaultValue = "1") Long eventId) {
-        String fileName = fileStorageService.storeFile(file,"eventimage","");
+        String fileName = fileStorageService.storeFile(file, "eventimage", "");
 
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         long userId = user.getId();

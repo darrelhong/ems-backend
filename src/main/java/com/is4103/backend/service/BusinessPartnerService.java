@@ -109,9 +109,9 @@ public class BusinessPartnerService {
         return bpRepository.findByEmail(email);
     }
 
-    public List<Attendee> getFollowersById (Long id){
+    public List<Attendee> getFollowersById(Long id) {
         BusinessPartner partner = getBusinessPartnerById(id);
-        List<Attendee>  followers = new ArrayList<>();
+        List<Attendee> followers = new ArrayList<>();
         followers = partner.getAttendeeFollowers();
         return followers;
     }
@@ -158,14 +158,15 @@ public class BusinessPartnerService {
     }
 
     @Transactional
-    public BusinessPartner updatePartner(BusinessPartner user, UpdatePartnerRequest updatePartnerRequest, String profilepicurl) {
+    public BusinessPartner updatePartner(BusinessPartner user, UpdatePartnerRequest updatePartnerRequest,
+            String profilepicurl) {
 
         user.setName(updatePartnerRequest.getName());
         user.setDescription(updatePartnerRequest.getDescription());
         user.setAddress(updatePartnerRequest.getAddress());
         user.setPhonenumber(updatePartnerRequest.getPhonenumber());
         user.setBusinessCategory(updatePartnerRequest.getBusinessCategory());
-        if(profilepicurl != null){
+        if (profilepicurl != null) {
             user.setProfilePic(profilepicurl);
         }
 
@@ -174,24 +175,25 @@ public class BusinessPartnerService {
 
     @Transactional
     public BusinessPartner followEventOrganiser(BusinessPartner user, FollowRequest followEORequest) {
-       
+
         EventOrganiser eo = eoController.getEventOrganiserById(followEORequest.getId());
-       List<EventOrganiser> follow = user.getFollowEventOrganisers();
-       follow.add(eo);
-       user.setFollowEventOrganisers(follow);
-        List<BusinessPartner> followers= eo.getBusinessPartnerFollowers();
+        List<EventOrganiser> follow = user.getFollowEventOrganisers();
+        follow.add(eo);
+        user.setFollowEventOrganisers(follow);
+        List<BusinessPartner> followers = eo.getBusinessPartnerFollowers();
         followers.add(user);
         eoRepository.save(eo);
         return bpRepository.save(user);
     }
+
     @Transactional
     public BusinessPartner unfollowEventOrganiser(BusinessPartner user, FollowRequest followEORequest) {
-       
+
         EventOrganiser eo = eoController.getEventOrganiserById(followEORequest.getId());
-       List<EventOrganiser> follow = user.getFollowEventOrganisers();
-       follow.remove(eo);
-       user.setFollowEventOrganisers(follow);
-        List<BusinessPartner> followers= eo.getBusinessPartnerFollowers();
+        List<EventOrganiser> follow = user.getFollowEventOrganisers();
+        follow.remove(eo);
+        user.setFollowEventOrganisers(follow);
+        List<BusinessPartner> followers = eo.getBusinessPartnerFollowers();
         followers.remove(user);
         eoRepository.save(eo);
         return bpRepository.save(user);
@@ -214,7 +216,7 @@ public class BusinessPartnerService {
         }
         if (keyword != null) {
             if (sort == null) {
-                return bpRepository.findByNameContaining(keyword,PageRequest.of(page, size));
+                return bpRepository.findByNameContaining(keyword, PageRequest.of(page, size));
             } else {
                 return bpRepository.findByNameContaining(keyword,
                         PageRequest.of(page, size, sort));
@@ -229,59 +231,52 @@ public class BusinessPartnerService {
 
     }
 
-   
+    public Page<BusinessPartner> getAllPartnersCat(int page, int size, String sortBy, String sortDir, String keyword,
+            String businessCategory, String clear) {
 
-    public Page<BusinessPartner> getAllPartnersCat(int page, int size, String sortBy, String sortDir, String keyword, String businessCategory, String clear) {
-        
-      if(clear !=null && clear.equals("true")){
-        return bpRepository.findAll(PageRequest.of(page, size));
-
-      }else{
-        Sort sort = null;
-        if (sortBy != null && sortDir != null) {
-            if (sortDir.equals("desc")) {
-                sort = Sort.by(sortBy).descending();
-            } else if (sortDir.equals("asc")) {
-                sort = Sort.by(sortBy).ascending();
-            }
-        }
-        
-       
-
-        if(businessCategory != null){
-           
-            if (sort == null) {
-                return bpRepository.findByBusinessCategoryContaining(businessCategory,PageRequest.of(page, size));
-
-            } else {
-                return bpRepository.findByBusinessCategoryContaining(businessCategory,
-                        PageRequest.of(page, size, sort));
-            }
-        }
-        
-
-        
-        if (keyword != null) {
-            
-            if (sort == null) {
-                return bpRepository.findByNameContaining(keyword,PageRequest.of(page, size));
-            } else {
-                return bpRepository.findByNameContaining(keyword,
-                        PageRequest.of(page, size, sort));
-            }
-
-        } 
-        
-        
-
-        if (sort == null) {
+        if (clear != null && clear.equals("true")) {
             return bpRepository.findAll(PageRequest.of(page, size));
-        } else {
-            
-            return bpRepository.findAll(PageRequest.of(page, size, sort));
-        }
 
-      }
+        } else {
+            Sort sort = null;
+            if (sortBy != null && sortDir != null) {
+                if (sortDir.equals("desc")) {
+                    sort = Sort.by(sortBy).descending();
+                } else if (sortDir.equals("asc")) {
+                    sort = Sort.by(sortBy).ascending();
+                }
+            }
+
+            if (businessCategory != null) {
+
+                if (sort == null) {
+                    return bpRepository.findByBusinessCategoryContaining(businessCategory, PageRequest.of(page, size));
+
+                } else {
+                    return bpRepository.findByBusinessCategoryContaining(businessCategory,
+                            PageRequest.of(page, size, sort));
+                }
+            }
+
+            if (keyword != null) {
+
+                if (sort == null) {
+                    return bpRepository.findByNameContaining(keyword, PageRequest.of(page, size));
+                } else {
+                    return bpRepository.findByNameContaining(keyword,
+                            PageRequest.of(page, size, sort));
+                }
+
+            }
+
+            if (sort == null) {
+                return bpRepository.findAll(PageRequest.of(page, size));
+            } else {
+
+                return bpRepository.findAll(PageRequest.of(page, size, sort));
+            }
+
+        }
 
     }
 
@@ -291,17 +286,17 @@ public class BusinessPartnerService {
     }
 
     public List<Event> getAllEventsByBp(Long id) {
-     
+
         List<EventBoothTransaction> eventTransList = eventBoothTransService.getAllEventBoothTransactions();
         List<Event> eventList = new ArrayList<>();
-        for(EventBoothTransaction trans: eventTransList ){
-            if(!(trans.getPaymentStatus().toString().equals("REFUNDED")) && trans.getBusinessPartner().getId() == id){
-            Event event = new Event();
-            event = eventService.getEventById(trans.getEid());
-            eventList.add(event);
+        for (EventBoothTransaction trans : eventTransList) {
+            if (!(trans.getPaymentStatus().toString().equals("REFUNDED")) && trans.getBusinessPartner().getId() == id) {
+                Event event = new Event();
+                event = eventService.getEventById(trans.getEid());
+                eventList.add(event);
             }
         }
-        return eventList; 
+        return eventList;
     }
 
 }

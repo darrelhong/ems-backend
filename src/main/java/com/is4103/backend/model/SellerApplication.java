@@ -23,18 +23,22 @@ public class SellerApplication {
     private long id;
 
     // @ManyToOne
-    // @JsonIgnoreProperties({ "events", "approved", "approvalMessage", "supportDocsUrl", "vipList", "attendeeFollowers",
-    //         "businessPartnerFollowers", "enquiries", "description", "profilePic", "email", "enabled", "phonenumber",
-    //         "address", "roles", "notifications" })
+    // @JsonIgnoreProperties({ "events", "approved", "approvalMessage",
+    // "supportDocsUrl", "vipList", "attendeeFollowers",
+    // "businessPartnerFollowers", "enquiries", "description", "profilePic",
+    // "email", "enabled", "phonenumber",
+    // "address", "roles", "notifications" })
     // private EventOrganiser eventOrganiser;
 
     @ManyToOne
-    @JsonIgnoreProperties({"events", "products", "sellerProfiles", "favouriteEventList", "attendeeFollowers", "followEventOrganisers", "sellerApplications", "enquiries"})
+    @JsonIgnoreProperties({ "events", "products", "sellerProfiles", "favouriteEventList", "attendeeFollowers",
+            "followEventOrganisers", "sellerApplications", "enquiries" })
     // @JsonIgnoreProperties("sellerApplications")
     private BusinessPartner businessPartner;
 
     @ManyToOne
-    @JsonIgnoreProperties({"sellerProfiles","eventOrganiser", "favouriteBusinessPartners","sellerApplications", "ticketTransactions", "products"})
+    @JsonIgnoreProperties({ "sellerProfiles", "eventOrganiser", "favouriteBusinessPartners", "sellerApplications",
+            "ticketTransactions", "products" })
     private Event event;
 
     private String description;
@@ -51,10 +55,11 @@ public class SellerApplication {
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
-    // @OneToOne(targetEntity = EventBoothTransaction.class, fetch = FetchType.EAGER)
+    // @OneToOne(targetEntity = EventBoothTransaction.class, fetch =
+    // FetchType.EAGER)
     // private EventBoothTransaction boothTransaction;
 
-    //instead of a transaction entity we just add:
-    //1. paymentStatus
-    //2. stripePaymentId
+    // instead of a transaction entity we just add:
+    // 1. paymentStatus
+    // 2. stripePaymentId
 }

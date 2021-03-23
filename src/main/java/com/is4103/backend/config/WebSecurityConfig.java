@@ -43,7 +43,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/partner/register/**", "/attendee/register/**", "/user/login/**", "/user/reset-password/**",
                         "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/user/{\\d+}", "/downloadFile/**",
                         "/organiser/event/{\\d+}", "/partner/followers/{\\d+}", "/partner/following/{\\d+}",
-                        "/organiser/attendeeFollowers/{\\d+}", "/organiser/partnerFollowers/{\\d+}","/organiser/event/{\\d+}/**", "/review/eo/{\\d+}", "/review/{\\d+}", "/event/public/**")
+                        "/organiser/attendeeFollowers/{\\d+}", "/organiser/partnerFollowers/{\\d+}",
+                        "/organiser/event/{\\d+}/**", "/review/eo/{\\d+}", "/review/{\\d+}", "/event/public/**")
 
                 .permitAll()
                 // can also be used to protected routes

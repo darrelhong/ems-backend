@@ -12,14 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
-// import org.hibernate.mapping.Set;
-
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import lombok.Data;
 
 @Data
@@ -34,7 +27,6 @@ public class BusinessPartner extends User {
     @ElementCollection(targetClass = Event.class)
     private List<Event> favouriteEventList;
 
-
     @JsonIgnore
     @Column(nullable = true)
     @ManyToMany
@@ -42,7 +34,7 @@ public class BusinessPartner extends User {
 
     @JsonIgnoreProperties("businessPartner")
     @Column(nullable = true)
-    @ManyToMany(mappedBy="businessPartnerFollowers")
+    @ManyToMany(mappedBy = "businessPartnerFollowers")
     private List<EventOrganiser> followEventOrganisers;
 
     // @JsonIgnoreProperties("businessPartner")
@@ -52,7 +44,7 @@ public class BusinessPartner extends User {
 
     @OneToMany(mappedBy = "businessPartner")
     @ElementCollection(targetClass = SellerApplication.class)
-    @JsonIgnoreProperties({"businessPartner","event"})
+    @JsonIgnoreProperties({ "businessPartner", "event" })
     private List<SellerApplication> sellerApplications;
 
     @OneToMany(mappedBy = "businessPartner")
@@ -66,7 +58,7 @@ public class BusinessPartner extends User {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "businessPartner")
     @ElementCollection(targetClass = Product.class)
-    @JsonIgnoreProperties({"businessPartner","booths"})
+    @JsonIgnoreProperties({ "businessPartner", "booths" })
     private List<Product> products;
 
     // @Transient
@@ -77,64 +69,68 @@ public class BusinessPartner extends User {
     private List<Review> reviews;
 
     // public BusinessPartner() {
-    //     super();
+    // super();
     // }
 
-    // public BusinessPartner(String businessCategory, List<Event> favouriteEventList,
-    //         List<EventBoothTransaction> eventBoothTransactions, List<EventOrganiser> followEventOrganisers) {
-    //     this();
-    //     this.businessCategory = businessCategory;
-    //     this.favouriteEventList = favouriteEventList;
-    //     this.eventBoothTransactions = eventBoothTransactions;
-    //     this.followEventOrganisers = followEventOrganisers;
-    //     this.attendeeFollowers = attendeeFollowers;
+    // public BusinessPartner(String businessCategory, List<Event>
+    // favouriteEventList,
+    // List<EventBoothTransaction> eventBoothTransactions, List<EventOrganiser>
+    // followEventOrganisers) {
+    // this();
+    // this.businessCategory = businessCategory;
+    // this.favouriteEventList = favouriteEventList;
+    // this.eventBoothTransactions = eventBoothTransactions;
+    // this.followEventOrganisers = followEventOrganisers;
+    // this.attendeeFollowers = attendeeFollowers;
     // }
 
     // public String getBusinessCategory() {
-    //     return businessCategory;
+    // return businessCategory;
     // }
 
     // public void setBusinessCategory(String businessCategory) {
-    //     this.businessCategory = businessCategory;
+    // this.businessCategory = businessCategory;
     // }
 
     // public List<Event> getFavouriteEventList() {
-    //     return favouriteEventList;
+    // return favouriteEventList;
     // }
 
     // public void setFavouriteEventList(List<Event> favouriteEventList) {
-    //     this.favouriteEventList = favouriteEventList;
+    // this.favouriteEventList = favouriteEventList;
     // }
 
     // public List<Attendee> getAttendeeFollowers() {
-    //     return attendeeFollowers;
+    // return attendeeFollowers;
     // }
 
     // public void setAttendeeFollowers(List<Attendee> attendeeFollowers) {
-    //     this.attendeeFollowers = attendeeFollowers;
+    // this.attendeeFollowers = attendeeFollowers;
     // }
 
     // public List<Review> getReviews() {
-    //     return reviews;
+    // return reviews;
     // }
 
     // public void setReviews(List<Review> reviews) {
-    //     this.reviews = reviews;
+    // this.reviews = reviews;
     // }
 
     // public List<EventBoothTransaction> getEventBoothTransactions() {
-    //     return eventBoothTransactions;
+    // return eventBoothTransactions;
     // }
 
-    // public void setEventBoothTransactions(List<EventBoothTransaction> eventBoothTransactions) {
-    //     this.eventBoothTransactions = eventBoothTransactions;
+    // public void setEventBoothTransactions(List<EventBoothTransaction>
+    // eventBoothTransactions) {
+    // this.eventBoothTransactions = eventBoothTransactions;
     // }
 
     // public List<EventOrganiser> getFollowEventOrganisers() {
-    //     return followEventOrganisers;
+    // return followEventOrganisers;
     // }
 
-    // public void setFollowEventOrganisers(List<EventOrganiser> followEventOrganisers) {
-    //     this.followEventOrganisers = followEventOrganisers;
+    // public void setFollowEventOrganisers(List<EventOrganiser>
+    // followEventOrganisers) {
+    // this.followEventOrganisers = followEventOrganisers;
     // }
 }

@@ -178,7 +178,6 @@ public class UserService {
         user.setAddress(updateUserRequest.getAddress());
         user.setPhonenumber(updateUserRequest.getPhonenumber());
 
-
         return userRepository.save(user);
     }
 
@@ -190,9 +189,9 @@ public class UserService {
     }
 
     // public User updateProfilePic(User user, String profilePicUrl) {
-    //     user.setProfilePic(profilePicUrl);
+    // user.setProfilePic(profilePicUrl);
 
-    //     return userRepository.save(user);
+    // return userRepository.save(user);
     // }
 
     public void createVerificationToken(User user, String token) {
@@ -307,17 +306,17 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void sendEnquiry(SendEnquiryRequest sendEnquiry,String eventName,User sender, User receiver) {
-      
+    public void sendEnquiry(SendEnquiryRequest sendEnquiry, String eventName, User sender, User receiver) {
+
         String subject = "";
         String recipientAddress = sendEnquiry.getReceiverEmail();
-   
-        if(!(eventName).equals("")){
-            subject = eventName +" - " + sendEnquiry.getSubject();
-        }else{
+
+        if (!(eventName).equals("")) {
+            subject = eventName + " - " + sendEnquiry.getSubject();
+        } else {
             subject = sendEnquiry.getSubject();
         }
-    
+
         String message = sendEnquiry.getContent();
 
         SimpleMailMessage email = new SimpleMailMessage();
@@ -325,10 +324,12 @@ public class UserService {
         email.setFrom(fromEmail);
         email.setTo(recipientAddress);
         email.setSubject(subject);
-        email.setText("Dear " +receiver.getName()+ "," + "\r\n\r\n"+
-        "You have received the following enquiry message from " + sender.getName() +":"+ 
-        "\r\n\r\n" + "\"" + message +"\""+ " " + 
-        "\r\n\r\n" + "<b>"+ "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" +"<b>" + "Please direct your reply to "+ sender.getName() +" at " + sendEnquiry.getSenderEmail() + "</b>");
+        email.setText("Dear " + receiver.getName() + "," + "\r\n\r\n" +
+                "You have received the following enquiry message from " + sender.getName() + ":" +
+                "\r\n\r\n" + "\"" + message + "\"" + " " +
+                "\r\n\r\n" + "<b>" + "This is an automated email from EventStop. Do not reply to this email.</b>"
+                + "\r\n" + "<b>" + "Please direct your reply to " + sender.getName() + " at "
+                + sendEnquiry.getSenderEmail() + "</b>");
         // cc the person who submitted the enquiry.
         email.setCc(sendEnquiry.getSenderEmail());
         javaMailSender.send(email);

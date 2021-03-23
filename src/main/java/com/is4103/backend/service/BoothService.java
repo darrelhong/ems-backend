@@ -1,4 +1,5 @@
 package com.is4103.backend.service;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class BoothService {
-    
+
     @Autowired
     BoothRepository boothRepository;
 

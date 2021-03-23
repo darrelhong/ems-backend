@@ -9,8 +9,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import com.is4103.backend.dto.OrganiserSearchCriteria;
-import com.is4103.backend.dto.PartnerSearchCriteria;
-import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.EventOrganiser;
 
 import org.springframework.data.jpa.domain.Specification;
@@ -41,6 +39,5 @@ public class OrganiserSpecification implements Specification<EventOrganiser> {
             return null;
         }
     }
-
 
 }

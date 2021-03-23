@@ -75,7 +75,7 @@ public class CreateEventRequest {
     private List<String> images;
 
     private float boothPrice;
-    
+
     @NotNull
     @NotEmpty
     private int boothCapacity;

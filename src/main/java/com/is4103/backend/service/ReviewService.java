@@ -8,12 +8,10 @@ import java.util.List;
 import com.is4103.backend.controller.AttendeeController;
 import com.is4103.backend.controller.BusinessPartnerController;
 import com.is4103.backend.controller.EventController;
-import com.is4103.backend.controller.EventOrganiserController;
 import com.is4103.backend.dto.CreateReview;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
-import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Review;
 import com.is4103.backend.repository.AttendeeRepository;
 import com.is4103.backend.repository.BusinessPartnerRepository;
@@ -42,9 +40,6 @@ public class ReviewService {
     private EventController eventController;
 
     @Autowired
-    private EventOrganiserController eventOrganiserController;
-
-    @Autowired
     private AttendeeController atnController;
 
     @Autowired
@@ -53,17 +48,17 @@ public class ReviewService {
     public List<Review> getReviewsByEventId(Long id) {
         Event event = eventController.getEventById(id);
         return reviewRepository.findByEvent(event);
-        
 
     }
 
-    public List<Review> getReviewsByEO(Long id){
-        // EventOrganiser organiser = eventOrganiserController.getEventOrganiserById(id);
+    public List<Review> getReviewsByEO(Long id) {
+        // EventOrganiser organiser =
+        // eventOrganiserController.getEventOrganiserById(id);
         List<Event> events = eventController.getAllEventsByOrganiser(id);
         List<Review> reviews = new ArrayList<>();
-        for(int i=0; i<events.size(); i++){
+        for (int i = 0; i < events.size(); i++) {
             List<Review> eventReviews = events.get(i).getReviews();
-            for(int h=0; h<eventReviews.size();h++){
+            for (int h = 0; h < eventReviews.size(); h++) {
                 reviews.add(eventReviews.get(h));
             }
         }

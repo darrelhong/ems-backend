@@ -43,15 +43,15 @@ public class BoothController {
 
     @PostMapping(path = "/add-product")
     public Booth addProductToBooth(
-        @RequestParam(name = "pid", defaultValue = "1") Long pid,
-        @RequestParam(name = "id", defaultValue = "10") Long id) {
+            @RequestParam(name = "pid", defaultValue = "1") Long pid,
+            @RequestParam(name = "id", defaultValue = "10") Long id) {
         return boothService.addProductToBooth(pid, id);
     }
 
     @PostMapping(path = "/remove-product")
-    public Booth removeProductFromBooth (
-        @RequestParam(name = "pid", defaultValue = "1") Long pid,
-        @RequestParam(name = "id", defaultValue = "10") Long id) {
+    public Booth removeProductFromBooth(
+            @RequestParam(name = "pid", defaultValue = "1") Long pid,
+            @RequestParam(name = "id", defaultValue = "10") Long id) {
         return boothService.removeProductFromBooth(pid, id);
     }
 

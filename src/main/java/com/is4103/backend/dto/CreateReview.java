@@ -1,6 +1,5 @@
 package com.is4103.backend.dto;
 
-
 import org.springframework.lang.Nullable;
 
 import lombok.Getter;

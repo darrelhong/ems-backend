@@ -44,7 +44,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.is4103.backend.dto.UploadFileResponse;
 
-
 @RestController
 @RequestMapping(path = "/organiser")
 // @PreAuthorize("hasRole('EVNTORG')")
@@ -58,7 +57,7 @@ public class EventOrganiserController {
 
     @Autowired
     private FileStorageProperties fileStorageProperties;
-    
+
     // @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
     public List<EventOrganiser> getAllEventOrganisers() {
@@ -113,8 +112,6 @@ public class EventOrganiserController {
 
     }
 
-
-
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/register/noverify")
     public EventOrganiser registerNewEventOrganiserNoVerify(@RequestBody @Valid SignupRequest signupRequest) {
@@ -152,7 +149,6 @@ public class EventOrganiserController {
         return eoService.removeFromVipList(currentUserId, bpId);
     }
 
-
     @PostMapping(value = "/vip/isvip/{bpId}")
     public boolean isBpInVipList(@PathVariable Long bpId) {
         Long currentUserId = userService.getCurrentUserId();
@@ -161,33 +157,30 @@ public class EventOrganiserController {
 
     @GetMapping(value = "/event/{eoId}")
     public List<Event> getAllEventsByEventOrgId(@PathVariable Long eoId) {
-      
+
         return eoService.getAllEventsByEoId(eoId);
     }
 
-
     @GetMapping(value = "/getVaildEventForBp/{eoId}")
     public List<Event> getValidBpEventsByEventOrgId(@PathVariable Long eoId) {
-      
+
         return eoService.getValidBpEventsByEventOrgId(eoId);
     }
 
-
     @GetMapping(value = "/getVaildEventForAtt/{eoId}")
     public List<Event> getValidAttEventsByEventOrgId(@PathVariable Long eoId) {
-      
+
         return eoService.getValidAttEventsByEventOrgId(eoId);
     }
-
 
     @GetMapping(value = "/event/{eoId}/{role}/{status}")
     public List<Event> getAllEventsByEventOrgIdRoleStatus(@PathVariable Long eoId, @PathVariable String role,
             @PathVariable String status) {
         System.out.println("call getAllEventsByEventOrgIdRoleStatus");
-        return eoService.getAllEventsByEoIdRoleStatus(eoId,role,status);
-        
+        return eoService.getAllEventsByEoIdRoleStatus(eoId, role, status);
+
     }
-    
+
     @GetMapping(path = "/get-organisers")
     public Page<EventOrganiser> getOrganisers(@RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
@@ -200,11 +193,10 @@ public class EventOrganiserController {
         return eoService.search(organiserSearchCriteria);
     }
 
-
-    
     @PreAuthorize("hasAnyRole('EVNTORG')")
     @PostMapping(value = "/updateEoProfile")
-    public UploadFileResponse updateUser(UpdateUserRequest updateUserRequest, @RequestParam(value ="profilepicfile", required = false) MultipartFile file) {
+    public UploadFileResponse updateUser(UpdateUserRequest updateUserRequest,
+            @RequestParam(value = "profilepicfile", required = false) MultipartFile file) {
 
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         System.out.println("file and user");
@@ -218,8 +210,8 @@ public class EventOrganiserController {
         }
         System.out.println("file");
 
-        if(file != null){
-                filename = fileStorageService.storeFile(file, "profilepic", "");
+        if (file != null) {
+            filename = fileStorageService.storeFile(file, "profilepic", "");
 
             fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/").path(filename)
                     .toUriString();
@@ -241,20 +233,23 @@ public class EventOrganiserController {
                     e.printStackTrace();
                 }
 
-             }
+            }
         }
-         
-         user = eoService.updateEoProfile(user, updateUserRequest,fileDownloadUri);
-         System.out.println("user profile pic");
-         System.out.println(user.getProfilePic());
-         
-         return new UploadFileResponse(user.getProfilePic());
-    }
-     @PreAuthorize("hasAnyRole('EVNTORG')")
-    @PostMapping(value = "/uploadbizdoc")
-    public UploadFileResponse uploadEoBizFile(UploadBizSupportFileRequest updateBizSupportFileRequest, @RequestParam(value ="bizSupportDoc") MultipartFile file) {
 
-        EventOrganiser user = (EventOrganiser) userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        user = eoService.updateEoProfile(user, updateUserRequest, fileDownloadUri);
+        System.out.println("user profile pic");
+        System.out.println(user.getProfilePic());
+
+        return new UploadFileResponse(user.getProfilePic());
+    }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @PostMapping(value = "/uploadbizdoc")
+    public UploadFileResponse uploadEoBizFile(UploadBizSupportFileRequest updateBizSupportFileRequest,
+            @RequestParam(value = "bizSupportDoc") MultipartFile file) {
+
+        EventOrganiser user = (EventOrganiser) userService
+                .getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
         String fileDownloadUri = null;
         String filename = null;
@@ -263,21 +258,18 @@ public class EventOrganiserController {
         if (updateBizSupportFileRequest.getId() != user.getId()) {
             throw new AuthenticationServiceException("An error has occured");
         }
-    
-        if(file != null){
-                filename = fileStorageService.storeFile(file, "bizsupportdoc", user.getEmail());
+
+        if (file != null) {
+            filename = fileStorageService.storeFile(file, "bizsupportdoc", user.getEmail());
 
             fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/").path(filename)
                     .toUriString();
 
-           
         }
         user = eoService.updateEoBizSupportUrl(user, fileDownloadUri);
         return new UploadFileResponse("success");
-        
+
     }
-    
- 
 
     @PreAuthorize("hasAnyRole('EVNTORG')")
     @PostMapping(value = "/broadcastEmailEnquiry")
@@ -289,17 +281,17 @@ public class EventOrganiserController {
             throw new AuthenticationServiceException("An error has occured");
         } else {
 
-            eoService.broadcastMessage(sender,broadcastMessageRequest);
+            eoService.broadcastMessage(sender, broadcastMessageRequest);
 
-            }
+        }
 
         return ResponseEntity.ok("Success");
     }
 
-
     @PreAuthorize("hasAnyRole('EVNTORG')")
     @PostMapping(value = "/broadcastEmailToFollowers")
-    public ResponseEntity sendEmailToFollowers(@RequestBody @Valid BroadcastMessageToFollowersRequest broadcastMessageToFollowersRequest) {
+    public ResponseEntity sendEmailToFollowers(
+            @RequestBody @Valid BroadcastMessageToFollowersRequest broadcastMessageToFollowersRequest) {
         User sender = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         // verify user id
         // if current user is null
@@ -307,13 +299,11 @@ public class EventOrganiserController {
             throw new AuthenticationServiceException("An error has occured");
         } else {
 
-            eoService.broadcastToFollowers(sender,broadcastMessageToFollowersRequest);
+            eoService.broadcastToFollowers(sender, broadcastMessageToFollowersRequest);
 
-            }
+        }
 
         return ResponseEntity.ok("Success");
     }
-
-    
 
 }

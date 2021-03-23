@@ -6,7 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface EventOrganiserRepository extends JpaRepository<EventOrganiser, Long>, JpaSpecificationExecutor<EventOrganiser> {
+public interface EventOrganiserRepository
+        extends JpaRepository<EventOrganiser, Long>, JpaSpecificationExecutor<EventOrganiser> {
     EventOrganiser findByEmail(String email);
-    Page<EventOrganiser> findByNameContaining(String name,  Pageable pageable);
+
+    Page<EventOrganiser> findByNameContaining(String name, Pageable pageable);
 }

@@ -23,5 +23,4 @@ public class BroadcastMessageRequest {
     @NotEmpty
     private String broadcastOption;
 
-
 }

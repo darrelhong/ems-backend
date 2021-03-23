@@ -18,7 +18,6 @@ public class SellerProfileController {
     @Autowired
     private SellerProfileService sellerProfileService;
 
-
     @GetMapping(path = "/all")
     public List<SellerProfile> getAllSellerProfiles() {
         return sellerProfileService.getAllSellerProfiles();

@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p from Product p where p.businessPartner.id = ?1")
-    public List<Product>  findProductsByBusinessPartner(Long id);
+    public List<Product> findProductsByBusinessPartner(Long id);
 }

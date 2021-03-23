@@ -1,6 +1,5 @@
 package com.is4103.backend.controller;
 
-import java.io.Console;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -23,8 +22,6 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -82,35 +79,34 @@ public class AttendeeController {
 
         return new SignupResponse("success");
     }
-    
+
     @PreAuthorize("hasAnyRole('ATND')")
-    @PostMapping(value ="/followBP")
-    public ResponseEntity<Attendee> followBusinessPartner(@RequestBody @Valid FollowRequest followRequest){
+    @PostMapping(value = "/followBP")
+    public ResponseEntity<Attendee> followBusinessPartner(@RequestBody @Valid FollowRequest followRequest) {
         Attendee user = atnService.getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         user = atnService.followBusinessPartner(user, followRequest);
         return ResponseEntity.ok(user);
     }
 
-    
     @PreAuthorize("hasAnyRole('ATND')")
-    @PostMapping(value ="/unfollowBP")
-    public ResponseEntity<Attendee> unfollowBusinessPartner(@RequestBody @Valid FollowRequest followRequest){
+    @PostMapping(value = "/unfollowBP")
+    public ResponseEntity<Attendee> unfollowBusinessPartner(@RequestBody @Valid FollowRequest followRequest) {
         Attendee user = atnService.getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         user = atnService.unfollowBusinessPartner(user, followRequest);
         return ResponseEntity.ok(user);
     }
 
     @PreAuthorize("hasAnyRole('ATND')")
-    @PostMapping(value ="/followEO")
-    public ResponseEntity<Attendee> followEventOrganiser(@RequestBody @Valid FollowRequest followRequest){
+    @PostMapping(value = "/followEO")
+    public ResponseEntity<Attendee> followEventOrganiser(@RequestBody @Valid FollowRequest followRequest) {
         Attendee user = atnService.getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         user = atnService.followEventOrganiser(user, followRequest);
         return ResponseEntity.ok(user);
     }
 
     @PreAuthorize("hasAnyRole('ATND')")
-    @PostMapping(value ="/unfollowEO")
-    public ResponseEntity<Attendee> unfollowEventOrganiser(@RequestBody @Valid FollowRequest followRequest){
+    @PostMapping(value = "/unfollowEO")
+    public ResponseEntity<Attendee> unfollowEventOrganiser(@RequestBody @Valid FollowRequest followRequest) {
         Attendee user = atnService.getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         user = atnService.unfollowEventOrganiser(user, followRequest);
         return ResponseEntity.ok(user);
@@ -118,10 +114,8 @@ public class AttendeeController {
 
     @PreAuthorize("hasAnyRole('ATND')")
     @PostMapping(value = "/update")
-    public ResponseEntity<Attendee> updateAttendee(
-            @RequestBody @Valid UpdateAttendeeRequest updateAttendeeRequest) {
-        Attendee user = atnService
-                .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    public ResponseEntity<Attendee> updateAttendee(@RequestBody @Valid UpdateAttendeeRequest updateAttendeeRequest) {
+        Attendee user = atnService.getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
         // verify user id
         if (updateAttendeeRequest.getId() != user.getId()) {

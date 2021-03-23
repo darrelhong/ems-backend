@@ -19,9 +19,7 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonView;
-
 
 import lombok.Data;
 
@@ -46,7 +44,8 @@ public class Event {
     private List<BusinessPartner> favouriteBusinessPartners;
 
     // @JsonView(EventViews.Private.class)
-    // @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
+    // @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy =
+    // "event")
     // @ElementCollection(targetClass = EventBoothTransaction.class)
     // @JsonIgnoreProperties("event")
     // private List<EventBoothTransaction> eventBoothTransactions;
@@ -58,7 +57,8 @@ public class Event {
     private List<SellerApplication> sellerApplications;
 
     // @JsonView(EventViews.Private.class)
-    // @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
+    // @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy =
+    // "event")
     // @JsonIgnoreProperties("event")
     // private List<Booth> booths;
 
@@ -78,8 +78,6 @@ public class Event {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @ElementCollection(targetClass = Review.class)
     private List<Review> reviews;
-
-
 
     // @Column(nullable = false)
     @JsonView(EventViews.Basic.class)
@@ -127,7 +125,7 @@ public class Event {
     private List<String> images;
 
     private float boothPrice;
-    
+
     // @Column(nullable = false)
     private int boothCapacity;
 
@@ -152,5 +150,4 @@ public class Event {
         return false;
     }
 
-    
 }

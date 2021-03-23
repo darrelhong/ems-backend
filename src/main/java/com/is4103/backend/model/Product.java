@@ -39,5 +39,4 @@ public class Product {
     @JsonIgnoreProperties("products")
     private BusinessPartner businessPartner;
 
-
 }
