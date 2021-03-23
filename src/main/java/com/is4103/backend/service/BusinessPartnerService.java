@@ -286,7 +286,9 @@ public class BusinessPartnerService {
         List<SellerApplication> eventTransList = sellerApplicationService.getAllSellerApplications();
         List<Event> eventList = new ArrayList<>();
         for (SellerApplication trans : eventTransList) {
-            if (!(trans.getPaymentStatus().toString().equals("REFUNDED")) && trans.getBusinessPartner().getId() == id) {
+            if (!(trans.getPaymentStatus().toString().equals("REFUNDED")) && 
+                trans.getBusinessPartner().getId() == id && 
+                !(eventList.contains(trans.getEvent()))) {
                 // Event event = new Event();
                 // event = eventService.getEventById(trans.getEid());
                 // event = eventService.getEventById(trans.getEid());
