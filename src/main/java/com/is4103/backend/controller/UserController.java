@@ -366,41 +366,6 @@ public class UserController {
         
     }
 
-    //  public CheckoutResponse createTransaction(Long eventId, Integer ticketQty, Attendee attendee)
-    //         throws StripeException {
-    //     Event event = eventService.getEventById(eventId);
-    //     Long ticketsSold = ttRepository.countByEventAndPaymentStatus(event, PaymentStatus.COMPLETED);
-
-    //     List<TicketTransaction> tickets = new ArrayList<>();
-
-    //     // check available tickets
-    //     if (event.getTicketCapacity() >= ticketsSold + ticketQty) {
-    //         Double paymentAmount = (double) event.getTicketPrice() * ticketQty;
-
-    //         // times hundered to convert to cents
-    //         Long stripePaymentAmount = Double.valueOf(paymentAmount * 100).longValue();
-
-    //         Stripe.apiKey = stripeApiKey;
-
-    //         PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder().setCurrency("sgd")
-    //                 .setAmount(stripePaymentAmount).build();
-    //         PaymentIntent intent = PaymentIntent.create(createParams);
-
-    //         for (int i = 0; i < ticketQty; i++) {
-    //             TicketTransaction tt = new TicketTransaction();
-    //             tt.setEvent(event);
-    //             tt.setAttendee(attendee);
-    //             tt.setStripePaymentId(intent.getId());
-    //             ttRepository.save(tt);
-    //             tickets.add(tt);
-    //         }
-
-    //         CheckoutResponse checkoutResponse = new CheckoutResponse(paymentAmount, intent.getClientSecret(), tickets);
-    //         return checkoutResponse;
-    //     }
-    //     return null;
-    // }
-
 }
 
 
