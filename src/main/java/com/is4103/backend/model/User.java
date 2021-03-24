@@ -68,7 +68,7 @@ public class User {
     private List<Notification> notifications;
 
     @Column(nullable = true)
-    private String cardId;
+    private String paymentMethodId;
     
     @Column(nullable = true)
     private boolean systemEmailNoti;
