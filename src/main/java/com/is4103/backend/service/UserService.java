@@ -334,4 +334,10 @@ public class UserService {
         email.setCc(sendEnquiry.getSenderEmail());
         javaMailSender.send(email);
     }
+
+    public User savePaymentMethod(User user,String paymentMethodId){
+        user.setPaymentMethodId(paymentMethodId);
+        return userRepository.save(user);
+
+    }
 }
