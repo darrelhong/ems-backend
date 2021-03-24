@@ -89,6 +89,12 @@ public class EventOrganiserService {
     public EventOrganiser getEventOrganiserById(Long eoId) {
         return eoRepository.findById(eoId).orElseThrow(() -> new UserNotFoundException());
     }
+    
+    public EventOrganiser getEventOrganiserByEmail(String email) {
+        System.out.println("getEventOrganiserByEmail");
+         System.out.println(eoRepository.findByEmail(email).getEmail());
+        return eoRepository.findByEmail(email);
+    }
 
     @Transactional
     public EventOrganiser registerNewEventOrganiser(SignupRequest signupRequest, boolean enabled) {
@@ -327,7 +333,8 @@ public class EventOrganiserService {
     }
 
     @Transactional
-    public User updateEoProfile(User user, UpdateUserRequest updateUserRequest, String profilepicurl) {
+    public EventOrganiser updateEoProfile(
+            EventOrganiser user, UpdateUserRequest updateUserRequest, String profilepicurl) {
 
         user.setName(updateUserRequest.getName());
         user.setDescription(updateUserRequest.getDescription());

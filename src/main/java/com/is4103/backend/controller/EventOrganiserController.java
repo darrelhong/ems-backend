@@ -198,19 +198,20 @@ public class EventOrganiserController {
     public UploadFileResponse updateUser(UpdateUserRequest updateUserRequest,
             @RequestParam(value = "profilepicfile", required = false) MultipartFile file) {
 
-        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        System.out.println("file and user");
-        System.out.println(user);
-        System.out.println(file);
+       
+  EventOrganiser user = eoService.getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+       
         String fileDownloadUri = null;
         String filename = null;
         // verify user id
         if (updateUserRequest.getId() != user.getId()) {
             throw new AuthenticationServiceException("An error has occured");
         }
-        System.out.println("file");
+      
+      
 
         if (file != null) {
+            
             filename = fileStorageService.storeFile(file, "profilepic", "");
 
             fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/").path(filename)
@@ -235,7 +236,7 @@ public class EventOrganiserController {
 
             }
         }
-
+        System.out.println("hello");
         user = eoService.updateEoProfile(user, updateUserRequest, fileDownloadUri);
         System.out.println("user profile pic");
         System.out.println(user.getProfilePic());
