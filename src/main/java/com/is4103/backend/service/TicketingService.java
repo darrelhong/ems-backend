@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
+import com.is4103.backend.dto.ticketing.TicketTransactionEventDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.PaymentStatus;
@@ -110,5 +111,9 @@ public class TicketingService {
                     LocalDateTime.now(), PaymentStatus.COMPLETED, type, Sort.by("dateTimeOrdered").descending());
         }
         return new ArrayList<>();
+    }
+
+    public Collection<TicketTransactionEventDto> getDistinctEventsPurchased(Attendee attendee) {
+        return ttRepository.findDistinctEventsByAttendee(attendee, PaymentStatus.COMPLETED);
     }
 }
