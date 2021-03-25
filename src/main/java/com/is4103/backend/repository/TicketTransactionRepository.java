@@ -27,4 +27,10 @@ public interface TicketTransactionRepository extends JpaRepository<TicketTransac
 
     <T> Collection<T> findByAttendeeAndEvent_EventStartDateBefore(Attendee attendee, LocalDateTime now, Class<T> type,
             Sort sort);
+
+    <T> Collection<T> findByAttendeeAndEvent_EventStartDateAfterAndPaymentStatus(Attendee attendee, LocalDateTime now,
+            PaymentStatus paymentStatus, Class<T> type, Sort sort);
+
+    <T> Collection<T> findByAttendeeAndEvent_EventStartDateBeforeAndPaymentStatus(Attendee attendee, LocalDateTime now,
+            PaymentStatus paymentStatus, Class<T> type, Sort sort);
 }

@@ -103,11 +103,11 @@ public class TicketingService {
 
     public <T> Collection<T> getTicketTransactionsAttendee(Attendee attendee, String period, Class<T> type) {
         if (period.equals("upcoming")) {
-            return ttRepository.findByAttendeeAndEvent_EventStartDateAfter(attendee, LocalDateTime.now(), type,
-                    Sort.by("dateTimeOrdered").descending());
+            return ttRepository.findByAttendeeAndEvent_EventStartDateAfterAndPaymentStatus(attendee,
+                    LocalDateTime.now(), PaymentStatus.COMPLETED, type, Sort.by("dateTimeOrdered").descending());
         } else if (period.equals("previous")) {
-            return ttRepository.findByAttendeeAndEvent_EventStartDateBefore(attendee, LocalDateTime.now(), type,
-                    Sort.by("dateTimeOrdered").descending());
+            return ttRepository.findByAttendeeAndEvent_EventStartDateBeforeAndPaymentStatus(attendee,
+                    LocalDateTime.now(), PaymentStatus.COMPLETED, type, Sort.by("dateTimeOrdered").descending());
         }
         return new ArrayList<>();
     }
