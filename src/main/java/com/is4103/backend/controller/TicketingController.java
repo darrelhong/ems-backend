@@ -92,12 +92,18 @@ public class TicketingController {
     @GetMapping(value = "/attendee")
     public ResponseEntity<TicketTransactionsResponse> getTicketTransactionsAttendee(
             @RequestParam(name = "period", defaultValue = "upcoming") String period) {
-        Attendee attendee = attendeeService
-                .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        Collection<TicketTransactionDto> tickets = ticketingService.getTicketTransactionsAttendee(attendee, period,
-                TicketTransactionDto.class);
-        Collection<TicketTransactionEventDto> events = ticketingService.getDistinctEventsPurchased(attendee);
-        TicketTransactionsResponse resp = new TicketTransactionsResponse(tickets, events);
-        return ResponseEntity.ok(resp);
+
+        if (period.equals("upcoming") || period.equals("previous")) {
+
+            Attendee attendee = attendeeService
+                    .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+            Collection<TicketTransactionDto> tickets = ticketingService.getTicketTransactionsAttendee(attendee, period,
+                    TicketTransactionDto.class);
+            Collection<TicketTransactionEventDto> events = ticketingService.getDistinctEventsPurchased(attendee,
+                    period);
+            TicketTransactionsResponse resp = new TicketTransactionsResponse(tickets, events);
+            return ResponseEntity.ok(resp);
+        }
+        return ResponseEntity.badRequest().body(new TicketTransactionsResponse());
     }
 }

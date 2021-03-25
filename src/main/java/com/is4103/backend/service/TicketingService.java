@@ -113,7 +113,14 @@ public class TicketingService {
         return new ArrayList<>();
     }
 
-    public Collection<TicketTransactionEventDto> getDistinctEventsPurchased(Attendee attendee) {
-        return ttRepository.findDistinctEventsByAttendee(attendee, PaymentStatus.COMPLETED);
+    public Collection<TicketTransactionEventDto> getDistinctEventsPurchased(Attendee attendee, String period) {
+        if (period.equals("upcoming")) {
+            return ttRepository.findDistinctEventsByAttendeeUpcoming(attendee, PaymentStatus.COMPLETED,
+                    LocalDateTime.now());
+        } else if (period.equals("previous")) {
+            return ttRepository.findDistinctEventsByAttendeePrevious(attendee, PaymentStatus.COMPLETED,
+                    LocalDateTime.now());
+        }
+        return new ArrayList<>();
     }
 }

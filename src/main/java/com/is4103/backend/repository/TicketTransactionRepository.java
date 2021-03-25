@@ -36,6 +36,11 @@ public interface TicketTransactionRepository extends JpaRepository<TicketTransac
     <T> Collection<T> findByAttendeeAndEvent_EventStartDateBeforeAndPaymentStatus(Attendee attendee, LocalDateTime now,
             PaymentStatus paymentStatus, Class<T> type, Sort sort);
 
-    @Query("SELECT DISTINCT(tt.event.eid) as eid, tt.event.name as name FROM TicketTransaction tt WHERE tt.attendee = ?1 AND tt.paymentStatus = ?2")
-    Collection<TicketTransactionEventDto> findDistinctEventsByAttendee(Attendee attendee, PaymentStatus paymentStatus);
+    @Query("SELECT DISTINCT(tt.event.eid) as eid, tt.event.name as name FROM TicketTransaction tt WHERE tt.attendee = ?1 AND tt.paymentStatus = ?2 AND tt.event.eventStartDate > ?3")
+    Collection<TicketTransactionEventDto> findDistinctEventsByAttendeeUpcoming(Attendee attendee,
+            PaymentStatus paymentStatus, LocalDateTime eventStartDate);
+
+    @Query("SELECT DISTINCT(tt.event.eid) as eid, tt.event.name as name FROM TicketTransaction tt WHERE tt.attendee = ?1 AND tt.paymentStatus = ?2 AND tt.event.eventStartDate < ?3")
+    Collection<TicketTransactionEventDto> findDistinctEventsByAttendeePrevious(Attendee attendee,
+            PaymentStatus paymentStatus, LocalDateTime eventStartDate);
 }
