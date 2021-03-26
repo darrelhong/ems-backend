@@ -140,6 +140,13 @@ public class BusinessPartnerController {
         return ResponseEntity.ok(user);
     }
 
+    @PostMapping(path = "/unlike/{bpId}/{eid}")
+    public ResponseEntity<BusinessPartner> unlikeEvent(@PathVariable long bpId, @PathVariable Long eid) {
+        BusinessPartner user = bpService.getBusinessPartnerById(bpId);
+        user = bpService.unlikeEvent(user, eid);
+        return ResponseEntity.ok(user);
+    }
+
     @PreAuthorize("hasAnyRole('BIZPTNR')")
     @PostMapping(value = "/followEO")
     public ResponseEntity<BusinessPartner> followEventOrganiser(@RequestBody @Valid FollowRequest followEORequest) {

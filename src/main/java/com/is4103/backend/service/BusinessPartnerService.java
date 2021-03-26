@@ -180,6 +180,14 @@ public class BusinessPartnerService {
         return bpRepository.save(user);
     }
 
+    public BusinessPartner unlikeEvent(BusinessPartner user, Long eid) {
+        Event event = eventService.getEventById(eid);
+        List<Event> likedEvents = user.getFavouriteEventList();
+        likedEvents.remove(event);
+        user.setFavouriteEventList(likedEvents);
+        return bpRepository.save(user);
+    }
+
     @Transactional
     public BusinessPartner followEventOrganiser(BusinessPartner user, FollowRequest followEORequest) {
 
