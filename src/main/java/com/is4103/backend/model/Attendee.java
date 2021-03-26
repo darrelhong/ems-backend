@@ -2,7 +2,6 @@ package com.is4103.backend.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -48,7 +47,7 @@ public class Attendee extends User {
     @ManyToMany
     @JoinColumn
     @JsonIgnore
-    private Set<Event> favouriteEvents;
+    private List<Event> favouriteEvents;
 
     public Attendee() {
         super();

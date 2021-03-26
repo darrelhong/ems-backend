@@ -190,7 +190,7 @@ public class AttendeeService {
         return atnRepository.save(user);
     }
 
-    public Set<Event> favouriteEvent(Attendee attendee, Long eventId) {
+    public List<Event> favouriteEvent(Attendee attendee, Long eventId) {
         Event event = eventService.getEventById(eventId);
         if (attendee.getFavouriteEvents().contains(event)) {
             attendee.getFavouriteEvents().remove(event);

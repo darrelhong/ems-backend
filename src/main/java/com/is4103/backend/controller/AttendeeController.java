@@ -1,7 +1,6 @@
 package com.is4103.backend.controller;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -141,7 +140,7 @@ public class AttendeeController {
         Attendee attendee = atnService
                 .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
-        Set<Event> favourites = atnService.favouriteEvent(attendee, eventId);
+        List<Event> favourites = atnService.favouriteEvent(attendee, eventId);
         List<FavouriteEventDto> resp = favourites.stream().map(event -> modelmapper.map(event, FavouriteEventDto.class))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(resp);
@@ -154,7 +153,7 @@ public class AttendeeController {
         Attendee attendee = atnService
                 .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
-        Set<Event> favourites = attendee.getFavouriteEvents();
+        List<Event> favourites = attendee.getFavouriteEvents();
         List<FavouriteEventDto> resp = favourites.stream().map(event -> modelmapper.map(event, FavouriteEventDto.class))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(resp);

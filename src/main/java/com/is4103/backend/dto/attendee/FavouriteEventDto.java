@@ -8,4 +8,5 @@ import lombok.Setter;
 public class FavouriteEventDto {
     Long eid;
     String name;
+    String descriptions;
 }
