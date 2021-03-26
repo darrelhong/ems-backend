@@ -7,6 +7,7 @@ import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdateAttendeeRequest;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
+import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
@@ -55,6 +56,9 @@ public class AttendeeService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EventService eventService;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -186,4 +190,14 @@ public class AttendeeService {
         return atnRepository.save(user);
     }
 
+    public Set<Event> favouriteEvent(Attendee attendee, Long eventId) {
+        Event event = eventService.getEventById(eventId);
+        if (attendee.getFavouriteEvents().contains(event)) {
+            attendee.getFavouriteEvents().remove(event);
+        } else {
+            attendee.getFavouriteEvents().add(event);
+        }
+        atnRepository.save(attendee);
+        return attendee.getFavouriteEvents();
+    }
 }
