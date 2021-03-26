@@ -9,6 +9,8 @@ import com.is4103.backend.dto.ticketing.CheckoutDto;
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
 import com.is4103.backend.dto.ticketing.TransactionListDto;
 import com.is4103.backend.dto.ticketing.TicketTransactionDto;
+import com.is4103.backend.dto.ticketing.TicketTransactionEventDto;
+import com.is4103.backend.dto.ticketing.TicketTransactionsResponse;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.service.AttendeeService;
@@ -88,16 +90,20 @@ public class TicketingController {
 
     @PreAuthorize("hasRole('ATND')")
     @GetMapping(value = "/attendee")
-    public ResponseEntity<Collection<TicketTransactionDto>> getTicketTransactionsAttendee(
+    public ResponseEntity<TicketTransactionsResponse> getTicketTransactionsAttendee(
             @RequestParam(name = "period", defaultValue = "upcoming") String period) {
-        Attendee attendee = attendeeService
-                .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        Collection<TicketTransactionDto> result = ticketingService.getTicketTransactionsAttendee(attendee, period,
-                TicketTransactionDto.class);
 
-        if (result.isEmpty()) {
-            return ResponseEntity.badRequest().body(result);
+        if (period.equals("upcoming") || period.equals("previous")) {
+
+            Attendee attendee = attendeeService
+                    .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+            Collection<TicketTransactionDto> tickets = ticketingService.getTicketTransactionsAttendee(attendee, period,
+                    TicketTransactionDto.class);
+            Collection<TicketTransactionEventDto> events = ticketingService.getDistinctEventsPurchased(attendee,
+                    period);
+            TicketTransactionsResponse resp = new TicketTransactionsResponse(tickets, events);
+            return ResponseEntity.ok(resp);
         }
-        return ResponseEntity.ok(result);
+        return ResponseEntity.badRequest().body(new TicketTransactionsResponse());
     }
 }
