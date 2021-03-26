@@ -133,6 +133,13 @@ public class BusinessPartnerController {
         return bpService.getFollowingById(id);
     }
 
+    @PostMapping(path = "/like/{bpId}/{eid}")
+    public ResponseEntity<BusinessPartner> likeEvent(@PathVariable Long bpId, @PathVariable Long eid) {
+        BusinessPartner user = bpService.getBusinessPartnerById(bpId);
+        user = bpService.likeEvent(user, eid);
+        return ResponseEntity.ok(user);
+    }
+
     @PreAuthorize("hasAnyRole('BIZPTNR')")
     @PostMapping(value = "/followEO")
     public ResponseEntity<BusinessPartner> followEventOrganiser(@RequestBody @Valid FollowRequest followEORequest) {
