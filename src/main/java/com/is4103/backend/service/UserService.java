@@ -340,4 +340,9 @@ public class UserService {
         return userRepository.save(user);
 
     }
+       public User deletePaymentMethod(User user){
+        user.setPaymentMethodId(null);
+        return userRepository.save(user);
+
+    }
 }

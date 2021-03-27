@@ -88,6 +88,9 @@ public class UserController {
     @Value("${stripe.apikey}")
     private String stripeApiKey;
 
+    @Value("${stripe.secretkey}")
+    private String stripeSecretKey;
+
     @GetMapping(path = "/all")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
@@ -297,13 +300,42 @@ public class UserController {
 
         return ResponseEntity.ok("Success");
     }
+    @GetMapping(value = "/getPaymentMethod")
+    public String getPaymentMethod() {
 
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+         PaymentMethod paymentMethod = new PaymentMethod();
+        if(user != null){
+        
+        try {
+        Stripe.apiKey = stripeSecretKey;
+        paymentMethod = PaymentMethod.retrieve(user.getPaymentMethodId());
+            
+        } catch (StripeException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }      
+     
+        }
+
+        return paymentMethod.toJson();
+}
+
+  @PostMapping(value = "/deleteCardPayment")
+  public User deleteCard() {
+      User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+  
+        User userRes = userService.deletePaymentMethod(user);
+
+        return userRes;
+  }
 
     @PostMapping(value = "/addCardPayment")
     public AddCardResponse addCard(@RequestBody @Valid AddCardRequest addCardRequest) {
         System.out.println("call addCardPayment ");
         String resMsg = "";
-        // String cardholderName = addCardRequest.getCardholdername();
+        String cardholderName = addCardRequest.getCardholdername();
           // System.out.println(cardholderName);
          String cardnumber = addCardRequest.getCardnumber();
         System.out.println(cardnumber);
@@ -325,7 +357,7 @@ public class UserController {
             card.put("cvc", cvc);
 
              Map<String, Object> billing_details = new HashMap<>();
-            billing_details.put("name", user.getName());
+            billing_details.put("name", cardholderName);
             billing_details.put("email", user.getEmail());
             if(user.getPhonenumber() != null){
             billing_details.put("phone", user.getPhonenumber());
