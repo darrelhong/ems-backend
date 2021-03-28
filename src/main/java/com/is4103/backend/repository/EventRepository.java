@@ -25,9 +25,9 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 
     List<Event> findByName(String name);
 
-    Page<Event> findByIsPublishedAndEventStartDateGreaterThan(boolean isPublished, LocalDateTime eventStartDate,
-            Pageable pageable);
+    <T> Page<T> findByNameContainingAndIsPublishedAndEventStartDateGreaterThan(String name, boolean isPublished,
+            LocalDateTime eventStartDate, Pageable pageable, Class<T> type);
 
-    Page<Event> findByNameContainingAndIsPublishedAndEventStartDateGreaterThan(String name, boolean isPublished,
-            LocalDateTime eventStartDate, Pageable pageable);
+    <T> Page<T> findByIsPublishedAndEventStartDateGreaterThan(boolean isPublished, LocalDateTime eventStartDate,
+            Pageable pageable, Class<T> type);
 }

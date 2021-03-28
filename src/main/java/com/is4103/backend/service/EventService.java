@@ -34,7 +34,8 @@ public class EventService {
         return eventRepository.findByIsPublished(true, PageRequest.of(page, size));
     }
 
-    public Page<Event> getPublishedEvents(int page, int size, String sortBy, String sortDir, String keyword) {
+    public <T> Page<T> getPublishedEvents(int page, int size, String sortBy, String sortDir, String keyword,
+            Class<T> type) {
         Sort sort = null;
         LocalDateTime now = LocalDateTime.now();
 
@@ -48,18 +49,19 @@ public class EventService {
         if (keyword != null) {
             if (sort == null) {
                 return eventRepository.findByNameContainingAndIsPublishedAndEventStartDateGreaterThan(keyword, true,
-                        now, PageRequest.of(page, size));
+                        now, PageRequest.of(page, size), type);
             } else {
                 return eventRepository.findByNameContainingAndIsPublishedAndEventStartDateGreaterThan(keyword, true,
-                        now, PageRequest.of(page, size, sort));
+                        now, PageRequest.of(page, size, sort), type);
             }
 
         }
         if (sort == null) {
-            return eventRepository.findByIsPublishedAndEventStartDateGreaterThan(true, now, PageRequest.of(page, size));
+            return eventRepository.findByIsPublishedAndEventStartDateGreaterThan(true, now, PageRequest.of(page, size),
+                    type);
         } else {
             return eventRepository.findByIsPublishedAndEventStartDateGreaterThan(true, now,
-                    PageRequest.of(page, size, sort));
+                    PageRequest.of(page, size, sort), type);
         }
 
     }

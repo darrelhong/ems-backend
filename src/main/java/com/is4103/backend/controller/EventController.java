@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.is4103.backend.dto.CreateEventRequest;
 import com.is4103.backend.dto.EventSearchCriteria;
+import com.is4103.backend.dto.event.EventCardDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
@@ -146,10 +147,17 @@ public class EventController {
 
     // updated to only get events that start current time
     @GetMapping(path = "/get-events")
-    public Page<Event> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
+    public Page<EventCardDto> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
             @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword) {
-        return eventService.getPublishedEvents(page, size, sort, sortDir, keyword);
+        return eventService.getPublishedEvents(page, size, sort, sortDir, keyword, EventCardDto.class);
+    }
+
+    @GetMapping(path = "/public/get-events")
+    public Page<EventCardDto> getEventsPublic(@RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword) {
+        return eventService.getPublishedEvents(page, size, sort, sortDir, keyword, EventCardDto.class);
     }
 
     @GetMapping(path = "/search")
