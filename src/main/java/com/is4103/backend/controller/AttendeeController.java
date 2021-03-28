@@ -9,7 +9,7 @@ import com.is4103.backend.dto.FollowRequest;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
 import com.is4103.backend.dto.UpdateAttendeeRequest;
-import com.is4103.backend.dto.attendee.FavouriteEventDto;
+import com.is4103.backend.dto.event.FavouriteEventDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;

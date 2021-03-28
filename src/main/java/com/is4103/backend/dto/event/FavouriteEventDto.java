@@ -1,4 +1,4 @@
-package com.is4103.backend.dto.attendee;
+package com.is4103.backend.dto.event;
 
 import lombok.Getter;
 import lombok.Setter;
