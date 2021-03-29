@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EventService {
+
     @Autowired
     private EventRepository eventRepository;
 
@@ -26,6 +27,10 @@ public class EventService {
 
     public Event getEventById(Long id) {
         return eventRepository.findById(id).orElseThrow(() -> new EventNotFoundException());
+    }
+
+    public <T> T getEventById(Long id, Class<T> type) {
+        return eventRepository.findByEid(id, type).orElseThrow(() -> new EventNotFoundException());
     }
 
     public Page<Event> getEvents(int page, int size) {

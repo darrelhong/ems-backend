@@ -142,7 +142,7 @@ public class Event {
 
     private boolean isPublished;
 
-    public boolean isAvailableForSale() {
+    public boolean getAvailableForSale() {
         if (this.isSellingTicket && this.saleStartDate != null && this.salesEndDate != null) {
             // if (this.saleStartDate != null && this.salesEndDate != null) {
             return LocalDateTime.now().isAfter(this.saleStartDate) && LocalDateTime.now().isBefore(this.salesEndDate);

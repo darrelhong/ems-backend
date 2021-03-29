@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.is4103.backend.dto.CreateEventRequest;
 import com.is4103.backend.dto.EventSearchCriteria;
 import com.is4103.backend.dto.event.EventCardDto;
+import com.is4103.backend.dto.event.EventDetailsDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
@@ -59,6 +60,17 @@ public class EventController {
     @GetMapping("/{id}")
     public Event getEventById(@PathVariable Long id) {
         return eventService.getEventById(id);
+    }
+
+    // use interface projection hide sensitive info
+    @GetMapping("/details/{id}")
+    public EventDetailsDto getEventDetails(@PathVariable Long id) {
+        return eventService.getEventById(id, EventDetailsDto.class);
+    }
+
+    @GetMapping("/details/public/{id}")
+    public EventDetailsDto getEventDetailsPublic(@PathVariable Long id) {
+        return eventService.getEventById(id, EventDetailsDto.class);
     }
 
     // @GetMapping("/getAllBpByEvent/{id}")
