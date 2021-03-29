@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.is4103.backend.dto.ticketing.AdminTicketTransactionDto;
 import com.is4103.backend.dto.ticketing.CheckoutDto;
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
 import com.is4103.backend.dto.ticketing.TransactionListDto;
@@ -84,8 +85,8 @@ public class TicketingController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = "/attendee/{id}")
-    public ResponseEntity<Collection<TicketTransactionDto>> getTicketTransactionsById(@PathVariable Long id) {
-        return ResponseEntity.ok(ticketingService.getTicketTransactionsById(id, TicketTransactionDto.class));
+    public ResponseEntity<Collection<AdminTicketTransactionDto>> getTicketTransactionsById(@PathVariable Long id) {
+        return ResponseEntity.ok(ticketingService.getTicketTransactionsById(id, AdminTicketTransactionDto.class));
     }
 
     @PreAuthorize("hasRole('ATND')")
