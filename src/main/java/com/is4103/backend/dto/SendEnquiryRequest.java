@@ -32,4 +32,5 @@ public class SendEnquiryRequest {
     @Nullable
     private Long eventId;
     
+
 }

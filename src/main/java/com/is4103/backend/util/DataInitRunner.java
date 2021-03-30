@@ -2,7 +2,6 @@ package com.is4103.backend.util;
 
 import java.util.Set;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Random;
@@ -16,17 +15,26 @@ import com.is4103.backend.model.EventStatus;
 import com.is4103.backend.model.PaymentStatus;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
+import com.is4103.backend.model.SellerApplication;
+import com.is4103.backend.model.SellerApplicationStatus;
+import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.model.User;
 import com.is4103.backend.model.Event;
-import com.is4103.backend.model.EventBoothTransaction;
+import com.is4103.backend.model.Product;
+import com.is4103.backend.model.SellerProfile;
 import com.is4103.backend.repository.RoleRepository;
 import com.is4103.backend.repository.UserRepository;
+import com.is4103.backend.repository.SellerApplicationRepository;
+import com.is4103.backend.service.AttendeeService;
 import com.thedeanda.lorem.Lorem;
 import com.thedeanda.lorem.LoremIpsum;
 import com.is4103.backend.repository.BusinessPartnerRepository;
 import com.is4103.backend.repository.EventOrganiserRepository;
-import com.is4103.backend.repository.EventBoothTransactionRepository;
 import com.is4103.backend.repository.EventRepository;
+import com.is4103.backend.repository.BoothRepository;
+import com.is4103.backend.repository.SellerProfileRepository;
+import com.is4103.backend.repository.TicketTransactionRepository;
+import com.is4103.backend.repository.ProductRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -41,16 +49,19 @@ import java.time.Month;
 public class DataInitRunner implements ApplicationRunner {
 
     @Autowired
+    private SellerApplicationRepository sellerApplicationRepository;
+
+    @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    private EventOrganiserRepository eoRepository;
+    private BusinessPartnerRepository businessPartnerRepository;
 
     @Autowired
-    private EventBoothTransactionRepository eventBoothTransactionRepository;
+    private EventOrganiserRepository eoRepository;
 
     @Autowired
     private EventRepository eventRepository;
@@ -59,12 +70,26 @@ public class DataInitRunner implements ApplicationRunner {
     private EventOrganiserRepository eventOrganiserRepository;
 
     @Autowired
-    private BusinessPartnerRepository partnerRepository;
+    private SellerProfileRepository sellerProfileRepository;
+
+    @Autowired
+    private BoothRepository boothRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private TicketTransactionRepository ticketTransactionRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     private EventOrganiser eoTest;
+
+    private String[] eventCategories = { "Automotive", "Business Support & Supplies", "Computers & Electronics",
+            "Computers", "Construction & Contractor", "Education", "Entertainment", "Food & Dining",
+            "Health & Medicine", "Home & Garden", "Legal & Financial", "Manufacturing, Wholesale, Distribution",
+            "Merchants (Retail)", "Personal Care & Services", "Real Estate", "Travel & Transportation" };
 
     @Override
     public void run(ApplicationArguments args) {
@@ -101,6 +126,15 @@ public class DataInitRunner implements ApplicationRunner {
         }
         if (eventRepository.findByName("Event 0").isEmpty()) {
             createDemoEvents();
+        }
+
+        if (boothRepository.findAll().isEmpty()) {
+            createProducts();
+            // createBoothsAndProfiles();
+        }
+
+        if (sellerApplicationRepository.findAll().isEmpty()) {
+            createSellerApplications();
         }
     }
 
@@ -176,12 +210,10 @@ public class DataInitRunner implements ApplicationRunner {
         category.add("Healthcare");
         atn.setCategoryPreferences(category);
         // atn.addfollowBP(businesspartner);
-        List<BusinessPartner> bpFollowing= new ArrayList<>();
+        List<BusinessPartner> bpFollowing = new ArrayList<>();
         bpFollowing.add(bp);
         atn.setFollowedBusinessPartners(bpFollowing);
         userRepository.save(atn);
- 
-        
 
         // create second attendee
         Attendee atnTwo = new Attendee();
@@ -196,8 +228,8 @@ public class DataInitRunner implements ApplicationRunner {
         atnTwo.setFollowedBusinessPartners(bpFollowing);
         userRepository.save(atnTwo);
 
-        //set atn and atn2 follow bp list 
-        
+        // set atn and atn2 follow bp list
+
         // Set<BusinessPartner> followBp = new HashSet<>();
         // followBp.add(bp);
         // atn.setFollowedBusinessPartners(followBp);
@@ -205,7 +237,7 @@ public class DataInitRunner implements ApplicationRunner {
         // userRepository.save(atn);
         // userRepository.save(atnTwo);
 
-        //set bp followers list 
+        // set bp followers list
         List<Attendee> followers = new ArrayList<>();
         followers.add(atn);
         followers.add(atnTwo);
@@ -223,7 +255,6 @@ public class DataInitRunner implements ApplicationRunner {
             userRepository.save(bp);
         }
 
-        
     }
 
     // Testing Methods
@@ -235,6 +266,8 @@ public class DataInitRunner implements ApplicationRunner {
         event.setAddress("Woodlands Avenue 6 #87-10");
         event.setDescriptions(
                 "The 14th Annual Academic Success Lecture featuring Dr. Kevin Gumienny is . This year's presentation will be held physically, and will focus on the topics of accessibility and universal design.");
+        event.setCategories(Arrays.asList(eventCategories));
+        // setEventCategories(event);
         event.setPhysical(false);
         LocalDateTime eventStart1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd1 = LocalDateTime.of(2021, Month.JUNE, 2, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -250,15 +283,20 @@ public class DataInitRunner implements ApplicationRunner {
         event.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-3.jpg"));
+        event.setBoothPrice(39);
         event.setBoothCapacity(305);
         event.setRating(0);
         event.setEventStatus(EventStatus.CREATED);
         event.setHidden(false);
         event.setPublished(true);
-        List<Booth> booths = new ArrayList<>();
-        booths.add(new Booth(199.0, 5.0, 4.5, event));
-        booths.add(new Booth(299.0, 6.3, 5.4, event));
-        event.setBooths(booths);
+        // List<Booth> booths = new ArrayList<>();
+        // booths.add(new Booth(199.0, 5.0, 4.5, event));
+        // booths.add(new Booth(299.0, 6.3, 5.4, event));
+        // event.setBooths(booths);
+
+        // EventBoothTransaction transaction = new EventBoothTransaction();
+        // transaction.setEvent(event);
+        // eventBoothTransactionRepository.save(transaction);
 
 
         // EventBoothTransaction transaction = new EventBoothTransaction();
@@ -269,6 +307,7 @@ public class DataInitRunner implements ApplicationRunner {
         event2.setName("IT Fair 2021");
         event2.setAddress("Sembwang2");
         event2.setDescriptions("Description 2");
+        setEventCategories(event2);
         event2.setPhysical(false);
         LocalDateTime eventStart = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         event2.setEventStartDate(eventStart);
@@ -283,6 +322,8 @@ public class DataInitRunner implements ApplicationRunner {
         event2.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-3.jpg"));
+
+        event2.setBoothPrice(39);
         event2.setBoothCapacity(305);
         event2.setRating(0);
         event2.setEventStatus(EventStatus.CREATED);
@@ -293,6 +334,7 @@ public class DataInitRunner implements ApplicationRunner {
         event3.setName("Career Fair");
         event3.setAddress("Sembwang3");
         event3.setDescriptions("Some description two3");
+        setEventCategories(event3);
         event3.setPhysical(false);
         LocalDateTime eventStart3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd3 = LocalDateTime.of(2021, Month.JUNE, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -307,6 +349,7 @@ public class DataInitRunner implements ApplicationRunner {
         event3.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
+        event3.setBoothPrice(39);
         event3.setBoothCapacity(305);
         event3.setRating(0);
         event3.setEventStatus(EventStatus.CREATED);
@@ -318,6 +361,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4.setName("Fintech 2021");
         event4.setAddress("Sembwang4");
         event4.setDescriptions("Some description 4");
+        setEventCategories(event4);
         event4.setPhysical(false);
         LocalDateTime eventStart4 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -334,6 +378,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-3.jpg"));
+        event4.setBoothPrice(39);
         event4.setBoothCapacity(305);
         event4.setRating(0);
         event4.setEventStatus(EventStatus.CREATED);
@@ -344,6 +389,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4_1.setName("SG Career Fair 2021");
         event4_1.setAddress("Sembwang4");
         event4_1.setDescriptions("Some description 4");
+        setEventCategories(event4_1);
         event4_1.setPhysical(false);
         LocalDateTime eventStart4_1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4_1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -360,6 +406,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4_1.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-3.jpg"));
+        event4_1.setBoothPrice(39);
         event4_1.setBoothCapacity(305);
         event4_1.setRating(0);
         event4_1.setEventStatus(EventStatus.CREATED);
@@ -370,6 +417,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4_2.setName("Tech Festival 2021");
         event4_2.setAddress("Sembwang4");
         event4_2.setDescriptions("Some description 4");
+        setEventCategories(event4_2);
         event4_2.setPhysical(false);
         LocalDateTime eventStart4_2 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4_2 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -386,6 +434,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4_2.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 6 + "/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 6 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 6 + "/image-3.jpg"));
+        event4_2.setBoothPrice(39);
         event4_2.setBoothCapacity(305);
         event4_2.setRating(0);
         event4_2.setEventStatus(EventStatus.CREATED);
@@ -396,6 +445,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4_3.setName("Viva Technology 2021");
         event4_3.setAddress("Sembwang4");
         event4_3.setDescriptions("Some description 4");
+        setEventCategories(event4_3);
         event4_3.setPhysical(false);
         LocalDateTime eventStart4_3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4_3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -412,6 +462,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4_3.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 7 + "/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 7 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 7 + "/image-3.jpg"));
+        event4_3.setBoothPrice(39);
         event4_3.setBoothCapacity(305);
         event4_3.setRating(0);
         event4_3.setEventStatus(EventStatus.CREATED);
@@ -422,6 +473,7 @@ public class DataInitRunner implements ApplicationRunner {
         event5.setName("Singapore Food Festival");
         event5.setAddress("Sembwang 5");
         event5.setDescriptions("Some description 5");
+        setEventCategories(event5);
         event5.setPhysical(false);
         LocalDateTime eventStart5 = LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd5 = LocalDateTime.of(2021, Month.JANUARY, 2, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -434,6 +486,7 @@ public class DataInitRunner implements ApplicationRunner {
         event5.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 8 + "/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 8 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 8 + "/image-3.jpg"));
+        event5.setBoothPrice(39);
         event5.setBoothCapacity(305);
         event5.setRating(5);
         event5.setEventStatus(EventStatus.CREATED);
@@ -445,6 +498,7 @@ public class DataInitRunner implements ApplicationRunner {
         event6.setName("Singapore Tech Conferences 2020");
         event6.setAddress("Sembwang 6");
         event6.setDescriptions("Some description 6");
+        setEventCategories(event6);
         event6.setPhysical(false);
         event6.setEventStartDate(LocalDateTime.now());
         event6.setEventEndDate(LocalDateTime.now());
@@ -453,6 +507,7 @@ public class DataInitRunner implements ApplicationRunner {
         event6.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 9 + "/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 9 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 9 + "/image-3.jpg"));
+        event6.setBoothPrice(39);
         event6.setBoothCapacity(305);
         event6.setRating(5);
         event6.setEventStatus(EventStatus.CREATED);
@@ -464,6 +519,7 @@ public class DataInitRunner implements ApplicationRunner {
         event7.setName("Tech Analystics 2020");
         event7.setAddress("Sembwang 6");
         event7.setDescriptions("Some description 6");
+        setEventCategories(event7);
         event7.setPhysical(false);
         event7.setEventStartDate(LocalDateTime.now());
         event7.setEventEndDate(LocalDateTime.now());
@@ -472,6 +528,7 @@ public class DataInitRunner implements ApplicationRunner {
         event7.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 10 + "/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 10 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 10 + "/image-3.jpg"));
+        event7.setBoothPrice(39);
         event7.setBoothCapacity(305);
         event7.setRating(5);
         event7.setEventStatus(EventStatus.CREATED);
@@ -483,6 +540,7 @@ public class DataInitRunner implements ApplicationRunner {
         event8.setName("Tech Conferences 2020");
         event8.setAddress("Sembwang 6");
         event8.setDescriptions("Some description 6");
+        setEventCategories(event8);
         event8.setPhysical(false);
         event8.setEventStartDate(LocalDateTime.now());
         event8.setEventEndDate(LocalDateTime.now());
@@ -491,6 +549,7 @@ public class DataInitRunner implements ApplicationRunner {
         event8.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 11 + "/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 11 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 11 + "/image-3.jpg"));
+        event8.setBoothPrice(39);
         event8.setBoothCapacity(305);
         event8.setRating(5);
         event8.setEventStatus(EventStatus.CREATED);
@@ -502,6 +561,7 @@ public class DataInitRunner implements ApplicationRunner {
         event9.setName("Tech Conferences 2020");
         event9.setAddress("Sembwang 6");
         event9.setDescriptions("Some description 6");
+        setEventCategories(event9);
         event9.setPhysical(false);
         event9.setEventStartDate(LocalDateTime.now());
         event9.setEventEndDate(LocalDateTime.now());
@@ -510,6 +570,7 @@ public class DataInitRunner implements ApplicationRunner {
         event9.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 12 + "/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 12 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 12 + "/image-3.jpg"));
+        event9.setBoothPrice(39);
         event9.setBoothCapacity(305);
         event9.setRating(5);
         event9.setEventStatus(EventStatus.CREATED);
@@ -558,24 +619,15 @@ public class DataInitRunner implements ApplicationRunner {
         event.setEventOrganiser(eo);
         eventRepository.save(event);
 
-        BusinessPartner bp = partnerRepository.findByEmail("partner@abc.com");
-        
-        EventBoothTransaction transaction = new EventBoothTransaction();
-        transaction.setEvent(event);
-        transaction.setPaymentStatus(PaymentStatus.COMPLETED);
-        transaction.setBoothApplicationstatus(BoothApplicationStatus.APPROVED);
-        transaction.setBusinessPartner(bp);
-        eventBoothTransactionRepository.save(transaction);
-
-        List<EventBoothTransaction> transactions = new ArrayList<>(); 
-        transactions.add(transaction);
-        bp.setEventBoothTransactions(transactions);
-        partnerRepository.save(bp);
+        // EventBoothTransaction transaction = new EventBoothTransaction();
+        // transaction.setEvent(event);
+        // eventBoothTransactionRepository.save(transaction);
     }
 
     private void createDemoEvents() {
-        // Lorem lorem = LoremIpsum.getInstance();
-         Random rand = new Random();
+
+        Lorem lorem = LoremIpsum.getInstance();
+        Random rand = new Random();
 
         EventOrganiser eo = eoRepository.findByEmail("organiser@abc.com");
         for (int i = 0; i < 25; i++) {
@@ -586,6 +638,7 @@ public class DataInitRunner implements ApplicationRunner {
             e.setDescriptions("description testtestest");
             e.setTicketPrice(Math.round(rand.nextFloat() * 20));
             e.setTicketCapacity(rand.nextInt(100));
+            setEventCategories(e);
             e.setPhysical(true);
             LocalDateTime eventStart = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(i).plusHours(i % 3);
             e.setEventStartDate(eventStart);
@@ -598,11 +651,255 @@ public class DataInitRunner implements ApplicationRunner {
                     "https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg",
                     "https://storage.googleapis.com/ems-images/events/event-" + i + "/image-2.jpg",
                     "https://storage.googleapis.com/ems-images/events/event-" + i + "/image-3.jpg"));
+            e.setBoothPrice(17);
             e.setBoothCapacity(rand.nextInt(50));
             e.setEventStatus(EventStatus.CREATED);
             e.setPublished(true);
             eventRepository.save(e);
         }
+    }
+
+    private void setEventCategories(Event event) {
+        Random rand = new Random();
+        int upperBound = eventCategories.length;
+        int numberOfCategories = rand.nextInt(upperBound);
+        List<String> categories = new ArrayList<>();
+        for (int i = 0; i < numberOfCategories; i++) {
+            int categoryIndex = rand.nextInt(upperBound);
+            String categoryString = eventCategories[categoryIndex];
+            categories.add(categoryString);
+        }
+        event.setCategories(categories);
+        // return event;
+    }
+
+    @Transactional
+    private void createProducts() {
+        Lorem lorem = LoremIpsum.getInstance();
+        // BusinessPartner bp =
+        // businessPartnerRepository.findByEmail("partner@abc.com");
+        List<BusinessPartner> businessPartners = businessPartnerRepository.findAll();
+        for (BusinessPartner bp : businessPartners) {
+            for (int i = 0; i < 10; i++) {
+                Product p = new Product();
+                p.setName("Product " + i);
+                p.setDescription(lorem.getWords(5, 20));
+                p.setImage("https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg");
+                p.setBusinessPartner(bp);
+                productRepository.save(p);
+            }
+        }
+    }
+
+    // @Transactional
+    // private void createBoothsAndProfiles(Event event, BusinessPartner bp) {
+    // Random rand = new Random();
+    // Lorem lorem = LoremIpsum.getInstance();
+
+    // // CREATING BOOTH PROFILES
+    // SellerProfile profile = new SellerProfile();
+    // profile.setEvent(event);
+    // // BusinessPartner bp = businessPartnerRepository.findById(id).get();
+    // // List<Product> bpProducts = businessPartnerService.getPartnerProducts(id);
+    // List<Product> bpProducts =
+    // productRepository.findProductsByBusinessPartner(bp.getId());
+    // profile.setBusinessPartner(bp);
+    // profile.setDescription(lorem.getWords(5, 20));
+    // profile.setBrochureImages(
+    // Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 1 +
+    // "/image-1.jpg",
+    // "https://storage.googleapis.com/ems-images/events/event-" + 2 +
+    // "/image-2.jpg",
+    // "https://storage.googleapis.com/ems-images/events/event-" + 3 +
+    // "/image-3.jpg"));
+    // sellerProfileRepository.save(profile);
+
+    // // CREATING 3 BOOTHS
+    // for (int i = 1; i < 4; i++) {
+    // Booth b = new Booth();
+
+    // // setting random set of products
+    // bp.getProducts().size();
+    // // List<Product> bpProducts= bp.getProducts();
+    // List<Product> sellerProfileProducts = new ArrayList<>();
+    // int numberOfProducts = rand.nextInt(bpProducts.size());
+    // for (int j = 0; j < numberOfProducts; j++) {
+    // sellerProfileProducts.add(bpProducts.get(j));
+    // }
+    // ;
+    // b.setProducts(sellerProfileProducts);
+    // b.setBoothNumber(i);
+    // b.setDescription(lorem.getWords(5, 20));
+    // b.setSellerProfile(sellerProfileRepository.findById(1L).get());
+    // boothRepository.save(b);
+    // }
+    // ;
+    // }
+
+    @Transactional
+    private void createBoothsAndProfiles() {
+        Random rand = new Random();
+        Lorem lorem = LoremIpsum.getInstance();
+
+        // CREATING BOOTH PROFILES
+        SellerProfile profile = new SellerProfile();
+        profile.setEvent(eventRepository.findAll().get(0));
+        profile.setBusinessPartner(businessPartnerRepository.findByEmail("partner@abc.com"));
+        profile.setDescription(lorem.getWords(5, 20));
+        profile.setBrochureImages(
+                Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
+                        "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
+                        "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
+        sellerProfileRepository.save(profile);
+
+        // CREATING 3 BOOTHS
+        for (int i = 1; i < 4; i++) {
+            Booth b = new Booth();
+
+            // setting random set of products
+            List<Product> allProducts = productRepository.findAll();
+            List<Product> sellerProfileProducts = new ArrayList<>();
+            int numberOfProducts = rand.nextInt(allProducts.size());
+            for (int j = 0; j < numberOfProducts; j++) {
+                sellerProfileProducts.add(allProducts.get(j));
+            }
+            ;
+            b.setProducts(sellerProfileProducts);
+            b.setBoothNumber(i);
+            b.setDescription(lorem.getWords(5, 20));
+            b.setSellerProfile(sellerProfileRepository.findById(1L).get());
+            boothRepository.save(b);
+        }
+        ;
+    }
+
+    @Transactional
+    private void createSellerApplications() {
+        // List<Event> allEvents = eventRepository.findAll();
+        Lorem lorem = LoremIpsum.getInstance();
+        Random rand = new Random();
+
+        // 4 TYPES OF APPLICATION TYPES
+        for (int count = 0; count < 4; count++) {
+
+            // THE STATUS ARRAYS ARE TO SHOW THE 4 DIFFERENT SCENARIOS OF PAYMENTSTATUS AND
+            // APPLICATIONSTATUS
+            // LATER WHEN I CREATE APPLICATIONS I'LL USE THE DIFFERENT COMBINATIONS
+            SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
+                    SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.REJECTED,
+                    SellerApplicationStatus.PENDING };
+
+            PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED,
+                    PaymentStatus.PENDING, PaymentStatus.PENDING };
+
+            // CREATE MORE FOR EVENT 1
+            Event firstEvent = eventRepository.findAll().get(0);
+            List<BusinessPartner> businessPartners = businessPartnerRepository.findAll();
+            for (BusinessPartner bp : businessPartners) {
+                SellerApplication application = new SellerApplication();
+                application.setBusinessPartner(bp);
+                application.setEvent(firstEvent);
+                application.setDescription(lorem.getWords(5, 20));
+                application.setComments(lorem.getWords(5, 20));
+                application.setBoothQuantity(rand.nextInt(300));
+                // application.setSellerApplicationStatus(sellerApplicationStatus);
+                application.setSellerApplicationStatus(sellerApplicationStatusArray[count]);
+                // application.setPaymentStatus(paymentStatus);
+                application.setPaymentStatus(paymentStatusArray[count]);
+                if (count == 1) {
+                    // FOR NUMBER 1, THAT IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
+                    // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
+                    SellerProfile profile = new SellerProfile();
+                    profile.setEvent(firstEvent);
+                    profile.setBusinessPartner(bp);
+                    profile.setDescription(lorem.getWords(5, 20));
+                    profile.setBrochureImages(Arrays.asList(
+                            "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
+                            "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
+                            "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
+                    SellerProfile savedProfile = sellerProfileRepository.save(profile);
+
+                    // BOOTH SETUP FOR EACH PROFILE
+                    for (int k = 1; k < 4; k++) {
+                        Booth b = new Booth();
+
+                        // setting random set of products
+                        List<Product> allProducts = productRepository.findProductsByBusinessPartner(bp.getId());
+                        // List<Product> allProducts = randomBp.getProducts();
+                        List<Product> sellerProfileProducts = new ArrayList<>();
+                        int numberOfProducts = rand.nextInt(allProducts.size());
+                        for (int j = 0; j < numberOfProducts; j++) {
+                            sellerProfileProducts.add(allProducts.get(j));
+                        }
+                        ;
+                        b.setProducts(sellerProfileProducts);
+                        b.setBoothNumber(k);
+                        b.setDescription(lorem.getWords(5, 20));
+                        b.setSellerProfile(savedProfile);
+                        boothRepository.save(b);
+                    }
+                    ;
+
+                }
+                sellerApplicationRepository.save(application);
+            }
+            // CREATE RANDOM NUMBERS FOR THE REST
+            List<Event> allEvents = eventRepository.findAll();
+            for (Event e : allEvents) {
+                for (int i = 0; i < 2; i++) {
+                    // MAKE 2 APPLICATIONS FOR EACH EVENT
+                    BusinessPartner randomBp = businessPartnerRepository.findAll()
+                            .get(rand.nextInt(businessPartners.size()));
+                    SellerApplication application = new SellerApplication();
+                    application.setBusinessPartner(randomBp);
+                    application.setEvent(e);
+                    application.setDescription(lorem.getWords(5, 20));
+                    application.setComments(lorem.getWords(5, 20));
+                    application.setBoothQuantity(rand.nextInt(300));
+                    int statusTypeIndex = rand.nextInt(3);
+                    application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
+                    application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
+                    if (statusTypeIndex == 1) {
+                        // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
+                        // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
+                        SellerProfile profile = new SellerProfile();
+                        profile.setEvent(e);
+                        profile.setBusinessPartner(randomBp);
+                        profile.setDescription(lorem.getWords(5, 20));
+                        profile.setBrochureImages(Arrays.asList(
+                                "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
+                                "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
+                                "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
+                        SellerProfile savedProfile = sellerProfileRepository.save(profile);
+
+                        // BOOTH SETUP FOR EACH PROFILE
+                        for (int k = 1; k < 4; k++) {
+                            Booth b = new Booth();
+
+                            // setting random set of products
+                            List<Product> allProducts = productRepository
+                                    .findProductsByBusinessPartner(randomBp.getId());
+                            // List<Product> allProducts = randomBp.getProducts();
+                            List<Product> sellerProfileProducts = new ArrayList<>();
+                            int numberOfProducts = rand.nextInt(allProducts.size());
+                            for (int j = 0; j < numberOfProducts; j++) {
+                                sellerProfileProducts.add(allProducts.get(j));
+                            }
+                            ;
+                            b.setProducts(sellerProfileProducts);
+                            b.setBoothNumber(k);
+                            b.setDescription(lorem.getWords(5, 20));
+                            b.setSellerProfile(savedProfile);
+                            boothRepository.save(b);
+                        }
+                        ;
+
+                    }
+                    sellerApplicationRepository.save(application);
+                }
+            }
+        }
+
     }
 
 }

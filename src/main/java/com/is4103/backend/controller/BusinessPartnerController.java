@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -106,7 +105,6 @@ public class BusinessPartnerController {
         return new SignupResponse("success");
     }
 
-
     @GetMapping(path = "/get-partners")
     public Page<BusinessPartner> getPartners(@RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
@@ -114,12 +112,12 @@ public class BusinessPartnerController {
         return bpService.getAllPartners(page, size, sort, sortDir, keyword);
     }
 
-    
     @GetMapping(path = "/get-partners-cat")
     public Page<BusinessPartner> getPartnersCat(@RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
-            @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword, @RequestParam(required = false) String businessCategory, @RequestParam(required = false) String clear) {
-            System.out.println("clear" + clear);
+            @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String businessCategory, @RequestParam(required = false) String clear) {
+        System.out.println("clear" + clear);
         return bpService.getAllPartnersCat(page, size, sort, sortDir, keyword, businessCategory, clear);
     }
 
@@ -127,7 +125,6 @@ public class BusinessPartnerController {
     public Page<BusinessPartner> search(PartnerSearchCriteria partnerSearchCriteria) {
         return bpService.search(partnerSearchCriteria);
     }
-
 
     @GetMapping(path = "/followers/{id}")
     public List<Attendee> getFollowers(@PathVariable Long id) {
@@ -139,19 +136,20 @@ public class BusinessPartnerController {
         return bpService.getFollowingById(id);
     }
 
-
     @PreAuthorize("hasAnyRole('BIZPTNR')")
-    @PostMapping(value ="/followEO")
-    public ResponseEntity<BusinessPartner> followEventOrganiser(@RequestBody @Valid FollowRequest followEORequest){
-        BusinessPartner user = bpService.getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    @PostMapping(value = "/followEO")
+    public ResponseEntity<BusinessPartner> followEventOrganiser(@RequestBody @Valid FollowRequest followEORequest) {
+        BusinessPartner user = bpService
+                .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         user = bpService.followEventOrganiser(user, followEORequest);
         return ResponseEntity.ok(user);
     }
 
     @PreAuthorize("hasAnyRole('BIZPTNR')")
-    @PostMapping(value ="/unfollowEO")
-    public ResponseEntity<BusinessPartner> unfollowEventOrganiser(@RequestBody @Valid FollowRequest followEORequest){
-        BusinessPartner user = bpService.getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    @PostMapping(value = "/unfollowEO")
+    public ResponseEntity<BusinessPartner> unfollowEventOrganiser(@RequestBody @Valid FollowRequest followEORequest) {
+        BusinessPartner user = bpService
+                .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         user = bpService.unfollowEventOrganiser(user, followEORequest);
         return ResponseEntity.ok(user);
     }
@@ -176,15 +174,26 @@ public class BusinessPartnerController {
 
     //     user = bpService.updatePartner(user, updatePartnerRequest);
     //     return ResponseEntity.ok(user);
+    // @RequestBody @Valid UpdatePartnerRequest updatePartnerRequest) {
+    // BusinessPartner user = bpService
+    // .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+    // // verify user id
+    // if (updatePartnerRequest.getId() != user.getId()) {
+    // throw new AuthenticationServiceException("An error has occured");
+    // }
+
+    // user = bpService.updatePartner(user, updatePartnerRequest);
+    // return ResponseEntity.ok(user);
     // }
 
     @PreAuthorize("hasAnyRole('BIZPTNR')")
     @PostMapping(value = "/update")
-    public UploadFileResponse updateUser(
-            UpdatePartnerRequest updatePartnerRequest,
+    public UploadFileResponse updateUser(UpdatePartnerRequest updatePartnerRequest,
             @RequestParam(value = "profilepicfile", required = false) MultipartFile file) {
 
-      BusinessPartner user = bpService.getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        BusinessPartner user = bpService
+                .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         String fileDownloadUri = null;
         String filename = null;
         // verify user id
@@ -210,7 +219,6 @@ public class BusinessPartnerController {
                 try {
                     Files.deleteIfExists(oldFilepath);
                 } catch (IOException e) {
-                    
                     e.printStackTrace();
                 }
 

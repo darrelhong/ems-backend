@@ -24,6 +24,7 @@ import com.is4103.backend.model.User;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.service.EventOrganiserService;
+import com.is4103.backend.model.Event;
 import com.is4103.backend.service.EventService;
 
 import com.is4103.backend.service.RoleService;
@@ -79,7 +80,6 @@ public class UserController {
 
     @Autowired
     private EventService eventService;
-
 
     @GetMapping(path = "/all")
     public List<User> getAllUsers() {
@@ -269,25 +269,23 @@ public class UserController {
     public ResponseEntity sendEnquiry(@RequestBody @Valid SendEnquiryRequest sendEnquiryRequest) {
         User sender = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         // verify user id
-        //System.out.println(user.getEmail());
-       System.out.println(sendEnquiryRequest.getSenderEmail());
+        // System.out.println(user.getEmail());
+        System.out.println(sendEnquiryRequest.getSenderEmail());
         User receiver = userService.getUserByEmail(sendEnquiryRequest.getReceiverEmail());
         System.out.println("receiver email");
         System.out.println(receiver.getEmail());
-        if (!(sendEnquiryRequest.getSenderEmail().equals(sender.getEmail())) || receiver == null ){
+        if (!(sendEnquiryRequest.getSenderEmail().equals(sender.getEmail())) || receiver == null) {
             throw new AuthenticationServiceException("An error has occured");
-        }else{
-        
-        if(sendEnquiryRequest.getEventId() != null){
-            Event event = eventService.getEventById(sendEnquiryRequest.getEventId());
-            String eventName = event.getName();
-            userService.sendEnquiry(sendEnquiryRequest, eventName, sender, receiver);
-        }else{
-            userService.sendEnquiry(sendEnquiryRequest, "", sender,receiver);
-        }
-      
-   
-       
+        } else {
+
+            if (sendEnquiryRequest.getEventId() != null) {
+                Event event = eventService.getEventById(sendEnquiryRequest.getEventId());
+                String eventName = event.getName();
+                userService.sendEnquiry(sendEnquiryRequest, eventName, sender, receiver);
+            } else {
+                userService.sendEnquiry(sendEnquiryRequest, "", sender, receiver);
+            }
+
         }
 
         return ResponseEntity.ok("Success");

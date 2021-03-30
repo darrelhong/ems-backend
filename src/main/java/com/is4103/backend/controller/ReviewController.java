@@ -30,13 +30,13 @@ public class ReviewController {
     }
 
     @GetMapping(path = "/eo/{id}")
-    public List<Review> getReviewsByEO(@PathVariable Long id){
+    public List<Review> getReviewsByEO(@PathVariable Long id) {
         return reviewService.getReviewsByEO(id);
     }
 
     @PostMapping(value = "/create")
     public Review createNewReview(@RequestBody @Valid CreateReview reviewRequest) {
         return reviewService.createNewReview(reviewRequest);
-    
     }
+
 }

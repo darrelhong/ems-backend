@@ -51,19 +51,7 @@ public class ReviewService {
     private BusinessPartnerController bpController;
 
     public List<Review> getReviewsByEventId(Long id) {
-        // Event event = eventController.getEventById(id);
-        // List<Review> filteredReviews = new ArrayList<>();
-        // List<Review> reviews = reviewRepository.findAll();
-        // for(int i=0; i<reviews.size(); i++){
-        // if(reviews.get(i).getEvent().getEid() == id){
-        // filteredReviews.add(reviews.get(i));
-        // }
-        // }
-
-        // return filteredReviews;
         Event event = eventController.getEventById(id);
-        // List<Review> reviews = reviewRepository.findByEvent(event);
-        // return reviews;
         return reviewRepository.findByEvent(event);
 
     }
@@ -72,35 +60,35 @@ public class ReviewService {
         // EventOrganiser organiser =
         // eventOrganiserController.getEventOrganiserById(id);
         List<Event> events = eventController.getAllEventsByOrganiser(id);
-        // List<Review> reviews = new ArrayList<>();
-        // for (int i = 0; i < events.size(); i++) {
-        //     System.out.println(events.get(i).getReviews() + "events " + events.get(i).getEid());
-        //     if (events.get(i).getReviews() != null) {
-        //         System.out.println("in reviews" + events.get(i).getReviews());
-        //         List<Review> eventReviews = events.get(i).getReviews();
-        //         for (int h = 0; h < eventReviews.size(); h++) {
-        //             reviews.add(eventReviews.get(h));
-        //         }
-        //     }
-        // }
-        // return reviews;
-        List<Review> filteredReviews = new ArrayList<>();
-        List<Review> reviews = reviewRepository.findAll();
-        for(int i =0; i<reviews.size(); i++){
-            for(int h=0; h<events.size();h++){
-                if(reviews.get(i).getEvent().getEid() == events.get(h).getEid()){
-                    filteredReviews.add(reviews.get(i));
+        List<Review> reviews = new ArrayList<>();
+        for (int i = 0; i < events.size(); i++) {
+            // System.out.println(events.get(i).getReviews() + "events " + events.get(i).getEid());
+            if (events.get(i).getReviews() != null) {
+                // System.out.println("in reviews" + events.get(i).getReviews());
+                List<Review> eventReviews = events.get(i).getReviews();
+                for (int h = 0; h < eventReviews.size(); h++) {
+                    reviews.add(eventReviews.get(h));
                 }
             }
         }
+        return reviews;
+        // List<Review> filteredReviews = new ArrayList<>();
+        // List<Review> reviews = reviewRepository.findAll();
+        // for(int i =0; i<reviews.size(); i++){
+        //     for(int h=0; h<events.size();h++){
+        //         if(reviews.get(i).getEvent().getEid() == events.get(h).getEid()){
+        //             filteredReviews.add(reviews.get(i));
+        //         }
+        //     }
+        // }
 
-        return filteredReviews;
+        // return filteredReviews;
     }
 
     @Transactional
     public Review createNewReview(CreateReview reviewRequest) {
         Event event = eventController.getEventById(reviewRequest.getEventId());
-        System.out.println(event + "event");
+        // System.out.println(event + "event");
         Review review = new Review();
         review.setRating(reviewRequest.getRating());
         review.setReviewText(reviewRequest.getReview());
@@ -121,19 +109,20 @@ public class ReviewService {
         String formatDateTime = now.format(formatter);
         review.setReviewDateTime(formatDateTime);
         review = reviewRepository.save(review);
-        if (event.getReviews() == null) {
+      
+        if (event.getReviews() == null || event.getReviews().isEmpty()) {
             List<Review> eventReviews = new ArrayList<>();
             eventReviews.add(review);
             event.setReviews(eventReviews);
             eoRepository.save(event);
         } else {
+         
             List<Review> eventReviews = new ArrayList<>();
             eventReviews= event.getReviews();
             eventReviews.add(review);
             event.setReviews(eventReviews);
             eoRepository.save(event);
         }
-
         if (reviewRequest.getAttendeeId() != 0L) {
             Attendee attendee = atnController.getAttendeeById(reviewRequest.getAttendeeId());
             if (attendee.getReviews() == null) {
@@ -141,13 +130,13 @@ public class ReviewService {
                 atnReviews.add(review);
                 attendee.setReviews(atnReviews);
                 atnRepository.save(attendee);
+
             } else {
 
                 List<Review> atnReviews = attendee.getReviews();
                 atnReviews.add(review);
                 attendee.setReviews(atnReviews);
                 atnRepository.save(attendee);
-
             }
 
         } else {
@@ -156,8 +145,6 @@ public class ReviewService {
                 List<Review> bpReviews = new ArrayList<>();
                 bpReviews.add(review);
                 partner.setReviews(bpReviews);
-                System.out.println(bpReviews);
-
                 bpRepository.save(partner);
             } else {
                 List<Review> bpReviews = partner.getReviews();
@@ -167,7 +154,7 @@ public class ReviewService {
             }
 
         }
-
+      
         return review;
     }
 

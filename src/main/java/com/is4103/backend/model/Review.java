@@ -9,9 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.Data;
+
 
 @Entity
 @Data
@@ -22,20 +21,16 @@ public class Review {
     private long id;
 
     private int rating;
-    
 
     @ManyToOne
     private Attendee attendee;
-    
-  
+
     @ManyToOne
     private BusinessPartner partner;
 
     private String reviewText;
 
-    
     @ManyToOne
     private Event event;
-
     private String reviewDateTime;
 }

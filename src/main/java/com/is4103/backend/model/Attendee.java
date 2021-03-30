@@ -3,9 +3,7 @@ package com.is4103.backend.model;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -17,7 +15,6 @@ import javax.persistence.JoinColumn;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Transient;
-
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -42,7 +39,7 @@ public class Attendee extends User {
     @OneToMany(mappedBy = "attendee")
     private List<TicketTransaction> ticketTransactions;
 
-     @Transient
+    //  @Transient
      @JsonIgnore
      @Column(nullable = true)
     @OneToMany(mappedBy = "attendee")

@@ -45,26 +45,40 @@ public class Event {
     @ManyToMany(fetch = FetchType.LAZY)
     private List<BusinessPartner> favouriteBusinessPartners;
 
-    @Transient
+    // @JsonView(EventViews.Private.class)
+    // @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy =
+    // "event")
+    // @ElementCollection(targetClass = EventBoothTransaction.class)
+    // @JsonIgnoreProperties("event")
+    // private List<EventBoothTransaction> eventBoothTransactions;
+
     @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
+    @ElementCollection(targetClass = SellerApplication.class)
     @JsonIgnoreProperties("event")
-    private List<EventBoothTransaction> eventBoothTransactions;
+    private List<SellerApplication> sellerApplications;
+
+    // @JsonView(EventViews.Private.class)
+    // @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy =
+    // "event")
+    // @JsonIgnoreProperties("event")
+    // private List<Booth> booths;
 
     @Transient
     @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @JsonIgnoreProperties("event")
-    private List<Booth> booths;
+    private List<SellerProfile> sellerProfiles;
 
+    
     @JsonIgnoreProperties("event")
     @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     private List<TicketTransaction> ticketTransactions;
 
-    // @JsonIgnore
-    @Transient
-    @JsonIgnoreProperties("event")
+     @JsonIgnore
+    // @Transient
+    // @JsonIgnoreProperties("event")
     // @JsonView(EventViews.Private.class)
     @Column(nullable = true)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
@@ -82,6 +96,9 @@ public class Event {
 
     // @Column(nullable = false)
     private String descriptions;
+
+    @ElementCollection(targetClass = String.class)
+    private List<String> categories;
 
     private boolean isSellingTicket;
 
@@ -115,6 +132,8 @@ public class Event {
     @ElementCollection(targetClass = String.class)
     private List<String> images;
 
+    private float boothPrice;
+
     // @Column(nullable = false)
     private int boothCapacity;
 
@@ -132,7 +151,8 @@ public class Event {
     private boolean isPublished;
 
     public boolean isAvailableForSale() {
-        if (this.saleStartDate != null && this.salesEndDate != null) {
+        if (this.isSellingTicket && this.saleStartDate != null && this.salesEndDate != null) {
+            // if (this.saleStartDate != null && this.salesEndDate != null) {
             return LocalDateTime.now().isAfter(this.saleStartDate) && LocalDateTime.now().isBefore(this.salesEndDate);
         }
         return false;

@@ -5,14 +5,10 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -24,8 +20,9 @@ import org.hibernate.annotations.FetchMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import lombok.Data;
 
+@Data
 @Entity
 @JsonView(EventViews.Private.class)
 public class BusinessPartner extends User {
@@ -44,86 +41,105 @@ public class BusinessPartner extends User {
     private List<Attendee> attendeeFollowers;
 
     @JsonIgnore
+    // @JsonIgnoreProperties("businessPartner")
     @Column(nullable = true)
-    @ManyToMany(mappedBy="businessPartnerFollowers")
+    @ManyToMany(mappedBy = "businessPartnerFollowers")
     private List<EventOrganiser> followEventOrganisers;
 
-    @Transient
+    // @JsonIgnoreProperties("businessPartner")
+    // @OneToMany(mappedBy = "businessPartner")
+    // @ElementCollection(targetClass = EventBoothTransaction.class)
+    // private List<EventBoothTransaction> eventBoothTransactions;
+
     @OneToMany(mappedBy = "businessPartner")
-    @ElementCollection(targetClass = EventBoothTransaction.class)
-    private List<EventBoothTransaction> eventBoothTransactions;
+    @ElementCollection(targetClass = SellerApplication.class)
+    @JsonIgnoreProperties({ "businessPartner", "event" })
+    private List<SellerApplication> sellerApplications;
 
     @OneToMany(mappedBy = "businessPartner")
     @ElementCollection(targetClass = Enquiry.class)
     private List<Enquiry> enquiries;
 
-    //  @Transient
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "businessPartner")
+    @ElementCollection(targetClass = SellerProfile.class)
+    @JsonIgnoreProperties("businessPartner")
+    private List<SellerProfile> sellerProfiles;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "businessPartner")
+    @ElementCollection(targetClass = Product.class)
+    @JsonIgnoreProperties({ "businessPartner", "booths" })
+    private List<Product> products;
+
+    // @Transient
     @JsonIgnore
     @Column(nullable = true)
     @OneToMany(mappedBy = "partner")
-    // @ElementCollection(targetClass = Review.class)
+    @ElementCollection(targetClass = Review.class)
     private List<Review> reviews;
 
-    public BusinessPartner() {
-        super();
-    }
+    // public BusinessPartner() {
+    // super();
+    // }
 
+    // public BusinessPartner(String businessCategory, List<Event>
+    // favouriteEventList,
+    // List<EventBoothTransaction> eventBoothTransactions, List<EventOrganiser>
+    // followEventOrganisers) {
+    // this();
+    // this.businessCategory = businessCategory;
+    // this.favouriteEventList = favouriteEventList;
+    // this.eventBoothTransactions = eventBoothTransactions;
+    // this.followEventOrganisers = followEventOrganisers;
+    // this.attendeeFollowers = attendeeFollowers;
+    // }
 
-    public BusinessPartner(String businessCategory, List<Event> favouriteEventList,
-            List<EventBoothTransaction> eventBoothTransactions, List<EventOrganiser> followEventOrganisers, List<Attendee> attendeeFollowers) {
-        this();
-        this.businessCategory = businessCategory;
-        this.favouriteEventList = favouriteEventList;
-        this.eventBoothTransactions = eventBoothTransactions;
-        this.followEventOrganisers = followEventOrganisers;
-        this.attendeeFollowers = attendeeFollowers;
-    }
+    // public String getBusinessCategory() {
+    // return businessCategory;
+    // }
 
-    public String getBusinessCategory() {
-        return businessCategory;
-    }
+    // public void setBusinessCategory(String businessCategory) {
+    // this.businessCategory = businessCategory;
+    // }
 
-    public void setBusinessCategory(String businessCategory) {
-        this.businessCategory = businessCategory;
-    }
+    // public List<Event> getFavouriteEventList() {
+    // return favouriteEventList;
+    // }
 
-    public List<Event> getFavouriteEventList() {
-        return favouriteEventList;
-    }
+    // public void setFavouriteEventList(List<Event> favouriteEventList) {
+    // this.favouriteEventList = favouriteEventList;
+    // }
 
-    public void setFavouriteEventList(List<Event> favouriteEventList) {
-        this.favouriteEventList = favouriteEventList;
-    }
+    // public List<Attendee> getAttendeeFollowers() {
+    // return attendeeFollowers;
+    // }
 
-    public List<Attendee> getAttendeeFollowers() {
-        return attendeeFollowers;
-    }
+    // public void setAttendeeFollowers(List<Attendee> attendeeFollowers) {
+    // this.attendeeFollowers = attendeeFollowers;
+    // }
 
-    public void setAttendeeFollowers(List<Attendee> attendeeFollowers) {
-        this.attendeeFollowers = attendeeFollowers;
-    }
+    // public List<Review> getReviews() {
+    // return reviews;
+    // }
 
-    public List<Review> getReviews() {
-        return reviews;
-    }
+    // public void setReviews(List<Review> reviews) {
+    // this.reviews = reviews;
+    // }
 
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
-    }
+    // public List<EventBoothTransaction> getEventBoothTransactions() {
+    // return eventBoothTransactions;
+    // }
 
-    public List<EventBoothTransaction> getEventBoothTransactions() {
-        return eventBoothTransactions;
-    }
+    // public void setEventBoothTransactions(List<EventBoothTransaction>
+    // eventBoothTransactions) {
+    // this.eventBoothTransactions = eventBoothTransactions;
+    // }
 
-    public void setEventBoothTransactions(List<EventBoothTransaction> eventBoothTransactions) {
-        this.eventBoothTransactions = eventBoothTransactions;
-    }
+    // public List<EventOrganiser> getFollowEventOrganisers() {
+    // return followEventOrganisers;
+    // }
 
-    public List<EventOrganiser> getFollowEventOrganisers() {
-        return followEventOrganisers;
-    }
-
-    public void setFollowEventOrganisers(List<EventOrganiser> followEventOrganisers) {
-        this.followEventOrganisers = followEventOrganisers;
-    }
+    // public void setFollowEventOrganisers(List<EventOrganiser>
+    // followEventOrganisers) {
+    // this.followEventOrganisers = followEventOrganisers;
+    // }
 }

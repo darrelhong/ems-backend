@@ -11,9 +11,7 @@ import lombok.Setter;
 @Setter
 public class BroadcastMessageToFollowersRequest {
     
-    @NotNull
     @NotEmpty
-    private String subject;
     @NotNull
     @NotEmpty
     private String content;

@@ -14,6 +14,7 @@ import lombok.Data;
 import java.util.List;
 
 import javax.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Data
@@ -23,37 +24,19 @@ public class Booth {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Double price;
-
-    @Column(nullable = true)
-    private Double length;
-
-    @Column(nullable = true)
-    private Double width;
-
     @Column(nullable = true)
     @ManyToMany
+    @JsonIgnoreProperties("booths")
     private List<Product> products;
 
+    // @ManyToOne
+    // private Event event;
+
     @ManyToOne
-    private Event event;
+    @JsonIgnoreProperties("booths")
+    private SellerProfile sellerProfile;
 
-    public Booth() {
-    };
+    private int boothNumber;
 
-    public Booth(Double price, Double length, Double width, Event event) {
-        this();
-        this.price = price;
-        this.length = length;
-        this.width = width;
-        this.event = event;
-    }
-
-    public Booth(Double price, Double length, Double width) {
-        this();
-        this.price = price;
-        this.length = length;
-        this.width = width;
-    }
+    private String description;
 }

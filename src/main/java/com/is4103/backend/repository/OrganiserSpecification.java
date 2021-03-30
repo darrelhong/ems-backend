@@ -42,5 +42,4 @@ public class OrganiserSpecification implements Specification<EventOrganiser> {
         }
     }
 
-
 }

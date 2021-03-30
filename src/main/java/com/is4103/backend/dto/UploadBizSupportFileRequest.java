@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UploadBizSupportFileRequest {
    
+
     @NotNull
     private Long id;
 
