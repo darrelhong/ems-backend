@@ -71,8 +71,8 @@ public class User {
     private String paymentMethodId;
     
     @Column(nullable = true)
-    private boolean systemEmailNoti;
+    private boolean systemEmailNoti = true;
    
     @Column(nullable = true)
-    private boolean eoEmailNoti;
+    private boolean eoEmailNoti = true;
 }

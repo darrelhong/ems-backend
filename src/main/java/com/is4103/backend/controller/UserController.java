@@ -20,6 +20,7 @@ import com.is4103.backend.dto.LoginUserResponse;
 import com.is4103.backend.dto.ResetPasswordDto;
 import com.is4103.backend.dto.SendEnquiryRequest;
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.dto.UpdateEmailNotiRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
@@ -396,6 +397,17 @@ public class UserController {
        
          return new AddCardResponse(resMsg);
         
+    }
+
+     @PostMapping(value = "/updateEmailNoti")
+    public User updateEmailNoti(@RequestBody @Valid UpdateEmailNotiRequest updateEmailNotiRequest) {
+        
+       boolean eoEmailNoti  = updateEmailNotiRequest.isEoEmailNoti();
+      // boolean systemEmailNoti = updateEmailNotiRequest.isSystemEmailNoti();
+       User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+       User userRes = userService.updateNotiSetting(user, eoEmailNoti);
+        
+       return userRes;
     }
 
 }

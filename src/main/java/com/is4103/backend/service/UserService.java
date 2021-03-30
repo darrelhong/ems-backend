@@ -340,8 +340,15 @@ public class UserService {
         return userRepository.save(user);
 
     }
-       public User deletePaymentMethod(User user){
+    public User deletePaymentMethod(User user){
         user.setPaymentMethodId(null);
+        return userRepository.save(user);
+
+    }
+    
+    public User updateNotiSetting(User user,boolean eoEmailNoti) {
+        user.setEoEmailNoti(eoEmailNoti);
+       // user.setSystemEmailNoti(systemEmailNoti);
         return userRepository.save(user);
 
     }
