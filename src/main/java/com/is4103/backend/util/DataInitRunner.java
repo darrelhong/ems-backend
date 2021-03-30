@@ -845,6 +845,7 @@ public class DataInitRunner implements ApplicationRunner {
             }
             // CREATE RANDOM NUMBERS FOR THE REST
             List<Event> allEvents = eventRepository.findAll();
+            allEvents.remove(allEvents.get(0));
             for (Event e : allEvents) {
                 for (int i = 0; i < 2; i++) {
                     // MAKE 2 APPLICATIONS FOR EACH EVENT

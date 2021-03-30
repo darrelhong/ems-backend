@@ -2,6 +2,7 @@ package com.is4103.backend.controller;
 
 import java.io.Console;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -9,13 +10,16 @@ import com.is4103.backend.dto.FollowRequest;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
 import com.is4103.backend.dto.UpdateAttendeeRequest;
+import com.is4103.backend.dto.event.FavouriteEventDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
+import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.service.AttendeeService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,6 +32,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -39,6 +44,9 @@ public class AttendeeController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ModelMapper modelmapper;
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
@@ -135,4 +143,28 @@ public class AttendeeController {
         return ResponseEntity.ok(user);
     }
 
+    @PreAuthorize("hasRole('ATND')")
+    @PostMapping(value = "/favourite-event")
+    public ResponseEntity<?> favouriteEvent(@RequestParam Long eventId) {
+        Attendee attendee = atnService
+                .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        List<Event> favourites = atnService.favouriteEvent(attendee, eventId);
+        List<FavouriteEventDto> resp = favourites.stream().map(event -> modelmapper.map(event, FavouriteEventDto.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(resp);
+
+    }
+
+    @PreAuthorize("hasRole('ATND')")
+    @GetMapping(value = "/get-favourite-events")
+    public ResponseEntity<?> getFavouriteEvent() {
+        Attendee attendee = atnService
+                .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        List<Event> favourites = attendee.getFavouriteEvents();
+        List<FavouriteEventDto> resp = favourites.stream().map(event -> modelmapper.map(event, FavouriteEventDto.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(resp);
+    }
 }

@@ -33,6 +33,10 @@ public class EventSpecification implements Specification<Event> {
                     builder.like(builder.lower(root.get("name")), "%" + criteria.getKeyword().toLowerCase() + "%"));
         }
 
+        if (criteria.getCategory() != null) {
+            predicates.add(builder.isMember(criteria.getCategory(), root.get("categories")));
+        }
+
         if (predicates.size() > 0) {
             return builder.or(predicates.toArray(Predicate[]::new));
         } else {

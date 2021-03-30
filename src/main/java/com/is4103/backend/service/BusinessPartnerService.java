@@ -177,6 +177,22 @@ public class BusinessPartnerService {
         return bpRepository.save(user);
     }
 
+    public BusinessPartner likeEvent(BusinessPartner user, Long eid) {
+        Event event = eventService.getEventById(eid);
+        List<Event> likedEvents = user.getFavouriteEventList();
+        likedEvents.add(event);
+        user.setFavouriteEventList(likedEvents);
+        return bpRepository.save(user);
+    }
+
+    public BusinessPartner unlikeEvent(BusinessPartner user, Long eid) {
+        Event event = eventService.getEventById(eid);
+        List<Event> likedEvents = user.getFavouriteEventList();
+        likedEvents.remove(event);
+        user.setFavouriteEventList(likedEvents);
+        return bpRepository.save(user);
+    }
+
     @Transactional
     public BusinessPartner followEventOrganiser(BusinessPartner user, FollowRequest followEORequest) {
 
@@ -291,9 +307,8 @@ public class BusinessPartnerService {
         List<SellerApplication> eventTransList = sellerApplicationService.getAllSellerApplications();
         List<Event> eventList = new ArrayList<>();
         for (SellerApplication trans : eventTransList) {
-            if (!(trans.getPaymentStatus().toString().equals("REFUNDED")) && 
-                trans.getBusinessPartner().getId() == id && 
-                !(eventList.contains(trans.getEvent()))) {
+            if (!(trans.getPaymentStatus().toString().equals("REFUNDED")) && trans.getBusinessPartner().getId() == id
+                    && !(eventList.contains(trans.getEvent()))) {
                 // Event event = new Event();
                 // event = eventService.getEventById(trans.getEid());
                 // event = eventService.getEventById(trans.getEid());

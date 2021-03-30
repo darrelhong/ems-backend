@@ -9,6 +9,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.JoinColumn;
@@ -18,8 +19,6 @@ import javax.persistence.Transient;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-// import org.hibernate.mapping.Set;
 
 @Entity
 @Data
@@ -51,6 +50,11 @@ public class Attendee extends User {
     @JsonIgnore
     @ManyToMany
     private List<BusinessPartner> followedBusinessPartners;
+
+    @ManyToMany
+    @JoinColumn
+    @JsonIgnore
+    private List<Event> favouriteEvents;
 
     public Attendee() {
         super();

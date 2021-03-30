@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -98,6 +99,8 @@ public class Event {
     private String descriptions;
 
     @ElementCollection(targetClass = String.class)
+    @CollectionTable(name = "event_categories")
+    @Column(name = "categories")
     private List<String> categories;
 
     private boolean isSellingTicket;
@@ -150,7 +153,7 @@ public class Event {
 
     private boolean isPublished;
 
-    public boolean isAvailableForSale() {
+    public boolean getAvailableForSale() {
         if (this.isSellingTicket && this.saleStartDate != null && this.salesEndDate != null) {
             // if (this.saleStartDate != null && this.salesEndDate != null) {
             return LocalDateTime.now().isAfter(this.saleStartDate) && LocalDateTime.now().isBefore(this.salesEndDate);
