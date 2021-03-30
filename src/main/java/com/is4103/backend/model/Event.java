@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -90,6 +91,8 @@ public class Event {
     private String descriptions;
 
     @ElementCollection(targetClass = String.class)
+    @CollectionTable(name = "event_categories")
+    @Column(name = "categories")
     private List<String> categories;
 
     private boolean isSellingTicket;

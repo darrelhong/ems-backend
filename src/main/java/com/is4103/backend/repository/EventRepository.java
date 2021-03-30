@@ -33,4 +33,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 
     <T> Page<T> findByIsPublishedAndEventStartDateGreaterThan(boolean isPublished, LocalDateTime eventStartDate,
             Pageable pageable, Class<T> type);
+
+    @Query(value = "SELECT DISTINCT categories FROM event_categories", nativeQuery = true)
+    List<String> getDistinctEventCategories();
 }

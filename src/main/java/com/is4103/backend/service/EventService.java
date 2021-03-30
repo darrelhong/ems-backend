@@ -86,4 +86,8 @@ public class EventService {
         event.setImages(images);
         return eventRepository.save(event);
     };
+
+    public List<String> getDistinctEventCategories() {
+        return eventRepository.getDistinctEventCategories();
+    }
 }

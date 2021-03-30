@@ -195,4 +195,9 @@ public class EventController {
                 .removeIf(application -> (application.getSellerApplicationStatus() != SellerApplicationStatus.PENDING));
         return newApplications;
     }
+
+    @GetMapping("/categories")
+    public List<String> getDistinctCategories() {
+        return eventService.getDistinctEventCategories();
+    }
 }
