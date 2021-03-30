@@ -12,6 +12,8 @@ public interface EventDetailsDto {
 
     String getAddress();
 
+    String getDescriptions();
+
     Boolean getSellingTicket();
 
     Float getTicketPrice();
