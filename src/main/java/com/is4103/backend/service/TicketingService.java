@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
+import com.is4103.backend.dto.ticketing.TicketTransactionEventDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.PaymentStatus;
@@ -103,11 +104,22 @@ public class TicketingService {
 
     public <T> Collection<T> getTicketTransactionsAttendee(Attendee attendee, String period, Class<T> type) {
         if (period.equals("upcoming")) {
-            return ttRepository.findByAttendeeAndEvent_EventStartDateAfter(attendee, LocalDateTime.now(), type,
-                    Sort.by("dateTimeOrdered").descending());
+            return ttRepository.findByAttendeeAndEvent_EventStartDateAfterAndPaymentStatus(attendee,
+                    LocalDateTime.now(), PaymentStatus.COMPLETED, type, Sort.by("dateTimeOrdered").descending());
         } else if (period.equals("previous")) {
-            return ttRepository.findByAttendeeAndEvent_EventStartDateBefore(attendee, LocalDateTime.now(), type,
-                    Sort.by("dateTimeOrdered").descending());
+            return ttRepository.findByAttendeeAndEvent_EventStartDateBeforeAndPaymentStatus(attendee,
+                    LocalDateTime.now(), PaymentStatus.COMPLETED, type, Sort.by("dateTimeOrdered").descending());
+        }
+        return new ArrayList<>();
+    }
+
+    public Collection<TicketTransactionEventDto> getDistinctEventsPurchased(Attendee attendee, String period) {
+        if (period.equals("upcoming")) {
+            return ttRepository.findDistinctEventsByAttendeeUpcoming(attendee, PaymentStatus.COMPLETED,
+                    LocalDateTime.now());
+        } else if (period.equals("previous")) {
+            return ttRepository.findDistinctEventsByAttendeePrevious(attendee, PaymentStatus.COMPLETED,
+                    LocalDateTime.now());
         }
         return new ArrayList<>();
     }

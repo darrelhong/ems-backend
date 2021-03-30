@@ -8,17 +8,20 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.is4103.backend.dto.DisabledAccountRequest;
 import com.is4103.backend.dto.FileStorageProperties;
 import com.is4103.backend.dto.FollowRequest;
 import com.is4103.backend.dto.PartnerSearchCriteria;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
 import com.is4103.backend.dto.UpdatePartnerRequest;
+import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.dto.UploadFileResponse;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
+import com.is4103.backend.model.User;
 import com.is4103.backend.service.BusinessPartnerService;
 import com.is4103.backend.service.FileStorageService;
 import com.is4103.backend.service.UserService;
@@ -133,6 +136,20 @@ public class BusinessPartnerController {
         return bpService.getFollowingById(id);
     }
 
+    @PostMapping(path = "/like/{bpId}/{eid}")
+    public ResponseEntity<BusinessPartner> likeEvent(@PathVariable Long bpId, @PathVariable Long eid) {
+        BusinessPartner user = bpService.getBusinessPartnerById(bpId);
+        user = bpService.likeEvent(user, eid);
+        return ResponseEntity.ok(user);
+    }
+
+    @PostMapping(path = "/unlike/{bpId}/{eid}")
+    public ResponseEntity<BusinessPartner> unlikeEvent(@PathVariable long bpId, @PathVariable Long eid) {
+        BusinessPartner user = bpService.getBusinessPartnerById(bpId);
+        user = bpService.unlikeEvent(user, eid);
+        return ResponseEntity.ok(user);
+    }
+
     @PreAuthorize("hasAnyRole('BIZPTNR')")
     @PostMapping(value = "/followEO")
     public ResponseEntity<BusinessPartner> followEventOrganiser(@RequestBody @Valid FollowRequest followEORequest) {
@@ -160,6 +177,17 @@ public class BusinessPartnerController {
     // @PreAuthorize("hasAnyRole('BIZPTNR')")
     // @PostMapping(value = "/update")
     // public ResponseEntity<BusinessPartner> updatePartner(
+    //         @RequestBody @Valid UpdatePartnerRequest updatePartnerRequest) {
+    //     BusinessPartner user = bpService
+    //             .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+    //     // verify user id
+    //     if (updatePartnerRequest.getId() != user.getId()) {
+    //         throw new AuthenticationServiceException("An error has occured");
+    //     }
+
+    //     user = bpService.updatePartner(user, updatePartnerRequest);
+    //     return ResponseEntity.ok(user);
     // @RequestBody @Valid UpdatePartnerRequest updatePartnerRequest) {
     // BusinessPartner user = bpService
     // .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -205,7 +233,6 @@ public class BusinessPartnerController {
                 try {
                     Files.deleteIfExists(oldFilepath);
                 } catch (IOException e) {
-
                     e.printStackTrace();
                 }
 
@@ -222,5 +249,14 @@ public class BusinessPartnerController {
 
         return bpService.getAllEventsByBp(bpId);
     }
+
+
+    @GetMapping(value = "/events/{bpId}/{role}/{status}")
+    public List<Event> getAllEventByBpIdStatus(@PathVariable Long bpId, @PathVariable String role, @PathVariable String status) {
+
+        return bpService.getAllEventsByBpIdStatus(bpId, role ,status);
+    }
+    
+
 
 }

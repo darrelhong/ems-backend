@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -19,7 +20,9 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonView;
+
 
 import lombok.Data;
 
@@ -62,25 +65,31 @@ public class Event {
     // @JsonIgnoreProperties("event")
     // private List<Booth> booths;
 
+    @Transient
     @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @JsonIgnoreProperties("event")
     private List<SellerProfile> sellerProfiles;
 
+    
     @JsonIgnoreProperties("event")
     @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     private List<TicketTransaction> ticketTransactions;
 
+     @JsonIgnore
     // @Transient
-    @JsonIgnore
+    // @JsonIgnoreProperties("event")
+    // @JsonView(EventViews.Private.class)
     @Column(nullable = true)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
-    @ElementCollection(targetClass = Review.class)
+    // @ElementCollection(targetClass = Review.class)
     private List<Review> reviews;
 
+
+
     // @Column(nullable = false)
-    @JsonView(EventViews.Basic.class)
+    // @JsonView(EventViews.Basic.class)
     private String name;
 
     // @Column(nullable = false)
@@ -90,6 +99,8 @@ public class Event {
     private String descriptions;
 
     @ElementCollection(targetClass = String.class)
+    @CollectionTable(name = "event_categories")
+    @Column(name = "categories")
     private List<String> categories;
 
     private boolean isSellingTicket;
@@ -142,7 +153,7 @@ public class Event {
 
     private boolean isPublished;
 
-    public boolean isAvailableForSale() {
+    public boolean getAvailableForSale() {
         if (this.isSellingTicket && this.saleStartDate != null && this.salesEndDate != null) {
             // if (this.saleStartDate != null && this.salesEndDate != null) {
             return LocalDateTime.now().isAfter(this.saleStartDate) && LocalDateTime.now().isBefore(this.salesEndDate);
@@ -150,4 +161,5 @@ public class Event {
         return false;
     }
 
+    
 }

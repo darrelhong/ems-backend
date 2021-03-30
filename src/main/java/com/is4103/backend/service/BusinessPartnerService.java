@@ -1,5 +1,7 @@
 package com.is4103.backend.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -13,12 +15,14 @@ import com.is4103.backend.dto.PartnerSearchCriteria;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.UpdatePartnerRequest;
 import com.is4103.backend.model.Attendee;
+import com.is4103.backend.model.BoothApplicationStatus;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.SellerApplication;
+import com.is4103.backend.model.SellerApplicationStatus;
 import com.is4103.backend.repository.BusinessPartnerRepository;
 import com.is4103.backend.repository.EventOrganiserRepository;
 import com.is4103.backend.repository.EventRepository;
@@ -26,6 +30,7 @@ import com.is4103.backend.repository.PartnerSpecification;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
+import com.is4103.backend.service.EventService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -172,6 +177,22 @@ public class BusinessPartnerService {
         return bpRepository.save(user);
     }
 
+    public BusinessPartner likeEvent(BusinessPartner user, Long eid) {
+        Event event = eventService.getEventById(eid);
+        List<Event> likedEvents = user.getFavouriteEventList();
+        likedEvents.add(event);
+        user.setFavouriteEventList(likedEvents);
+        return bpRepository.save(user);
+    }
+
+    public BusinessPartner unlikeEvent(BusinessPartner user, Long eid) {
+        Event event = eventService.getEventById(eid);
+        List<Event> likedEvents = user.getFavouriteEventList();
+        likedEvents.remove(event);
+        user.setFavouriteEventList(likedEvents);
+        return bpRepository.save(user);
+    }
+
     @Transactional
     public BusinessPartner followEventOrganiser(BusinessPartner user, FollowRequest followEORequest) {
 
@@ -286,9 +307,8 @@ public class BusinessPartnerService {
         List<SellerApplication> eventTransList = sellerApplicationService.getAllSellerApplications();
         List<Event> eventList = new ArrayList<>();
         for (SellerApplication trans : eventTransList) {
-            if (!(trans.getPaymentStatus().toString().equals("REFUNDED")) && 
-                trans.getBusinessPartner().getId() == id && 
-                !(eventList.contains(trans.getEvent()))) {
+            if (!(trans.getPaymentStatus().toString().equals("REFUNDED")) && trans.getBusinessPartner().getId() == id
+                    && !(eventList.contains(trans.getEvent()))) {
                 // Event event = new Event();
                 // event = eventService.getEventById(trans.getEid());
                 // event = eventService.getEventById(trans.getEid());
@@ -298,4 +318,60 @@ public class BusinessPartnerService {
         }
         return eventList;
     }
+
+    public List<Event> getAllEventsByBpIdStatus(Long id, String role, String status) {
+
+        List<SellerApplication> eventTransList = sellerApplicationService.getAllSellerApplications();
+        List<Event> eventList = new ArrayList<>();
+        for (SellerApplication trans : eventTransList) {
+            if (!(trans.getPaymentStatus().toString().equals("REFUNDED")) && trans.getBusinessPartner().getId() == id
+                    && trans.getSellerApplicationStatus().equals(SellerApplicationStatus.APPROVED)) {
+                Event event = new Event();
+                event = eventService.getEventById(trans.getEvent().getEid());
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+                LocalDateTime now = LocalDateTime.now();
+                if (role.equals("guest") || role.equals("ATND") || role.equals("EVNTORG")) {
+                    if (status.equals("current")) {
+                        if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                                && (event.getEventStartDate().isAfter(now) || event.getEventStartDate().isEqual(now)) && (event.getSaleStartDate().isAfter(now) || event.getSaleStartDate().isEqual(now))) {
+                            // System.out.println("test event" );
+                            eventList.add(event);
+                        }
+                    } else if (status.equals("past")) {
+                        if (event.getEventStatus().toString().equals("CREATED")
+                                && (event.getEventEndDate().isBefore(now) || event.getEventEndDate().isEqual(now))) {
+
+                            eventList.add(event);
+                        }
+                    }
+                } else if (role.equals("BIZPTNR")) {
+                    // System.out.println("in bp");
+
+                    if (status.equals("current")) {
+                        // System.out.println("id" + event.getEid());
+                        // System.out.println("start" + event.getEventStartDate());
+                        // System.out.println("startsales" + event.getSaleStartDate());
+                        if (event.getEventStatus().toString().equals("CREATED") && !event.isHidden()
+                                && (event.getEventStartDate().isAfter(now) || event.getEventStartDate().isEqual(now)) && (event.getSaleStartDate().isAfter(now) || event.getSaleStartDate().isEqual(now))) {
+                            eventList.add(event);
+                            // System.out.println("in bp current");
+
+                        }
+
+                    } else if (status.equals("past")) {
+
+                        if (event.getEventStatus().toString().equals("CREATED")
+                                && (event.getEventEndDate().isBefore(now) || event.getEventEndDate().isEqual(now))) {
+                            // System.out.println("in past");
+
+                            eventList.add(event);
+                        }
+                    }
+                }
+            }
+        }
+        // System.out.println("events" + eventList);
+        return eventList;
+    }
+
 }

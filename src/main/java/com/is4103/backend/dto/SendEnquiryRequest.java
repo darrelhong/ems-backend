@@ -31,5 +31,6 @@ public class SendEnquiryRequest {
     private String content;
     @Nullable
     private Long eventId;
+    
 
 }

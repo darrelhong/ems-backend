@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.io.Console;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -14,14 +16,17 @@ import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
 import com.is4103.backend.dto.UpdateAttendeeRequest;
 import com.is4103.backend.dto.UploadFileResponse;
+import com.is4103.backend.dto.event.FavouriteEventDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
+import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.service.AttendeeService;
 import com.is4103.backend.service.FileStorageService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +34,8 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +53,9 @@ public class AttendeeController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ModelMapper modelmapper;
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
@@ -96,33 +106,36 @@ public class AttendeeController {
         return new SignupResponse("success");
     }
 
+
+    
     @PreAuthorize("hasAnyRole('ATND')")
-    @PostMapping(value = "/followBP")
-    public ResponseEntity<Attendee> followBusinessPartner(@RequestBody @Valid FollowRequest followRequest) {
+    @PostMapping(value ="/followBP")
+    public ResponseEntity<Attendee> followBusinessPartner(@RequestBody @Valid FollowRequest followRequest){
         Attendee user = atnService.getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         user = atnService.followBusinessPartner(user, followRequest);
         return ResponseEntity.ok(user);
     }
 
+    
     @PreAuthorize("hasAnyRole('ATND')")
-    @PostMapping(value = "/unfollowBP")
-    public ResponseEntity<Attendee> unfollowBusinessPartner(@RequestBody @Valid FollowRequest followRequest) {
+    @PostMapping(value ="/unfollowBP")
+    public ResponseEntity<Attendee> unfollowBusinessPartner(@RequestBody @Valid FollowRequest followRequest){
         Attendee user = atnService.getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         user = atnService.unfollowBusinessPartner(user, followRequest);
         return ResponseEntity.ok(user);
     }
 
     @PreAuthorize("hasAnyRole('ATND')")
-    @PostMapping(value = "/followEO")
-    public ResponseEntity<Attendee> followEventOrganiser(@RequestBody @Valid FollowRequest followRequest) {
+    @PostMapping(value ="/followEO")
+    public ResponseEntity<Attendee> followEventOrganiser(@RequestBody @Valid FollowRequest followRequest){
         Attendee user = atnService.getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         user = atnService.followEventOrganiser(user, followRequest);
         return ResponseEntity.ok(user);
     }
 
     @PreAuthorize("hasAnyRole('ATND')")
-    @PostMapping(value = "/unfollowEO")
-    public ResponseEntity<Attendee> unfollowEventOrganiser(@RequestBody @Valid FollowRequest followRequest) {
+    @PostMapping(value ="/unfollowEO")
+    public ResponseEntity<Attendee> unfollowEventOrganiser(@RequestBody @Valid FollowRequest followRequest){
         Attendee user = atnService.getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         user = atnService.unfollowEventOrganiser(user, followRequest);
         return ResponseEntity.ok(user);
@@ -192,4 +205,28 @@ public class AttendeeController {
         return new UploadFileResponse(user.getProfilePic());
     }
 
+    @PreAuthorize("hasRole('ATND')")
+    @PostMapping(value = "/favourite-event")
+    public ResponseEntity<?> favouriteEvent(@RequestParam Long eventId) {
+        Attendee attendee = atnService
+                .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        List<Event> favourites = atnService.favouriteEvent(attendee, eventId);
+        List<FavouriteEventDto> resp = favourites.stream().map(event -> modelmapper.map(event, FavouriteEventDto.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(resp);
+
+    }
+
+    @PreAuthorize("hasRole('ATND')")
+    @GetMapping(value = "/get-favourite-events")
+    public ResponseEntity<?> getFavouriteEvent() {
+        Attendee attendee = atnService
+                .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        List<Event> favourites = attendee.getFavouriteEvents();
+        List<FavouriteEventDto> resp = favourites.stream().map(event -> modelmapper.map(event, FavouriteEventDto.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(resp);
+    }
 }

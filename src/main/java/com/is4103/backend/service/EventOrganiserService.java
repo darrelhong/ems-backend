@@ -107,7 +107,7 @@ public class EventOrganiserService {
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         newEo.setRoles(roles);
-        // newEo.setSupportDocsUrl(bizsupportdocdownloadurl);
+        //newEo.setSupportDocsUrl(bizsupportdocdownloadurl);
 
         if (enabled) {
             newEo.setEnabled(true);
@@ -551,3 +551,4 @@ public class EventOrganiserService {
     }
 
 }
+

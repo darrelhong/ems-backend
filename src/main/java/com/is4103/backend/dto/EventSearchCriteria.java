@@ -13,6 +13,7 @@ public class EventSearchCriteria {
     Integer page;
     String sort;
     String sortDir;
+    String category;
 
     String keyword;
 

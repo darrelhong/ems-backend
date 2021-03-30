@@ -27,15 +27,15 @@ public class SellerProfile {
 
     @ManyToOne
     @ElementCollection(targetClass = Event.class)
-    @JsonIgnoreProperties({ "sellerProfiles", "eventOrganiser", "favouriteBusinessPartners", "sellerApplications",
-            "ticketTransactions", "products" })
-    // @JsonIgnore
+//     @JsonIgnoreProperties({ "sellerProfiles", "eventOrganiser", "favouriteBusinessPartners", "sellerApplications",
+        //     "ticketTransactions", "products" })
+    @JsonIgnore
     private Event event;
 
     @ManyToOne
     @ElementCollection(targetClass = BusinessPartner.class)
-    // @JsonIgnore
-    @JsonIgnoreProperties({ "products", "events", "sellerProfiles", "favouriteEventList", "attendeeFollowers",
+//     @JsonIgnore
+    @JsonIgnoreProperties({ "businessCategory", "products", "events", "sellerProfiles", "favouriteEventList", "attendeeFollowers",
             "followEventOrganisers", "sellerApplications", "enquiries" })
     private BusinessPartner businessPartner;
 

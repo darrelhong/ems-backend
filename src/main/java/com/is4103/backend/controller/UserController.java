@@ -26,6 +26,9 @@ import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
 
+import com.is4103.backend.model.BusinessPartner;
+import com.is4103.backend.model.Event;
+import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.service.EventService;
 
