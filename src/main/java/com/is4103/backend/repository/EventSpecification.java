@@ -28,6 +28,14 @@ public class EventSpecification implements Specification<Event> {
     public Predicate toPredicate(Root<Event> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         List<Predicate> predicates = new ArrayList<Predicate>();
 
+        if (criteria.getIsPublished() != null) {
+            predicates.add(builder.equal(root.get("isPublished"), criteria.getIsPublished()));
+        }
+
+        if (criteria.getEventStartAfter() != null) {
+            predicates.add(builder.greaterThan(root.get("eventStartDate"), criteria.getEventStartAfter()));
+        }
+
         if (criteria.getKeyword() != null) {
             predicates.add(
                     builder.like(builder.lower(root.get("name")), "%" + criteria.getKeyword().toLowerCase() + "%"));
@@ -38,7 +46,7 @@ public class EventSpecification implements Specification<Event> {
         }
 
         if (predicates.size() > 0) {
-            return builder.or(predicates.toArray(Predicate[]::new));
+            return builder.and(predicates.toArray(Predicate[]::new));
         } else {
             return null;
         }

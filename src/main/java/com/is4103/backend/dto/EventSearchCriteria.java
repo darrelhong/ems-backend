@@ -1,5 +1,7 @@
 package com.is4103.backend.dto;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
@@ -14,6 +16,8 @@ public class EventSearchCriteria {
     String sort;
     String sortDir;
     String category;
+    LocalDateTime eventStartAfter;
+    Boolean isPublished;
 
     String keyword;
 

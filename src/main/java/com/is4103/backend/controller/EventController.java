@@ -1,5 +1,6 @@
 package com.is4103.backend.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -174,6 +175,9 @@ public class EventController {
 
     @GetMapping(path = "/search")
     public Page<Event> search(EventSearchCriteria eventSearchCriteria) {
+        eventSearchCriteria.setEventStartAfter(LocalDateTime.now());
+        eventSearchCriteria.setIsPublished(true);
+
         return eventService.search(eventSearchCriteria);
     }
 
