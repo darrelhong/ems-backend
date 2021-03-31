@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.is4103.backend.dto.CreateEventRequest;
 import com.is4103.backend.dto.EventSearchCriteria;
+import com.is4103.backend.dto.event.EventCardClassDto;
 import com.is4103.backend.dto.event.EventCardDto;
 import com.is4103.backend.dto.event.EventDetailsDto;
 import com.is4103.backend.model.Attendee;
@@ -22,6 +23,7 @@ import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.service.EventService;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +47,9 @@ public class EventController {
 
     @Autowired
     private EventOrganiserService eventOrganiserService;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @GetMapping(path = "/all")
     public List<Event> getAllEvents() {
@@ -174,11 +179,11 @@ public class EventController {
     }
 
     @GetMapping(path = "/search")
-    public Page<Event> search(EventSearchCriteria eventSearchCriteria) {
+    public Page<EventCardClassDto> search(EventSearchCriteria eventSearchCriteria) {
         eventSearchCriteria.setEventStartAfter(LocalDateTime.now());
         eventSearchCriteria.setIsPublished(true);
-
-        return eventService.search(eventSearchCriteria);
+        Page<Event> result = eventService.search(eventSearchCriteria);
+        return result.map(event -> modelMapper.map(event, EventCardClassDto.class));
     }
 
     @GetMapping("/delete/{id}")
