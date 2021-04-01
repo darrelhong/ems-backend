@@ -99,7 +99,7 @@ public class TicketingService {
 
     public <T> Collection<T> getTicketTransactionsById(Long id, Class<T> type) {
         Attendee attendee = attendeeService.getAttendeeById(id);
-        return ttRepository.findByAttendee(attendee, type);
+        return ttRepository.findByAttendee(attendee, type, Sort.by("dateTimeOrdered").descending());
     }
 
     public <T> Collection<T> getTicketTransactionsAttendee(Attendee attendee, String period, Class<T> type) {
