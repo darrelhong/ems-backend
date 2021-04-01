@@ -186,6 +186,14 @@ public class EventController {
         return result.map(event -> modelMapper.map(event, EventCardClassDto.class));
     }
 
+    @GetMapping(path = "public/search")
+    public Page<EventCardClassDto> searchPublic(EventSearchCriteria eventSearchCriteria) {
+        eventSearchCriteria.setEventStartAfter(LocalDateTime.now());
+        eventSearchCriteria.setIsPublished(true);
+        Page<Event> result = eventService.search(eventSearchCriteria);
+        return result.map(event -> modelMapper.map(event, EventCardClassDto.class));
+    }
+
     @GetMapping("/delete/{id}")
     public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
         eventRepository.delete(eventService.getEventById(id));
