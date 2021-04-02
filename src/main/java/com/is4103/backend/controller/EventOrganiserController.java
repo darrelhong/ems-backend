@@ -21,6 +21,7 @@ import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
+import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.model.User;
 import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.service.FileStorageService;
@@ -307,6 +308,16 @@ public class EventOrganiserController {
         }
 
         return ResponseEntity.ok("Success");
+    }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getAllPendingBoothApplicationByEo")
+    public List<SellerApplication> getAllPendingBoothApplicationByEo(){
+
+        EventOrganiser user =  eoService.getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+   
+     
+        return  eoService.getAllPendingSellerApplicationByUser(user);
     }
 
 }

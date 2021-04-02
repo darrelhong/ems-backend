@@ -77,6 +77,9 @@ public class EventOrganiserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private SellerApplicationService sellerAppService;
+
     public List<EventOrganiser> getAllEventOrganisers() {
         return eoRepository.findAll();
     }
@@ -494,16 +497,21 @@ public class EventOrganiserService {
     @Transactional
     public void broadcastToFollowers(User eo, BroadcastMessageToFollowersRequest broadcastMessageToFollowersRequest) {
 
-        String subject = broadcastMessageToFollowersRequest.getSubject();
+        //String subject = broadcastMessageToFollowersRequest.getSubject();
         String broadcastOption = broadcastMessageToFollowersRequest.getBroadcastOption();
         List<String> emailList = new ArrayList<>();
+        System.out.println("broadcast message");
+        System.out.println(broadcastMessageToFollowersRequest.getContent());
+        System.out.println(broadcastMessageToFollowersRequest.getBroadcastOption());
 
         if (broadcastOption.equals("AllBpFollowers")) {
 
             List<BusinessPartner> BpFollowersList = new ArrayList<>();
             BpFollowersList = this.getPartnerFollowersById(eo.getId());
             for (BusinessPartner bp : BpFollowersList) {
+                if(bp.isEoEmailNoti()){
                 emailList.add(bp.getEmail());
+                }
             }
 
         } else if (broadcastOption.equals("AllAttFollowers")) {
@@ -512,7 +520,9 @@ public class EventOrganiserService {
             AttFollowersList = this.getAttendeeFollowersById(eo.getId());
 
             for (Attendee att : AttFollowersList) {
+                 if(att.isEoEmailNoti()){
                 emailList.add(att.getEmail());
+                 }
             }
 
         } else if (broadcastOption.equals("Both")) {
@@ -522,11 +532,15 @@ public class EventOrganiserService {
             AttFollowersList = this.getAttendeeFollowersById(eo.getId());
 
             for (BusinessPartner bp : BpFollowersList) {
+                 if(bp.isEoEmailNoti()){
                 emailList.add(bp.getEmail());
+                }
             }
 
             for (Attendee att : AttFollowersList) {
+                  if(att.isEoEmailNoti()){
                 emailList.add(att.getEmail());
+                  }
             }
 
         }
@@ -536,11 +550,14 @@ public class EventOrganiserService {
         SimpleMailMessage email = new SimpleMailMessage();
 
         String[] mailArray = emailList.toArray(new String[0]);
-        System.out.println("mailArray");
-        System.out.println(mailArray);
+        // System.out.println("mailArray");
+        // System.out.println(mailArray);
+        //  System.out.println(mailArray.length);
+        // System.out.println(mailArray[0]);
+
         email.setFrom(fromEmail);
         email.setTo(mailArray);
-        email.setSubject(subject);
+        email.setSubject("New Message from EventStop");
         email.setText("You have received the following message from " + eo.getName() + ":" + "\r\n\r\n" + "\"" + message
                 + "\"" + " " + "\r\n\r\n" + "<b>"
                 + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>"
@@ -548,6 +565,24 @@ public class EventOrganiserService {
         // cc the person who submitted the enquiry.
         email.setCc(eo.getEmail());
         javaMailSender.send(email);
+          System.out.println(email);
+          System.out.println("sent");
+    }
+
+    public List<SellerApplication> getAllPendingSellerApplicationByUser(EventOrganiser eo){
+       
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        List<SellerApplication> filteredSellerApplication = new ArrayList<>();
+       
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+      
+        for(SellerApplication sa:allSellerApplication){
+            if(sa.getEvent().getEventOrganiser().getId() == eo.getId() && sa.getSellerApplicationStatus().toString().equals("PENDING")){
+                 filteredSellerApplication.add(sa);
+            }
+        }
+       
+       return filteredSellerApplication;
     }
 
 }
