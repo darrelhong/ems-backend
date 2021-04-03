@@ -74,7 +74,7 @@ public class EventController {
         return eventService.getEventById(id, EventDetailsDto.class);
     }
 
-    @GetMapping("/details/public/{id}")
+    @GetMapping("/public/details/{id}")
     public EventDetailsDto getEventDetailsPublic(@PathVariable Long id) {
         return eventService.getEventById(id, EventDetailsDto.class);
     }
