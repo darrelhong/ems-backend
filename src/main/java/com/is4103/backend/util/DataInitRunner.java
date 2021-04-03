@@ -888,10 +888,9 @@ public class DataInitRunner implements ApplicationRunner {
                 application.setDescription(lorem.getWords(5, 20));
                 application.setComments(lorem.getWords(5, 20));
                 application.setBoothQuantity(rand.nextInt(300));
-                // application.setSellerApplicationStatus(sellerApplicationStatus);
                 application.setSellerApplicationStatus(sellerApplicationStatusArray[count]);
-                // application.setPaymentStatus(paymentStatus);
                 application.setPaymentStatus(paymentStatusArray[count]);
+                application.setApplicationDate(firstEvent.getEventStartDate().minusDays(rand.nextInt(20)));
                 if (count == 1) {
                     // FOR NUMBER 1, THAT IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
                     // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
@@ -946,6 +945,7 @@ public class DataInitRunner implements ApplicationRunner {
                     int statusTypeIndex = rand.nextInt(3);
                     application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
                     application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
+                    application.setApplicationDate(e.getEventStartDate().minusDays(rand.nextInt(20)));
                     if (statusTypeIndex == 1) {
                         // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
                         // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
