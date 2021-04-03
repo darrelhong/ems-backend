@@ -1,5 +1,6 @@
 package com.is4103.backend.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -312,6 +313,48 @@ public class BusinessPartnerService {
             }
         }
         return eventList;
+    }
+
+    public List<Event> getAllEventsByBpFollowers(Long bpId) {
+        List<Event> filterEventList = new ArrayList<>();
+        List<EventOrganiser> eoFollowerList = getFollowingById(bpId);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime thirdDay = now.plusDays(3);
+        thirdDay = thirdDay.withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+        for (int i = 0; i < eoFollowerList.size(); i++) {
+            EventOrganiser eo = eoFollowerList.get(i);
+            List<Event> eoEventList = eoController.getAllEventsByEventOrgId(eo.getId());
+            for (Event event : eoEventList) {
+                if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                        && !(event.getEventStartDate().isBefore(thirdDay))
+                        && !(event.getSalesEndDate().isBefore(now))) {
+                    filterEventList.add(event);
+                }
+            }
+        }
+
+        return filterEventList;
+    }
+
+    public List<Event> getAllEventsByBpBusinessCategory(Long bpId) {
+        List<Event> eventList = eventService.getAllEvents();
+        String bizCat = getBusinessPartnerById(bpId).getBusinessCategory();
+        List<Event> filterEventList = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime thirdDay = now.plusDays(3);
+        thirdDay = thirdDay.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        
+        for (Event event : eventList) {
+            if (event.getCategories().contains(bizCat)
+                    && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                    && !(event.getEventStartDate().isBefore(thirdDay))
+                    && !(event.getSalesEndDate().isBefore(now))) {
+                filterEventList.add(event);
+            }
+        }
+
+        return filterEventList;
     }
 
 }

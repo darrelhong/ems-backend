@@ -11,6 +11,7 @@ import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
+import com.is4103.backend.model.User;
 import com.is4103.backend.repository.AttendeeRepository;
 import com.is4103.backend.repository.BusinessPartnerRepository;
 import com.is4103.backend.repository.EventOrganiserRepository;
@@ -23,9 +24,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -199,5 +202,109 @@ public class AttendeeService {
         }
         atnRepository.save(attendee);
         return attendee.getFavouriteEvents();
+    }
+
+    public List<Event> getEventsByAtnFollowers(Long atnId) {
+        List<Event> filterEventList = new ArrayList<>();
+        List<BusinessPartner> bpFollowerList = getFollowingBp(atnId);
+        List<EventOrganiser> eoFollowerList = getFollowingEo(atnId);
+        LocalDateTime now = LocalDateTime.now();
+
+        for (int i = 0; i < bpFollowerList.size(); i++) {
+            BusinessPartner bp = bpFollowerList.get(i);
+            List<Event> bpEventList = bpController.getAllEventByBpId(bp.getId());
+            for (Event event : bpEventList) {
+                if (!filterEventList.contains(event)
+                        && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                        && !(event.getSalesEndDate().isBefore(now))) {
+                    filterEventList.add(event);
+                }
+            }
+        }
+
+        for (int i = 0; i < eoFollowerList.size(); i++) {
+            EventOrganiser eo = eoFollowerList.get(i);
+            List<Event> eoEventList = eoController.getAllEventsByEventOrgId(eo.getId());
+            for (Event event : eoEventList) {
+                if (!filterEventList.contains(event)
+                        && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                        && !(event.getSalesEndDate().isBefore(now))) {
+                    filterEventList.add(event);
+                }
+            }
+        }
+
+        return filterEventList;
+    }
+
+    public List<Event> getEventsByAtnFollowers(Long atnId, Long page) {
+        List<Event> filterEventList = new ArrayList<>();
+        List<BusinessPartner> bpFollowerList = getFollowingBp(atnId);
+        List<EventOrganiser> eoFollowerList = getFollowingEo(atnId);
+        LocalDateTime now = LocalDateTime.now();
+        int currentEventNo = 0;
+
+        System.out.println("page: " + page);
+        for (int i = 0; i < bpFollowerList.size(); i++) {
+            BusinessPartner bp = bpFollowerList.get(i);
+            List<Event> bpEventList = bpController.getAllEventByBpId(bp.getId());
+            for (Event event : bpEventList) {
+                if (!filterEventList.contains(event)
+                        && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                        && !(event.getSalesEndDate().isBefore(now))) {
+                    System.out.println("currentEventNo: " + currentEventNo);
+                    if (!(currentEventNo < 10 * (page - 1))) {
+                        filterEventList.add(event);
+                        if (filterEventList.size() == 10) {
+                            System.out.println(filterEventList.size());
+                            return filterEventList;
+                        }
+                    }
+                    currentEventNo += 1;
+                }
+            }
+        }
+
+        for (int i = 0; i < eoFollowerList.size(); i++) {
+            EventOrganiser eo = eoFollowerList.get(i);
+            List<Event> eoEventList = eoController.getAllEventsByEventOrgId(eo.getId());
+            for (Event event : eoEventList) {
+                if (!filterEventList.contains(event)
+                        && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                        && !(event.getSalesEndDate().isBefore(now))) {
+                    System.out.println("currentEventNo: " + currentEventNo);
+                    if (!(currentEventNo < 10 * (page - 1))) {
+                        filterEventList.add(event);
+                        if (filterEventList.size() == 10) {
+                            return filterEventList;
+                        }
+                    }
+                    currentEventNo += 1;
+                }
+            }
+        }
+
+        System.out.println(filterEventList.size());
+        return filterEventList;
+    }
+
+    public List<Event> getAllEventsByAtnCategoryPreferences(Long atnId) {
+        List<Event> eventList = eventService.getAllEvents();
+        List<String> categoryList = getAttendeeById(atnId).getCategoryPreferences();
+        List<Event> filterEventList = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        
+        for (Event event : eventList) {
+            for (String category : categoryList) {
+                if (event.getCategories().contains(category)
+                        && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                        && !(event.getSalesEndDate().isBefore(now))) {
+                    filterEventList.add(event);
+                    break;
+                }
+            }
+        }
+
+        return filterEventList;
     }
 }

@@ -158,4 +158,22 @@ public class AttendeeController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(resp);
     }
+
+    @PreAuthorize("hasRole('ATND')")
+    @GetMapping(path = "/getEventsByAtnFollowers/{id}")
+    public List<Event> getEventsByAtnFollowers(@PathVariable Long id) {
+        return atnService.getEventsByAtnFollowers(id);
+    }
+
+    @PreAuthorize("hasRole('ATND')")
+    @GetMapping(path = "/getEventsByAtnFollowers/{id}/{pageParam}")
+    public List<Event> getEventsByAtnFollowers(@PathVariable Long id, @PathVariable Long pageParam) {
+        return atnService.getEventsByAtnFollowers(id, pageParam);
+    }
+
+    @PreAuthorize("hasRole('ATND')")
+    @GetMapping(path = "/getAllEventsByAtnCategoryPreferences/{id}")
+    public List<Event> getAllEventsByAtnCategoryPreferences(@PathVariable Long id) {
+        return atnService.getAllEventsByAtnCategoryPreferences(id);
+    }
 }

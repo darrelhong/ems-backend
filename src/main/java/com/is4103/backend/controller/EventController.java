@@ -217,4 +217,29 @@ public class EventController {
     public List<String> getDistinctCategories() {
         return eventService.getDistinctEventCategories();
     }
+
+    @GetMapping("/getAllEventsThisWeekend")
+    public List<Event> getAllEventsThisWeekend() {
+        return eventService.getAllEventsThisWeekend();
+    }
+
+    @GetMapping("/getAllEventsNextWeek")
+    public List<Event> getAllEventsNextWeek() {
+        return eventService.getAllEventsNextWeek();
+    }
+
+    @GetMapping("/getAllEventsInNext30Days")
+    public List<Event> getAllEventsInNext30Days() {
+        return eventService.getAllEventsInNext30Days();
+    }
+
+    @GetMapping("/getMostPopularEvent")
+    public Event getMostPopularEvent() {
+        return eventService.getMostPopularEvent();
+    }
+
+    @GetMapping("/getTopTenEvents")
+    public List<Event> getTopTenEvents() {
+        return eventService.getTopTenEvents();
+    }
 }

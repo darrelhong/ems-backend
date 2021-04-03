@@ -237,4 +237,14 @@ public class BusinessPartnerController {
         return bpService.getAllEventsByBp(bpId);
     }
 
+    @GetMapping(path = "/getAllEventsByBpFollowers/{id}")
+    public List<Event> getAllEventsByBpFollowers(@PathVariable Long id) {
+        return bpService.getAllEventsByBpFollowers(id);
+    }
+
+    @GetMapping(path = "/getAllEventsByBpBusinessCategory/{id}")
+    public List<Event> getAllEventsByBpBusinessCategory(@PathVariable Long id) {
+        return bpService.getAllEventsByBpBusinessCategory(id);
+    }
+
 }
