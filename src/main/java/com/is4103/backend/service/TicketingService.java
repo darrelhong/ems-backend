@@ -97,7 +97,7 @@ public class TicketingService {
         }
     }
 
-    public <T> Collection<T> getTicketTransactionsById(Long id, Class<T> type) {
+    public <T> Collection<T> getTicketTransactionsByAttendeeId(Long id, Class<T> type) {
         Attendee attendee = attendeeService.getAttendeeById(id);
         return ttRepository.findByAttendee(attendee, type, Sort.by("dateTimeOrdered").descending());
     }

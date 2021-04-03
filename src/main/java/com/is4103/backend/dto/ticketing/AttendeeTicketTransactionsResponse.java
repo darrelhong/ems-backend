@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TicketTransactionsResponse {
+public class AttendeeTicketTransactionsResponse {
     private Collection<TicketTransactionDto> tickets;
     private Collection<TicketTransactionEventDto> events;
 }
