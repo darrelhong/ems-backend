@@ -244,7 +244,6 @@ public class AttendeeService {
         LocalDateTime now = LocalDateTime.now();
         int currentEventNo = 0;
 
-        System.out.println("page: " + page);
         for (int i = 0; i < bpFollowerList.size(); i++) {
             BusinessPartner bp = bpFollowerList.get(i);
             List<Event> bpEventList = bpController.getAllEventByBpId(bp.getId());
@@ -252,7 +251,6 @@ public class AttendeeService {
                 if (!filterEventList.contains(event)
                         && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                         && !(event.getSalesEndDate().isBefore(now))) {
-                    System.out.println("currentEventNo: " + currentEventNo);
                     if (!(currentEventNo < 10 * (page - 1))) {
                         filterEventList.add(event);
                         if (filterEventList.size() == 10) {
@@ -272,7 +270,6 @@ public class AttendeeService {
                 if (!filterEventList.contains(event)
                         && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                         && !(event.getSalesEndDate().isBefore(now))) {
-                    System.out.println("currentEventNo: " + currentEventNo);
                     if (!(currentEventNo < 10 * (page - 1))) {
                         filterEventList.add(event);
                         if (filterEventList.size() == 10) {
@@ -284,7 +281,6 @@ public class AttendeeService {
             }
         }
 
-        System.out.println(filterEventList.size());
         return filterEventList;
     }
 

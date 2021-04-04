@@ -233,9 +233,9 @@ public class EventController {
         return eventService.getAllEventsInNext30Days();
     }
 
-    @GetMapping("/getMostPopularEvent")
-    public Event getMostPopularEvent() {
-        return eventService.getMostPopularEvent();
+    @GetMapping("/getMostPopularEvents")
+    public List<Event> getMostPopularEvents() {
+        return eventService.getMostPopularEvents();
     }
 
     @GetMapping("/getTopTenEvents")

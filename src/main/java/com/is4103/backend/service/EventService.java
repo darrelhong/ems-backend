@@ -186,17 +186,17 @@ public class EventService {
         return filterEventList;
     }
 
-    public Event getMostPopularEvent() {
+    public List<Event> getMostPopularEvents() {
         User user = userService.getUserById(userService.getCurrentUserId());
         List<Event> eventList = getAllEvents();
-        Event mostPopularEvent = null;
+        List<Event> mostPopularEventList = new ArrayList<Event>();
         LocalDateTime now = LocalDateTime.now();
         
         for (Event event : eventList) {
             if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                     && !(event.getSaleStartDate().isAfter(now))
                     && !(event.getSalesEndDate().isBefore(now))) {
-                if (mostPopularEvent == null) {
+                if (mostPopularEventList.size() == 0) {
                 
                     if (user instanceof BusinessPartner) {
                         LocalDateTime thirdDayFromNow = now.plusDays(3);
@@ -205,40 +205,53 @@ public class EventService {
                             continue;
                         }
                     }
-                    mostPopularEvent = event;
+                    mostPopularEventList.add(event);
                 }
                 else {
-                    List<TicketTransaction> transList = tktService.getAllTransactions();
-
-                    Integer e1NoOfTicketsSold = 0;
-                    for (TicketTransaction trans : transList) {
-                        if (trans.getEvent().getEid() == event.getEid()) {
-                            e1NoOfTicketsSold++;
-                        }
-                    }
-                    Integer e2NoOfTicketsSold = 0;
-                    for (TicketTransaction trans : transList) {
-                        if (trans.getEvent().getEid() == mostPopularEvent.getEid()) {
-                            e2NoOfTicketsSold++;
-                        }
-                    }
-
-                    if (e1NoOfTicketsSold > e2NoOfTicketsSold) {
-                
-                        if (user instanceof BusinessPartner) {
-                            LocalDateTime thirdDayFromNow = now.plusDays(3);
-                            thirdDayFromNow = thirdDayFromNow.withHour(0).withMinute(0).withSecond(0).withNano(0);
-                            if (event.getEventStartDate().isBefore(thirdDayFromNow)) {
-                                continue;
+                    System.out.println(mostPopularEventList.size());
+                    for (Event popularEvent : mostPopularEventList) {
+                        List<TicketTransaction> transList = tktService.getAllTransactions();
+    
+                        Integer e1NoOfTicketsSold = 0;
+                        for (TicketTransaction trans : transList) {
+                            if (trans.getEvent().getEid() == event.getEid()) {
+                                e1NoOfTicketsSold++;
                             }
                         }
-                        mostPopularEvent = event;
+                        Integer e2NoOfTicketsSold = 0;
+                        for (TicketTransaction trans : transList) {
+                            if (trans.getEvent().getEid() == mostPopularEventList.get(0).getEid()) {
+                                e2NoOfTicketsSold++;
+                            }
+                        }
+                        System.out.println();
+                        System.out.println("e1: " + e1NoOfTicketsSold);
+                        System.out.println("e2: " + e2NoOfTicketsSold);
+                        System.out.println();
+    
+                        if (e1NoOfTicketsSold > e2NoOfTicketsSold) {
+                    
+                            if (user instanceof BusinessPartner) {
+                                LocalDateTime thirdDayFromNow = now.plusDays(3);
+                                thirdDayFromNow = thirdDayFromNow.withHour(0).withMinute(0).withSecond(0).withNano(0);
+                                if (event.getEventStartDate().isBefore(thirdDayFromNow)) {
+                                    continue;
+                                }
+                            }
+
+                            mostPopularEventList.add(mostPopularEventList.indexOf(popularEvent), event);
+                            break;
+                        }
+                        else if (mostPopularEventList.indexOf(popularEvent) == mostPopularEventList.size() - 1) {
+                            mostPopularEventList.add(event);
+                            break;
+                        }
                     }
                 }
             }
         }
 
-        return mostPopularEvent;
+        return mostPopularEventList.subList(0, 5);
     }
 
     public List<Event> getTopTenEvents() {
