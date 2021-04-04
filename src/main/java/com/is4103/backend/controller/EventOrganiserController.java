@@ -1,10 +1,12 @@
 package com.is4103.backend.controller;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -384,4 +386,12 @@ public class EventOrganiserController {
         return -1;
     }
 
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getMostPopularEventList")
+    public List<Event> getMostPopularEventList() {        
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        return eoService.getMostPopularEventList(user);
+    
+    }
 }

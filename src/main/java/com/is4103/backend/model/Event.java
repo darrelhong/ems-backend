@@ -1,5 +1,6 @@
 package com.is4103.backend.model;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -160,6 +161,8 @@ public class Event {
         }
         return false;
     }
-
     
+    // non-entity field use for analytics
+    @Transient
+    private BigInteger applicationCount;
 }

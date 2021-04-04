@@ -1,13 +1,17 @@
 package com.is4103.backend.service;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
@@ -25,11 +29,13 @@ import com.is4103.backend.model.Event;
 // import com.is4103.backend.model.EventBoothTransaction;
 import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.model.EventOrganiser;
+import com.is4103.backend.model.PopularEvent;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.model.User;
 import com.is4103.backend.repository.EventOrganiserRepository;
+import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.repository.OrganiserSpecification;
 import com.is4103.backend.repository.UserRepository;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
@@ -82,6 +88,9 @@ public class EventOrganiserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
 
     @Autowired
     private SellerApplicationService sellerAppService;
@@ -709,6 +718,49 @@ public class EventOrganiserService {
         return totalSales;
 
     }
+
+    //   public List<Event> getMostPopularEventList(EventOrganiser eo) {
+    //    // Stripe.apiKey = stripeSecretKey;
+
+
+    //     List<Event> allEventsOfEo = new ArrayList<>();
+    //     allEventsOfEo = eventService.getAllEventsByOrganiser(eo.getId());
+    //     List<?> mostPopularEventList = new ArrayList<>();
+    //     mostPopularEventList = eventRepository.getMostPopularEventList();
+    //     System.out.println(mostPopularEventList.size());
+    //     System.out.println(mostPopularEventList.toArray());
+        
+    //     for(Object e:mostPopularEventList){
+    //     System.out.println(e[0]);
+    //     System.out.println(e.toString());
+    //     }
+    //     return allEventsOfEo;
+
+        
+    // }
+
+    public List<Event>  getMostPopularEventList(EventOrganiser eo){
+       List<Object[]> result = eventRepository.getMostPopularEventList();
+       Map<BigInteger,BigInteger> map = new HashMap<BigInteger,BigInteger>();
+       List<Event> popularEventList = new ArrayList<>();
+       List<Event> eoEvents = eventService.getAllEventsByOrganiser(eo.getId());
+       System.out.println(eoEvents.size());
+       if(result != null && !result.isEmpty()){
+          map = new HashMap<BigInteger,BigInteger>();
+          for (Object[] object : result) {
+              for(Event e : eoEvents){
+                  if((BigInteger)object[1] == BigInteger.valueOf(e.getEid())){
+                    //  map.put(((BigInteger)object[1]),(BigInteger)object[0]);
+                     e.setApplicationCount((BigInteger)object[0]);
+                     popularEventList.add(e);
+                  }
+              }           
+          }
+       }
+     
+    return popularEventList;
+     }
+    
 
 }
 

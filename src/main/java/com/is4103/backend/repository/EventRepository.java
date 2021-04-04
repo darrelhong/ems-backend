@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventStatus;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,4 +35,11 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 
     @Query(value = "SELECT DISTINCT categories FROM event_categories", nativeQuery = true)
     List<String> getDistinctEventCategories();
+
+
+    @Query(value = "SELECT Count(id) as applicationCount, event_eid as eventId FROM seller_application sa GROUP BY event_eid", nativeQuery = true)
+    List<Object[]> getMostPopularEventList();
+    
+
+
 }
