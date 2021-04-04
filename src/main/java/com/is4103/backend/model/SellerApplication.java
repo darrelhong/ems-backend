@@ -1,5 +1,7 @@
 package com.is4103.backend.model;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -54,6 +56,9 @@ public class SellerApplication {
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
+
+    private LocalDateTime applicationDate;
+
 
     // @OneToOne(targetEntity = EventBoothTransaction.class, fetch =
     // FetchType.EAGER)

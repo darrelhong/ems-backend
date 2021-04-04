@@ -1,8 +1,11 @@
 package com.is4103.backend.service;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +35,9 @@ import com.is4103.backend.repository.UserRepository;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -80,6 +86,16 @@ public class EventOrganiserService {
     @Autowired
     private SellerApplicationService sellerAppService;
 
+    @Autowired
+    private TicketingService ttService;
+
+    @Value("${stripe.apikey}")
+    private String stripeApiKey;
+
+    @Value("${stripe.secretkey}")
+    private String stripeSecretKey;
+
+    
     public List<EventOrganiser> getAllEventOrganisers() {
         return eoRepository.findAll();
     }
@@ -569,6 +585,8 @@ public class EventOrganiserService {
           System.out.println("sent");
     }
 
+    //dashboards
+
     public List<SellerApplication> getAllPendingSellerApplicationByUser(EventOrganiser eo){
        
         List<SellerApplication> allSellerApplication = new ArrayList<>();
@@ -583,6 +601,113 @@ public class EventOrganiserService {
         }
        
        return filteredSellerApplication;
+    }
+
+    public static boolean isSameDay(Date date1, Date date2) {
+    SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+
+    return fmt.format(date1).equals(fmt.format(date2));
+    }
+
+    public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {
+    return java.sql.Timestamp.valueOf(dateToConvert);
+}
+
+    public double getDailyBoothSales(EventOrganiser eo) throws StripeException{
+        Stripe.apiKey = stripeSecretKey;
+        
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        Date now = new Date();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+      
+        double totalSales = 0;
+        for (SellerApplication sa : allSellerApplication) {
+           
+            if (sa.getEvent().getEventOrganiser().getId() == eo.getId()
+                    && sa.getPaymentStatus().toString().equals("COMPLETED") && isSameDay(convertToDateViaSqlTimestamp(sa.getApplicationDate()),now)) {
+
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;  
+            }
+        }
+    
+        return totalSales;
+       
+    }
+
+    public double getMonthlyBoothSales(EventOrganiser eo) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+
+        double totalSales = 0;
+         LocalDateTime now = LocalDateTime.now();
+        for (SellerApplication sa : allSellerApplication) {
+           
+          
+            if (sa.getEvent().getEventOrganiser().getId() == eo.getId()
+                    && sa.getPaymentStatus().toString().equals("COMPLETED")
+                    && (sa.getApplicationDate().getYear() == now.getYear()) && (sa.getApplicationDate().getMonth() == now.getMonth())){
+
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+                }
+
+            }
+
+        return totalSales;
+
+    }
+      public double getYearlyBoothSales(EventOrganiser eo) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+
+        double totalSales = 0;
+         LocalDateTime now = LocalDateTime.now();
+        for (SellerApplication sa : allSellerApplication) {
+         
+            if (sa.getEvent().getEventOrganiser().getId() == eo.getId()
+                    && sa.getPaymentStatus().toString().equals("COMPLETED")
+                    && (sa.getApplicationDate().getYear() == now.getYear())){
+
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+                }
+
+            }
+
+        return totalSales;
+
+    }
+
+    
+    public double getDailyTicketSales(EventOrganiser eo) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        Date now = new Date();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+
+        double totalSales = 0;
+        for (TicketTransaction tt : allticketTrans) {
+
+            if (tt.getEvent().getEventOrganiser().getId() == eo.getId()
+                    && tt.getPaymentStatus().toString().equals("COMPLETED")
+                    && isSameDay(convertToDateViaSqlTimestamp(tt.getDateTimeOrdered()), now)) {
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+            }
+        }
+
+        return totalSales;
+
     }
 
 }

@@ -10,6 +10,7 @@ import com.is4103.backend.dto.ticketing.CheckoutResponse;
 import com.is4103.backend.dto.ticketing.TicketTransactionEventDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.Event;
+import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.PaymentStatus;
 import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.repository.TicketTransactionRepository;
@@ -123,4 +124,21 @@ public class TicketingService {
         }
         return new ArrayList<>();
     }
+    
+    public List<TicketTransaction> getAllTicketTransacionByEo(EventOrganiser eo){
+        List<TicketTransaction> allticketlist = new ArrayList<>();
+        List<TicketTransaction> filteredticketlist = new ArrayList<>();
+        allticketlist = ttRepository.getAllEventTickets();
+       // List<Event> allEventByEo = eventService.getAllEventsByOrganiser(eo.getId());
+       
+           for(TicketTransaction tt:allticketlist){
+               if(tt.getEvent().getEventOrganiser().getId() == eo.getId()){
+                filteredticketlist.add(tt);
+               }
+           }
+        return filteredticketlist;
+
+    }
+
+
 }

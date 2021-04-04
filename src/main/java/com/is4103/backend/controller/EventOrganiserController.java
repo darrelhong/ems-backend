@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.is4103.backend.dto.UploadFileResponse;
+import com.stripe.exception.StripeException;
 
 @RestController
 @RequestMapping(path = "/organiser")
@@ -318,6 +319,69 @@ public class EventOrganiserController {
    
      
         return  eoService.getAllPendingSellerApplicationByUser(user);
+    }
+    
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getBoothDailySales")
+    public double getAllBoothDailySalesByEo() {
+
+        EventOrganiser user = eoService.getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        try{
+        return eoService.getDailyBoothSales(user);
+        }catch(StripeException ex){
+            System.out.println(ex);
+           
+        }
+         return -1;
+    }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getBoothYearlySales")
+    public double getAllBoothYearlySalesByEo() {
+
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        try {
+            return eoService.getYearlyBoothSales(user);
+        } catch (StripeException ex) {
+            System.out.println(ex);
+
+        }
+        return -1;
+    }
+
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getBoothMonthlySales")
+    public double getAllBoothMonthlySalesByEo() {
+
+        EventOrganiser user = eoService.getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        try {
+            return eoService.getMonthlyBoothSales(user);
+        } catch (StripeException ex) {
+            System.out.println(ex);
+
+        }
+        return -1;
+    }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getTicketDailySales")
+    public double getAllTicketDailySalesByEo() {
+
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        try {
+            return eoService.getDailyTicketSales(user);
+        } catch (StripeException ex) {
+            System.out.println(ex);
+
+        }
+        return -1;
     }
 
 }
