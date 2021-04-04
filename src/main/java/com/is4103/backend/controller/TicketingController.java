@@ -8,6 +8,8 @@ import javax.validation.Valid;
 import com.is4103.backend.dto.ticketing.AdminTicketTransactionDto;
 import com.is4103.backend.dto.ticketing.CheckoutDto;
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
+import com.is4103.backend.dto.ticketing.OrganiserTicketDto;
+import com.is4103.backend.dto.ticketing.TicketTransactionCriteria;
 import com.is4103.backend.dto.ticketing.TransactionListDto;
 import com.is4103.backend.dto.ticketing.TicketTransactionDto;
 import com.is4103.backend.dto.ticketing.TicketTransactionEventDto;
@@ -22,7 +24,9 @@ import com.is4103.backend.util.errors.ticketing.CheckoutException;
 import com.is4103.backend.util.errors.ticketing.TicketTransactionNotFoundException;
 import com.stripe.exception.StripeException;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +47,9 @@ public class TicketingController {
 
     @Autowired
     private AttendeeService attendeeService;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @PostMapping(value = "/checkout")
     public ResponseEntity<CheckoutResponse> createTransaction(@RequestBody @Valid CheckoutDto checkoutDto) {
@@ -107,5 +114,16 @@ public class TicketingController {
             return ResponseEntity.ok(resp);
         }
         return ResponseEntity.badRequest().body(new AttendeeTicketTransactionsResponse());
+    }
+
+    @PreAuthorize("hasRole('EVNTORG')")
+    @GetMapping(value = "/event/{eventId}")
+    public ResponseEntity<Page<OrganiserTicketDto>> getTicketTransactionsByEventId(@PathVariable Long eventId,
+            TicketTransactionCriteria ticketTransactionCriteria) {
+        ticketTransactionCriteria.setEventId(eventId);
+
+        Page<TicketTransaction> result = ticketingService.getTicketTransactionIdsByCriteria(ticketTransactionCriteria);
+        Page<OrganiserTicketDto> response = result.map(tt -> modelMapper.map(tt, OrganiserTicketDto.class));
+        return ResponseEntity.ok(response);
     }
 }

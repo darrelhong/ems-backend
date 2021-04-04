@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.UUID;
 
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
+import com.is4103.backend.dto.ticketing.TicketTransactionCriteria;
 import com.is4103.backend.dto.ticketing.TicketTransactionEventDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.PaymentStatus;
 import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.repository.TicketTransactionRepository;
+import com.is4103.backend.repository.TicketTransactionSpecification;
 import com.is4103.backend.util.errors.ticketing.TicketTransactionNotFoundException;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
@@ -21,6 +23,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -122,5 +125,11 @@ public class TicketingService {
                     LocalDateTime.now());
         }
         return new ArrayList<>();
+    }
+
+    public Page<TicketTransaction> getTicketTransactionIdsByCriteria(
+            TicketTransactionCriteria ticketTransactionCriteria) {
+        return ttRepository.findAll(new TicketTransactionSpecification(ticketTransactionCriteria),
+                ticketTransactionCriteria.toPageRequest());
     }
 }
