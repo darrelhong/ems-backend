@@ -603,7 +603,7 @@ public class EventOrganiserService {
         allSellerApplication = sellerAppService.getAllSellerApplications();
       
         for(SellerApplication sa:allSellerApplication){
-            if(sa.getEvent().getEventOrganiser().getId() == eo.getId() && sa.getSellerApplicationStatus().toString().equals("PENDING")){
+            if(sa.getEvent().getEventOrganiser().getId().equals(eo.getId()) && sa.getSellerApplicationStatus().toString().equals("PENDING")){
                  filteredSellerApplication.add(sa);
             }
         }
@@ -631,7 +631,7 @@ public class EventOrganiserService {
         double totalSales = 0;
         for (SellerApplication sa : allSellerApplication) {
            
-            if (sa.getEvent().getEventOrganiser().getId() == eo.getId()
+            if (sa.getEvent().getEventOrganiser().getId().equals(eo.getId())
                     && sa.getPaymentStatus().toString().equals("COMPLETED") && isSameDay(convertToDateViaSqlTimestamp(sa.getPaymentDate()),now)) {
 
                 PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
@@ -655,7 +655,7 @@ public class EventOrganiserService {
         for (SellerApplication sa : allSellerApplication) {
            
           
-            if (sa.getEvent().getEventOrganiser().getId() == eo.getId()
+            if (sa.getEvent().getEventOrganiser().getId().equals(eo.getId())
                     && sa.getPaymentStatus().toString().equals("COMPLETED")
                     && (sa.getPaymentDate().getYear() == now.getYear()) && (sa.getPaymentDate().getMonth() == now.getMonth())){
 
@@ -679,7 +679,7 @@ public class EventOrganiserService {
          LocalDateTime now = LocalDateTime.now();
         for (SellerApplication sa : allSellerApplication) {
          
-            if (sa.getEvent().getEventOrganiser().getId() == eo.getId()
+            if (sa.getEvent().getEventOrganiser().getId().equals(eo.getId())
                     && sa.getPaymentStatus().toString().equals("COMPLETED")
                     && (sa.getPaymentDate().getYear() == now.getYear())){
 
@@ -705,7 +705,7 @@ public class EventOrganiserService {
         double totalSales = 0;
         for (TicketTransaction tt : allticketTrans) {
 
-            if (tt.getEvent().getEventOrganiser().getId() == eo.getId()
+            if (tt.getEvent().getEventOrganiser().getId().equals(eo.getId())
                     && tt.getPaymentStatus().toString().equals("COMPLETED")
                     && isSameDay(convertToDateViaSqlTimestamp(tt.getDateTimeOrdered()), now)) {
                 PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
