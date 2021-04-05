@@ -16,4 +16,6 @@ public class CheckoutDto {
 
     @NotNull
     private Integer ticketQty;
+
+    private String paymentMethodId;
 }

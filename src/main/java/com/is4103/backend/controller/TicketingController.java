@@ -58,7 +58,7 @@ public class TicketingController {
                     .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
             CheckoutResponse result = ticketingService.createTransaction(checkoutDto.getEventId(),
-                    checkoutDto.getTicketQty(), attendee);
+                    checkoutDto.getTicketQty(), attendee, checkoutDto.getPaymentMethodId());
 
             if (result != null) {
                 return ResponseEntity.ok(result);
@@ -67,6 +67,19 @@ public class TicketingController {
         } catch (StripeException | UserNotFoundException e) {
             System.out.println(e.getMessage());
             throw new CheckoutException();
+        }
+    }
+
+    @GetMapping(value = "/payment-methods")
+    public ResponseEntity<?> getPaymentMethods() {
+        Attendee attendee = attendeeService
+                .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        try {
+
+            return ResponseEntity.ok(ticketingService.getPaymentMethods(attendee).getData());
+        } catch (StripeException | UserNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            return ResponseEntity.badRequest().build();
         }
     }
 

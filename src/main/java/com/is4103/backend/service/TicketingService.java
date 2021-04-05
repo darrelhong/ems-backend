@@ -19,7 +19,10 @@ import com.is4103.backend.util.errors.ticketing.TicketTransactionNotFoundExcepti
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
+import com.stripe.model.PaymentMethod;
+import com.stripe.model.PaymentMethodCollection;
 import com.stripe.param.PaymentIntentCreateParams;
+import com.stripe.param.PaymentMethodListParams;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,8 +50,8 @@ public class TicketingService {
                 .orElseThrow(() -> new TicketTransactionNotFoundException("Ticket Transaction Not Found"));
     }
 
-    public CheckoutResponse createTransaction(Long eventId, Integer ticketQty, Attendee attendee)
-            throws StripeException {
+    public CheckoutResponse createTransaction(Long eventId, Integer ticketQty, Attendee attendee,
+            String paymentMethodId) throws StripeException {
         Event event = eventService.getEventById(eventId);
         Long ticketsSold = ttRepository.countByEventAndPaymentStatus(event, PaymentStatus.COMPLETED);
 
@@ -63,21 +66,43 @@ public class TicketingService {
 
             Stripe.apiKey = stripeApiKey;
 
-            PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder().setCurrency("sgd")
-                    .setAmount(stripePaymentAmount).setCustomer(attendee.getStripeCustomerId()).build();
-            PaymentIntent intent = PaymentIntent.create(createParams);
+            PaymentIntentCreateParams.Builder createParamsBuilder = new PaymentIntentCreateParams.Builder()
+                    .setCurrency("sgd").setAmount(stripePaymentAmount).setCustomer(attendee.getStripeCustomerId());
 
-            for (int i = 0; i < ticketQty; i++) {
-                TicketTransaction tt = new TicketTransaction();
-                tt.setEvent(event);
-                tt.setAttendee(attendee);
-                tt.setStripePaymentId(intent.getId());
-                ttRepository.save(tt);
-                tickets.add(tt);
+            if (paymentMethodId == null) {
+
+                PaymentIntent intent = PaymentIntent.create(createParamsBuilder.build());
+
+                for (int i = 0; i < ticketQty; i++) {
+                    TicketTransaction tt = new TicketTransaction();
+                    tt.setEvent(event);
+                    tt.setAttendee(attendee);
+                    tt.setStripePaymentId(intent.getId());
+                    ttRepository.save(tt);
+                    tickets.add(tt);
+                }
+
+                CheckoutResponse checkoutResponse = new CheckoutResponse(paymentAmount, intent.getClientSecret(),
+                        tickets);
+                return checkoutResponse;
+            } else {
+                createParamsBuilder.setPaymentMethod(paymentMethodId).setConfirm(true).setOffSession(true);
+
+                PaymentIntent intent = PaymentIntent.create(createParamsBuilder.build());
+
+                for (int i = 0; i < ticketQty; i++) {
+                    TicketTransaction tt = new TicketTransaction();
+                    tt.setEvent(event);
+                    tt.setAttendee(attendee);
+                    tt.setStripePaymentId(intent.getId());
+                    tt.setPaymentStatus(PaymentStatus.COMPLETED);
+                    ttRepository.save(tt);
+                    tickets.add(tt);
+
+                    CheckoutResponse checkoutResponse = new CheckoutResponse(null, null, tickets);
+                    return checkoutResponse;
+                }
             }
-
-            CheckoutResponse checkoutResponse = new CheckoutResponse(paymentAmount, intent.getClientSecret(), tickets);
-            return checkoutResponse;
         }
         return null;
     }
@@ -98,6 +123,16 @@ public class TicketingService {
             TicketTransaction tt = findById(id);
             ttRepository.delete(tt);
         }
+    }
+
+    public PaymentMethodCollection getPaymentMethods(Attendee attendee) throws StripeException {
+        Stripe.apiKey = stripeApiKey;
+
+        PaymentMethodListParams params = PaymentMethodListParams.builder().setCustomer(attendee.getStripeCustomerId())
+                .setType(PaymentMethodListParams.Type.CARD).build();
+
+        PaymentMethodCollection pms = PaymentMethod.list(params);
+        return pms;
     }
 
     public <T> Collection<T> getTicketTransactionsByAttendeeId(Long id, Class<T> type) {
