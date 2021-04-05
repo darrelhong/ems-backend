@@ -58,7 +58,7 @@ public class EventController {
 
     @Autowired
     private BusinessPartnerService bpService;
-  
+
     private ModelMapper modelMapper;
 
     @GetMapping(path = "/all")
@@ -174,33 +174,40 @@ public class EventController {
     }
 
     // updated to only get events that start current time
+    // @GetMapping(path = "/get-events")
+    // public Page<Event> getEvents(@RequestParam(name = "page", defaultValue = "0")
+    // int page,
+    // @RequestParam(name = "size", defaultValue = "10") int size,
+    // @RequestParam(defaultValue = "all") String filter, @RequestParam(required =
+    // false) String sort,
+    // @RequestParam(required = false) String sortDir, @RequestParam(required =
+    // false) String keyword,
+    // @RequestParam(required = false) String user) {
+    // System.out.println("*********filter********" + filter);
+    // System.out.println("*********user**********" + user);
+    // if (user != null) {
+    // // System.out.println(filter);
+    // List<Event> data = null;
+    // BusinessPartner partner =
+    // bpService.getBusinessPartnerById(Long.parseLong(user));
+    // if (filter.equals("favourite")) {
+    // // System.out.println("reached??????????????????????????");
+    // Pageable firstPageWithTwoELements = PageRequest.of(0, 2);
+    // data = partner.getFavouriteEventList();
+    // Page<Event> test12 = new PageImpl(data);
+    // return test12;
+    // } else if (filter.equals("applied")) {
+    // // data = saService.g
+    // } else if (filter.equals("pending payment")) {
+
+    // } else if (filter.equals("confirmed")) {
+
+    // }
+    // }
+    // return eventService.getPublishedEvents(page, size, sort, sortDir, keyword);
+    // }
+
     @GetMapping(path = "/get-events")
-//     public Page<Event> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
-//             @RequestParam(name = "size", defaultValue = "10") int size,
-//             @RequestParam(defaultValue = "all") String filter, @RequestParam(required = false) String sort,
-//             @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword,
-//             @RequestParam(required = false) String user) {
-//         System.out.println("*********filter********" + filter);
-//         System.out.println("*********user**********" + user);
-//         if (user != null) {
-//             // System.out.println(filter);
-//             List<Event> data = null;
-//             BusinessPartner partner = bpService.getBusinessPartnerById(Long.parseLong(user));
-//             if (filter.equals("favourite")) {
-//                 // System.out.println("reached??????????????????????????");
-//                 Pageable firstPageWithTwoELements = PageRequest.of(0, 2);
-//                 data = partner.getFavouriteEventList();
-//                 Page<Event> test12 = new PageImpl(data);
-//                 return test12;
-//             } else if (filter.equals("applied")) {
-//                 // data = saService.g
-//             } else if (filter.equals("pending payment")) {
-
-//             } else if (filter.equals("confirmed")) {
-
-//             }
-//         }
-//         return eventService.getPublishedEvents(page, size, sort, sortDir, keyword);
     public Page<EventCardDto> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
             @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword) {
@@ -263,7 +270,7 @@ public class EventController {
         Event e = getEventById(eid);
         return eventService.removePicture(e, imageIndex);
     }
-  
+
     @GetMapping("/categories")
     public List<String> getDistinctCategories() {
         return eventService.getDistinctEventCategories();
