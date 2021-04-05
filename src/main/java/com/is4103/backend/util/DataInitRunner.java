@@ -214,6 +214,7 @@ public class DataInitRunner implements ApplicationRunner {
         List<BusinessPartner> bpFollowing = new ArrayList<>();
         bpFollowing.add(bp);
         atn.setFollowedBusinessPartners(bpFollowing);
+        atn.setStripeCustomerId("cus_JFCHLoDF4Gr3sI");
         userRepository.save(atn);
 
         // create second attendee
@@ -947,7 +948,8 @@ public class DataInitRunner implements ApplicationRunner {
                     application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
                     application.setApplicationDate(e.getEventStartDate().minusDays(rand.nextInt(20)));
                     if (statusTypeIndex == 1) {
-                        // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
+                        // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH
+                        // PAYMENT
                         // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
                         SellerProfile profile = new SellerProfile();
                         profile.setEvent(e);

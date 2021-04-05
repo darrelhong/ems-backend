@@ -64,7 +64,7 @@ public class TicketingService {
             Stripe.apiKey = stripeApiKey;
 
             PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder().setCurrency("sgd")
-                    .setAmount(stripePaymentAmount).build();
+                    .setAmount(stripePaymentAmount).setCustomer(attendee.getStripeCustomerId()).build();
             PaymentIntent intent = PaymentIntent.create(createParams);
 
             for (int i = 0; i < ticketQty; i++) {
