@@ -86,6 +86,9 @@ public class DataInitRunner implements ApplicationRunner {
 
     private EventOrganiser eoTest;
 
+    //lili eo
+    private EventOrganiser eoLili;
+
     private String[] eventCategories = { "Automotive", "Business Support & Supplies", "Computers & Electronics",
             "Computers", "Construction & Contractor", "Education", "Entertainment", "Food & Dining",
             "Health & Medicine", "Home & Garden", "Legal & Financial", "Manufacturing, Wholesale, Distribution",
@@ -125,7 +128,8 @@ public class DataInitRunner implements ApplicationRunner {
 
         }
         if (eventRepository.findByName("Event 0").isEmpty()) {
-            createDemoEvents();
+            //lili
+           // createDemoEvents();
         }
 
         if (boothRepository.findAll().isEmpty()) {
@@ -162,6 +166,18 @@ public class DataInitRunner implements ApplicationRunner {
 
         this.eoTest = eo;
 
+        //Lili EO
+         EventOrganiser eo2 = new EventOrganiser();
+        eo2.setEmail("linlili7842@gmail.com");
+        eo2.setName("Lili Organiser");
+        eo2.setPassword(passwordEncoder.encode("password"));
+        eo2.setEnabled(true);
+        eo2.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
+        eo2.setSupportDocsUrl(null);
+        userRepository.save(eo2);
+        this.eoLili = eo2;
+
+    
         for (int i = 2; i <= 11; i++) {
             eo = new EventOrganiser();
             eo.setEmail("organiser" + i + "@abc.com");
@@ -184,17 +200,37 @@ public class DataInitRunner implements ApplicationRunner {
         bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
         bp.setBusinessCategory("Home & Garden");
 
+        // lili bp
+        BusinessPartner bp2 = new BusinessPartner();
+        bp2.setEmail("linlili2319@gmail.com");
+        bp2.setName("Lili Business Partner");
+        bp2.setPassword(passwordEncoder.encode("password"));
+        bp2.setEnabled(true);
+        bp2.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
+        bp2.setBusinessCategory("Home & Garden");
+
         // set follow eo list for bp
         List<EventOrganiser> following = new ArrayList<>();
         following.add(this.eoTest);
+        //lili
+        following.add(this.eoLili);
         bp.setFollowEventOrganisers(following);
+        //lili
+        bp2.setFollowEventOrganisers(following);
         userRepository.save(bp);
+        //lili
+        userRepository.save(bp2);
+
 
         // set followers bp list for eo
         List<BusinessPartner> followersBP = new ArrayList<>();
         followersBP.add(bp);
+        followersBP.add(bp2);
         this.eoTest.setBusinessPartnerFollowers(followersBP);
+        //lili
+        this.eoLili.setBusinessPartnerFollowers(followersBP);
         userRepository.save(this.eoTest);
+        userRepository.save(this.eoLili);
 
 
         //create attendee
@@ -228,6 +264,21 @@ public class DataInitRunner implements ApplicationRunner {
         atnTwo.setFollowedBusinessPartners(bpFollowing);
         userRepository.save(atnTwo);
 
+        //lili att
+            // create second attendee
+        Attendee atnLili = new Attendee();
+        atnLili.setEmail("linlili53012@gmail.com");
+        atnLili.setName("Lili attendee");
+        atnLili.setPassword(passwordEncoder.encode("password"));
+        atnLili.setDescription("description for Second attendeeeeeeee :)");
+        atnLili.setEnabled(true);
+        atnLili.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.ATND)));
+        atnLili.setCategoryPreferences(category);
+        // atnTwo.addfollowBP(businesspartner);
+        atnLili.setFollowedBusinessPartners(bpFollowing);
+        userRepository.save(atnLili);
+
+
         // set atn and atn2 follow bp list
 
         // Set<BusinessPartner> followBp = new HashSet<>();
@@ -241,8 +292,12 @@ public class DataInitRunner implements ApplicationRunner {
         List<Attendee> followers = new ArrayList<>();
         followers.add(atn);
         followers.add(atnTwo);
+        //lili
+        followers.add(atnLili);
         bp.setAttendeeFollowers(followers);
-        userRepository.save(bp);    
+        bp2.setAttendeeFollowers(followers);
+        userRepository.save(bp);   
+        userRepository.save(bp2);    
 
            
         
@@ -577,7 +632,9 @@ public class DataInitRunner implements ApplicationRunner {
         event9.setHidden(false);
         event9.setPublished(true);
 
-        EventOrganiser eventOrg = eventOrganiserRepository.findByEmail("organiser@abc.com");
+       // EventOrganiser eventOrg = eventOrganiserRepository.findByEmail("organiser@abc.com");
+        //lili
+        EventOrganiser eventOrg = eventOrganiserRepository.findByEmail("linlili7842@gmail.com");
         event.setEventOrganiser(eventOrg);
         event2.setEventOrganiser(eventOrg);
         event3.setEventOrganiser(eventOrg);
@@ -795,7 +852,9 @@ public class DataInitRunner implements ApplicationRunner {
             // CREATE MORE FOR EVENT 1
             Event firstEvent = eventRepository.findAll().get(0);
             List<BusinessPartner> businessPartners = businessPartnerRepository.findAll();
+            int bpCount = 0;
             for (BusinessPartner bp : businessPartners) {
+               
                 SellerApplication application = new SellerApplication();
                 application.setBusinessPartner(bp);
                 application.setEvent(firstEvent);
@@ -806,6 +865,11 @@ public class DataInitRunner implements ApplicationRunner {
                 application.setSellerApplicationStatus(sellerApplicationStatusArray[count]);
                 // application.setPaymentStatus(paymentStatus);
                 application.setPaymentStatus(paymentStatusArray[count]);
+                // lili
+                LocalDateTime applicaionDate = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(bpCount).plusHours(
+                        bpCount % 3);
+                application.setApplicationDate(applicaionDate);
+                bpCount ++;
                 if (count == 1) {
                     // FOR NUMBER 1, THAT IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
                     // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
@@ -838,7 +902,7 @@ public class DataInitRunner implements ApplicationRunner {
                         b.setSellerProfile(savedProfile);
                         boothRepository.save(b);
                     }
-                    ;
+                    
 
                 }
                 sellerApplicationRepository.save(application);
@@ -860,6 +924,9 @@ public class DataInitRunner implements ApplicationRunner {
                     int statusTypeIndex = rand.nextInt(3);
                     application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
                     application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
+                    LocalDateTime applicaionDate = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(i)
+                            .plusHours(i % 3);
+                    application.setApplicationDate(applicaionDate);
                     if (statusTypeIndex == 1) {
                         // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
                         // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
