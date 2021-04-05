@@ -29,7 +29,7 @@ import com.is4103.backend.model.Event;
 // import com.is4103.backend.model.EventBoothTransaction;
 import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.model.EventOrganiser;
-import com.is4103.backend.model.PopularEvent;
+// import com.is4103.backend.model.PopularEvent;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.TicketTransaction;
