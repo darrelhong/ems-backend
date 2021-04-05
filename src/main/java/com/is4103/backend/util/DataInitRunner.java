@@ -998,64 +998,64 @@ public class DataInitRunner implements ApplicationRunner {
                 sellerApplicationRepository.save(application);
             }
 
-            // CREATE RANDOM NUMBERS FOR THE REST
-            List<Event> allEvents = eventRepository.findAll();
-            allEvents.remove(allEvents.get(0));
-            for (Event e : allEvents) {
-                for (int i = 0; i < 2; i++) {
-                    // MAKE 2 APPLICATIONS FOR EACH EVENT
-                    BusinessPartner randomBp = businessPartnerRepository.findAll()
-                            .get(rand.nextInt(businessPartners.size()));
-                    SellerApplication application = new SellerApplication();
-                    application.setBusinessPartner(randomBp);
-                    application.setEvent(e);
-                    application.setDescription(lorem.getWords(5, 20));
-                    application.setComments(lorem.getWords(5, 20));
-                    application.setBoothQuantity(rand.nextInt(300));
-                    int statusTypeIndex = rand.nextInt(3);
-                    application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
-                    application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
-                    application.setApplicationDate(e.getEventStartDate().minusDays(rand.nextInt(20)));
-                    if (statusTypeIndex == 1) {
-                        // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH
-                        // PAYMENT
-                        // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
-                        SellerProfile profile = new SellerProfile();
-                        profile.setEvent(e);
-                        profile.setBusinessPartner(randomBp);
-                        profile.setDescription(lorem.getWords(5, 20));
-                        profile.setBrochureImages(Arrays.asList(
-                                "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
-                                "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
-                                "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
-                        SellerProfile savedProfile = sellerProfileRepository.save(profile);
+            // SECOND COPY OF SAME CODE
+            // List<Event> allEvents = eventRepository.findAll();
+            // allEvents.remove(allEvents.get(0));
+            // for (Event e : allEvents) {
+            //     for (int i = 0; i < 2; i++) {
+            //         // MAKE 2 APPLICATIONS FOR EACH EVENT
+            //         BusinessPartner randomBp = businessPartnerRepository.findAll()
+            //                 .get(rand.nextInt(businessPartners.size()));
+            //         SellerApplication application = new SellerApplication();
+            //         application.setBusinessPartner(randomBp);
+            //         application.setEvent(e);
+            //         application.setDescription(lorem.getWords(5, 20));
+            //         application.setComments(lorem.getWords(5, 20));
+            //         application.setBoothQuantity(rand.nextInt(300));
+            //         int statusTypeIndex = rand.nextInt(3);
+            //         application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
+            //         application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
+            //         application.setApplicationDate(e.getEventStartDate().minusDays(rand.nextInt(20)));
+            //         if (statusTypeIndex == 1) {
+            //             // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH
+            //             // PAYMENT
+            //             // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
+            //             SellerProfile profile = new SellerProfile();
+            //             profile.setEvent(e);
+            //             profile.setBusinessPartner(randomBp);
+            //             profile.setDescription(lorem.getWords(5, 20));
+            //             profile.setBrochureImages(Arrays.asList(
+            //                     "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
+            //                     "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
+            //                     "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
+            //             SellerProfile savedProfile = sellerProfileRepository.save(profile);
 
-                        // BOOTH SETUP FOR EACH PROFILE
-                        for (int k = 1; k < 4; k++) {
-                            Booth b = new Booth();
+            //             // BOOTH SETUP FOR EACH PROFILE
+            //             for (int k = 1; k < 4; k++) {
+            //                 Booth b = new Booth();
 
-                            // setting random set of products
-                            List<Product> allProducts = productRepository
-                                    .findProductsByBusinessPartner(randomBp.getId());
-                            // List<Product> allProducts = randomBp.getProducts();
-                            List<Product> sellerProfileProducts = new ArrayList<>();
-                            int numberOfProducts = rand.nextInt(allProducts.size());
-                            for (int j = 0; j < numberOfProducts; j++) {
-                                sellerProfileProducts.add(allProducts.get(j));
-                            }
-                            ;
-                            b.setProducts(sellerProfileProducts);
-                            b.setBoothNumber(k);
-                            b.setDescription(lorem.getWords(5, 20));
-                            b.setSellerProfile(savedProfile);
-                            boothRepository.save(b);
-                        }
-                        ;
+            //                 // setting random set of products
+            //                 List<Product> allProducts = productRepository
+            //                         .findProductsByBusinessPartner(randomBp.getId());
+            //                 // List<Product> allProducts = randomBp.getProducts();
+            //                 List<Product> sellerProfileProducts = new ArrayList<>();
+            //                 int numberOfProducts = rand.nextInt(allProducts.size());
+            //                 for (int j = 0; j < numberOfProducts; j++) {
+            //                     sellerProfileProducts.add(allProducts.get(j));
+            //                 }
+            //                 ;
+            //                 b.setProducts(sellerProfileProducts);
+            //                 b.setBoothNumber(k);
+            //                 b.setDescription(lorem.getWords(5, 20));
+            //                 b.setSellerProfile(savedProfile);
+            //                 boothRepository.save(b);
+            //             }
+            //             ;
 
-                    }
-                    sellerApplicationRepository.save(application);
-                }
-            }
+            //         }
+            //         sellerApplicationRepository.save(application);
+            //     }
+            // }
         }
     }
 
