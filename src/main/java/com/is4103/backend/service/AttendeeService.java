@@ -251,14 +251,14 @@ public class AttendeeService {
                 if (!filterEventList.contains(event)
                         && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                         && !(event.getSalesEndDate().isBefore(now))) {
-                    if (!(currentEventNo < 10 * (page - 1))) {
+                    currentEventNo += 1;
+
+                    if (!(currentEventNo < (10 * (page - 1) + 1))) {
                         filterEventList.add(event);
                         if (filterEventList.size() == 10) {
-                            System.out.println(filterEventList.size());
                             return filterEventList;
                         }
                     }
-                    currentEventNo += 1;
                 }
             }
         }
@@ -270,13 +270,14 @@ public class AttendeeService {
                 if (!filterEventList.contains(event)
                         && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                         && !(event.getSalesEndDate().isBefore(now))) {
-                    if (!(currentEventNo < 10 * (page - 1))) {
+                    currentEventNo += 1;
+
+                    if (!(currentEventNo < (10 * (page - 1) + 1))) {
                         filterEventList.add(event);
                         if (filterEventList.size() == 10) {
                             return filterEventList;
                         }
                     }
-                    currentEventNo += 1;
                 }
             }
         }
@@ -284,7 +285,7 @@ public class AttendeeService {
         return filterEventList;
     }
 
-    public List<Event> getAllEventsByAtnCategoryPreferences(Long atnId) {
+    public List<Event> getEventsByAtnCategoryPreferences(Long atnId) {
         List<Event> eventList = eventService.getAllEvents();
         List<String> categoryList = getAttendeeById(atnId).getCategoryPreferences();
         List<Event> filterEventList = new ArrayList<>();
@@ -297,6 +298,34 @@ public class AttendeeService {
                         && !(event.getSalesEndDate().isBefore(now))) {
                     filterEventList.add(event);
                     break;
+                }
+            }
+        }
+
+        return filterEventList;
+    }
+
+    public List<Event> getEventsByAtnCategoryPreferences(Long atnId, Long page) {
+        List<Event> eventList = eventService.getAllEvents();
+        List<String> categoryList = getAttendeeById(atnId).getCategoryPreferences();
+        List<Event> filterEventList = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        int currentEventNo = 0;
+        
+        for (Event event : eventList) {
+            for (String category : categoryList) {
+                if (event.getCategories().contains(category)
+                        && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                        && !(event.getSalesEndDate().isBefore(now))) {
+                    currentEventNo += 1;
+
+                    if (!(currentEventNo < (10 * (page - 1) + 1))) {
+                        filterEventList.add(event);
+                        if (filterEventList.size() == 10) {
+                            return filterEventList;
+                        }
+                        break;
+                    }
                 }
             }
         }

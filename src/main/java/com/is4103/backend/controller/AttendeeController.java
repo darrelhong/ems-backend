@@ -172,8 +172,14 @@ public class AttendeeController {
     }
 
     @PreAuthorize("hasRole('ATND')")
-    @GetMapping(path = "/getAllEventsByAtnCategoryPreferences/{id}")
-    public List<Event> getAllEventsByAtnCategoryPreferences(@PathVariable Long id) {
-        return atnService.getAllEventsByAtnCategoryPreferences(id);
+    @GetMapping(path = "/getEventsByAtnCategoryPreferences/{id}")
+    public List<Event> getEventsByAtnCategoryPreferences(@PathVariable Long id) {
+        return atnService.getEventsByAtnCategoryPreferences(id);
+    }
+
+    @PreAuthorize("hasRole('ATND')")
+    @GetMapping(path = "/getEventsByAtnCategoryPreferences/{id}/{pageParam}")
+    public List<Event> getEventsByAtnCategoryPreferences(@PathVariable Long id, @PathVariable Long pageParam) {
+        return atnService.getEventsByAtnCategoryPreferences(id, pageParam);
     }
 }

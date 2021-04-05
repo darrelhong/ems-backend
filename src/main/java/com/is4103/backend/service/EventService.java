@@ -102,7 +102,7 @@ public class EventService {
         return eventRepository.getDistinctEventCategories();
     }
 
-    public List<Event> getAllEventsThisWeekend() {
+    public List<Event> getEventsThisWeekend() {
         User user = userService.getUserById(userService.getCurrentUserId());
         List<Event> eventList = getAllEvents();
         List<Event> filterEventList = new ArrayList<>();
@@ -133,7 +133,46 @@ public class EventService {
         return filterEventList;
     }
 
-    public List<Event> getAllEventsNextWeek() {
+    public List<Event> getEventsThisWeekend(Long page) {
+        User user = userService.getUserById(userService.getCurrentUserId());
+        List<Event> eventList = getAllEvents();
+        List<Event> filterEventList = new ArrayList<>();
+        int currentEventNo = 0;
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime comingSunday = now.plusDays(7 - now.getDayOfWeek().getValue());
+        comingSunday = comingSunday.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+        LocalDateTime comingSaturday = now.plusDays(6 - now.getDayOfWeek().getValue());
+        comingSaturday = comingSaturday.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        
+        for (Event event : eventList) {
+            if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                    && !(event.getEventStartDate().isAfter(comingSunday))
+                    && !(event.getEventEndDate().isBefore(comingSaturday))
+                    && !(event.getSalesEndDate().isBefore(now))) {
+                currentEventNo += 1;
+
+                if (!(currentEventNo < (10 * (page - 1) + 1))) {
+                    if (user instanceof BusinessPartner) {
+                        LocalDateTime thirdDayFromNow = now.plusDays(3);
+                        thirdDayFromNow = thirdDayFromNow.withHour(0).withMinute(0).withSecond(0).withNano(0);
+                        if (event.getEventStartDate().isBefore(thirdDayFromNow)) {
+                            currentEventNo += 1;
+                            continue;
+                        }
+                    }
+                    filterEventList.add(event);
+                    if (filterEventList.size() == 10) {
+                        return filterEventList;
+                    }
+                }
+            }
+        }
+
+        return filterEventList;
+    }
+
+    public List<Event> getEventsNextWeek() {
         User user = userService.getUserById(userService.getCurrentUserId());
         List<Event> eventList = getAllEvents();
         List<Event> filterEventList = new ArrayList<>();
@@ -164,7 +203,45 @@ public class EventService {
         return filterEventList;
     }
 
-    public List<Event> getAllEventsInNext30Days() {
+    public List<Event> getEventsNextWeek(Long page) {
+        User user = userService.getUserById(userService.getCurrentUserId());
+        List<Event> eventList = getAllEvents();
+        List<Event> filterEventList = new ArrayList<>();
+        int currentEventNo = 0;
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextSunday = now.plusDays(14 - now.getDayOfWeek().getValue());
+        nextSunday = nextSunday.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+        LocalDateTime comingMonday = now.plusDays(8 - now.getDayOfWeek().getValue());
+        comingMonday = comingMonday.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        
+        for (Event event : eventList) {
+            if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                    && !(event.getEventStartDate().isAfter(nextSunday))
+                    && !(event.getEventEndDate().isBefore(comingMonday))
+                    && !(event.getSalesEndDate().isBefore(now))) {
+                currentEventNo += 1;
+                
+                if (!(currentEventNo < (10 * (page - 1) + 1))) {
+                    if (user instanceof BusinessPartner) {
+                        LocalDateTime thirdDayFromNow = now.plusDays(3);
+                        thirdDayFromNow = thirdDayFromNow.withHour(0).withMinute(0).withSecond(0).withNano(0);
+                        if (event.getEventStartDate().isBefore(thirdDayFromNow)) {
+                            continue;
+                        }
+                    }
+                    filterEventList.add(event);
+                    if (filterEventList.size() == 10) {
+                        return filterEventList;
+                    }
+                }
+            }
+        }
+
+        return filterEventList;
+    }
+
+    public List<Event> getEventsInNext30Days() {
         List<Event> eventList = getAllEvents();
         List<Event> filterEventList = new ArrayList<>();
 
@@ -186,72 +263,44 @@ public class EventService {
         return filterEventList;
     }
 
-    public List<Event> getMostPopularEvents() {
-        User user = userService.getUserById(userService.getCurrentUserId());
+    public List<Event> getEventsInNext30Days(Long page) {
         List<Event> eventList = getAllEvents();
-        List<Event> mostPopularEventList = new ArrayList<Event>();
+        List<Event> filterEventList = new ArrayList<>();
+        int currentEventNo = 0;
+
         LocalDateTime now = LocalDateTime.now();
+        LocalDateTime lastDay = now.plusDays(30);
+        lastDay = lastDay.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+        LocalDateTime thirdDay = now.plusDays(3);
+        thirdDay = thirdDay.withHour(0).withMinute(0).withSecond(0).withNano(0);
         
         for (Event event : eventList) {
+            System.out.println(currentEventNo + ": " + event.getName());
+            System.out.println();
             if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
-                    && !(event.getSaleStartDate().isAfter(now))
+                    && !(event.getEventStartDate().isBefore(thirdDay))
+                    && !(event.getEventStartDate().isAfter(lastDay))
                     && !(event.getSalesEndDate().isBefore(now))) {
-                if (mostPopularEventList.size() == 0) {
+                System.out.println(currentEventNo + ": " + event.getName());
+                System.out.println();
+                System.out.println(!(currentEventNo < (10 * (page - 1) + 1)));
+                System.out.println();
+                currentEventNo += 1;
                 
-                    if (user instanceof BusinessPartner) {
-                        LocalDateTime thirdDayFromNow = now.plusDays(3);
-                        thirdDayFromNow = thirdDayFromNow.withHour(0).withMinute(0).withSecond(0).withNano(0);
-                        if (event.getEventStartDate().isBefore(thirdDayFromNow)) {
-                            continue;
-                        }
-                    }
-                    mostPopularEventList.add(event);
-                }
-                else {
-                    System.out.println(mostPopularEventList.size());
-                    for (Event popularEvent : mostPopularEventList) {
-                        List<TicketTransaction> transList = tktService.getAllTransactions();
-    
-                        Integer e1NoOfTicketsSold = 0;
-                        for (TicketTransaction trans : transList) {
-                            if (trans.getEvent().getEid() == event.getEid()) {
-                                e1NoOfTicketsSold++;
-                            }
-                        }
-                        Integer e2NoOfTicketsSold = 0;
-                        for (TicketTransaction trans : transList) {
-                            if (trans.getEvent().getEid() == mostPopularEventList.get(0).getEid()) {
-                                e2NoOfTicketsSold++;
-                            }
-                        }
+                if (!(currentEventNo < (10 * (page - 1) + 1))) {
+                    System.out.println(currentEventNo + ": " + event.getName());
+                    System.out.println();
+                    filterEventList.add(event);
+                    if (filterEventList.size() == 10) {
+                        System.out.println(currentEventNo + ": " + event.getName());
                         System.out.println();
-                        System.out.println("e1: " + e1NoOfTicketsSold);
-                        System.out.println("e2: " + e2NoOfTicketsSold);
-                        System.out.println();
-    
-                        if (e1NoOfTicketsSold > e2NoOfTicketsSold) {
-                    
-                            if (user instanceof BusinessPartner) {
-                                LocalDateTime thirdDayFromNow = now.plusDays(3);
-                                thirdDayFromNow = thirdDayFromNow.withHour(0).withMinute(0).withSecond(0).withNano(0);
-                                if (event.getEventStartDate().isBefore(thirdDayFromNow)) {
-                                    continue;
-                                }
-                            }
-
-                            mostPopularEventList.add(mostPopularEventList.indexOf(popularEvent), event);
-                            break;
-                        }
-                        else if (mostPopularEventList.indexOf(popularEvent) == mostPopularEventList.size() - 1) {
-                            mostPopularEventList.add(event);
-                            break;
-                        }
+                        return filterEventList;
                     }
                 }
             }
         }
 
-        return mostPopularEventList.subList(0, 5);
+        return filterEventList;
     }
 
     public List<Event> getTopTenEvents() {

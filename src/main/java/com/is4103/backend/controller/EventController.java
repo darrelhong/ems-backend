@@ -218,24 +218,34 @@ public class EventController {
         return eventService.getDistinctEventCategories();
     }
 
-    @GetMapping("/getAllEventsThisWeekend")
-    public List<Event> getAllEventsThisWeekend() {
-        return eventService.getAllEventsThisWeekend();
+    @GetMapping("/getEventsThisWeekend")
+    public List<Event> getEventsThisWeekend() {
+        return eventService.getEventsThisWeekend();
     }
 
-    @GetMapping("/getAllEventsNextWeek")
-    public List<Event> getAllEventsNextWeek() {
-        return eventService.getAllEventsNextWeek();
+    @GetMapping("/getEventsThisWeekend/{pageParam}")
+    public List<Event> getEventsThisWeekend(@PathVariable Long pageParam) {
+        return eventService.getEventsThisWeekend(pageParam);
     }
 
-    @GetMapping("/getAllEventsInNext30Days")
-    public List<Event> getAllEventsInNext30Days() {
-        return eventService.getAllEventsInNext30Days();
+    @GetMapping("/getEventsNextWeek")
+    public List<Event> getEventsNextWeek() {
+        return eventService.getEventsNextWeek();
     }
 
-    @GetMapping("/getMostPopularEvents")
-    public List<Event> getMostPopularEvents() {
-        return eventService.getMostPopularEvents();
+    @GetMapping("/getEventsNextWeek/{pageParam}")
+    public List<Event> getEventsNextWeek(@PathVariable Long pageParam) {
+        return eventService.getEventsNextWeek(pageParam);
+    }
+
+    @GetMapping("/getEventsInNext30Days")
+    public List<Event> getEventsInNext30Days() {
+        return eventService.getEventsInNext30Days();
+    }
+
+    @GetMapping("/getEventsInNext30Days/{pageParam}")
+    public List<Event> getEventsInNext30Days(@PathVariable Long pageParam) {
+        return eventService.getEventsInNext30Days(pageParam);
     }
 
     @GetMapping("/getTopTenEvents")
