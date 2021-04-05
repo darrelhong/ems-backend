@@ -37,20 +37,20 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     List<String> getDistinctEventCategories();
 
 
-    @Query(value = "SELECT Count(id) as applicationCount, event_eid as eventId FROM seller_application sa GROUP BY event_eid", nativeQuery = true)
-    List<Object[]> getMostPopularEventList();
+   // @Query(value = "SELECT Count(id) as applicationCount, event_eid as eventId FROM seller_application sa GROUP BY event_eid", nativeQuery = true)
+   // List<Object[]> getMostPopularEventList();
     
     // get most popular event of the day
-    @Query(value = "SELECT Count(id) as applicationCount, event_eid as eventId FROM seller_application sa GROUP BY event_eid", nativeQuery = true)
-    List<Object[]> getDailyMostPopularEventList();
+    @Query(value = "SELECT Count(id) as applicationCount, event_eid as eventId, DATE(payment_date) as payment_date, payment_status FROM seller_application sa GROUP BY event_eid,DATE(payment_date), payment_status HAVING DATE(payment_date) = DATE(NOW()) and payment_status = 'COMPLETED'", nativeQuery = true)
+    List<Object[]> getBoothDashboardDailyMostPopularEventList();
     
     // get most popular event of the month
-    @Query(value = "SELECT Count(id) as applicationCount, event_eid as eventId FROM seller_application sa GROUP BY event_eid", nativeQuery = true)
-    List<Object[]> getMonthlyMostPopularEventList();
+    @Query(value = "SELECT Count(id) as applicationCount, event_eid as eventId, DATE(payment_date) as payment_date, payment_status FROM seller_application sa GROUP BY event_eid,DATE(payment_date),payment_status HAVING YEAR(payment_date) = YEAR(NOW()) and MONTH(payment_date) = MONTH(NOW()) and payment_status = 'COMPLETED'", nativeQuery = true)
+    List<Object[]> getBoothDashboardMonthlyMostPopularEventList();
     
     // get most popular event of the year
-     @Query(value = "SELECT Count(id) as applicationCount, event_eid as eventId FROM seller_application sa GROUP BY event_eid", nativeQuery = true)
-    List<Object[]> getYearlyMostPopularEventList();
+     @Query(value = "SELECT Count(id) as applicationCount, event_eid as eventId, DATE(payment_date) as payment_date, payment_status FROM seller_application sa GROUP BY event_eid, DATE(payment_date), payment_status HAVING YEAR(payment_date) = YEAR(NOW()) and payment_status = 'COMPLETED'", nativeQuery = true)
+    List<Object[]> getBoothDashboardYearlyMostPopularEventList();
 
 
 

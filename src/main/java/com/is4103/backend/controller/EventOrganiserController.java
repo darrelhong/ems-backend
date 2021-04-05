@@ -387,11 +387,30 @@ public class EventOrganiserController {
     }
 
     @PreAuthorize("hasAnyRole('EVNTORG')")
-    @GetMapping(path = "/getMostPopularEventList")
-    public List<Event> getMostPopularEventList() {        
+    @GetMapping(path = "/getBoothDashboardDailyMostPopularEventList")
+    public List<Event> getBoothDashboardDailyMostPopularEventList() {        
         EventOrganiser user = eoService
                 .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        return eoService.getMostPopularEventList(user);
+        return eoService.getBoothDashboardMostPopularEventOfTheDay(user);
     
+    }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getBoothDashboardMonthlyMostPopularEventList")
+    public List<Event> getBoothDashboardMonthlyMostPopularEventList() {
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        return eoService.getBoothDashboardMostPopularEventOfTheMonth(user);
+
+    }
+
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getBoothDashboardYearlyMostPopularEventList")
+    public List<Event> getBoothDashboardYearlyMostPopularEventList() {
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        return eoService.getBoothDashboardMostPopularEventOfTheYear(user);
+
     }
 }
