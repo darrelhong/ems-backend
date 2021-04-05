@@ -167,4 +167,11 @@ public class TicketingService {
         return ttRepository.findAll(new TicketTransactionSpecification(ticketTransactionCriteria),
                 ticketTransactionCriteria.toPageRequest());
     }
+
+    public void removePaymentMethod(String paymentMethodId) throws StripeException {
+        Stripe.apiKey = stripeApiKey;
+
+        PaymentMethod pm = PaymentMethod.retrieve(paymentMethodId);
+        pm.detach();
+    }
 }

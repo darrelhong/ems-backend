@@ -2,6 +2,7 @@ package com.is4103.backend.controller;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -138,5 +139,16 @@ public class TicketingController {
         Page<TicketTransaction> result = ticketingService.getTicketTransactionIdsByCriteria(ticketTransactionCriteria);
         Page<OrganiserTicketDto> response = result.map(tt -> modelMapper.map(tt, OrganiserTicketDto.class));
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(value = "/payment-methods/remove")
+    public ResponseEntity<String> removePaymentMethod(@RequestBody Map<String, String> body) {
+        try {
+            ticketingService.removePaymentMethod(body.get("paymentMethodId"));
+            return ResponseEntity.ok("Success");
+        } catch (StripeException ex) {
+            System.out.println(ex.getMessage());
+            return ResponseEntity.badRequest().body("An error occured");
+        }
     }
 }
