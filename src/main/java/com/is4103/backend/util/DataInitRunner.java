@@ -869,6 +869,10 @@ public class DataInitRunner implements ApplicationRunner {
                 LocalDateTime applicaionDate = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(bpCount).plusHours(
                         bpCount % 3);
                 application.setApplicationDate(applicaionDate);
+                LocalDateTime paymentDate = LocalDateTime.of(2021, Month.APRIL, 2, 9, 0).plusDays(bpCount).plusHours(
+                        bpCount % 3);
+                application.setPaymentDate(paymentDate);
+
                 bpCount ++;
                 if (count == 1) {
                     // FOR NUMBER 1, THAT IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
@@ -895,7 +899,7 @@ public class DataInitRunner implements ApplicationRunner {
                         for (int j = 0; j < numberOfProducts; j++) {
                             sellerProfileProducts.add(allProducts.get(j));
                         }
-                        ;
+                        
                         b.setProducts(sellerProfileProducts);
                         b.setBoothNumber(k);
                         b.setDescription(lorem.getWords(5, 20));
@@ -927,6 +931,10 @@ public class DataInitRunner implements ApplicationRunner {
                     LocalDateTime applicaionDate = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(i)
                             .plusHours(i % 3);
                     application.setApplicationDate(applicaionDate);
+                    LocalDateTime paymentDate = LocalDateTime.of(2021, Month.APRIL, 2, 9, 0).plusDays(bpCount)
+                            .plusHours(bpCount % 3);
+                    application.setPaymentDate(paymentDate);
+
                     if (statusTypeIndex == 1) {
                         // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
                         // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT

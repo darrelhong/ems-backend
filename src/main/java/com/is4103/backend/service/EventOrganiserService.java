@@ -29,7 +29,6 @@ import com.is4103.backend.model.Event;
 // import com.is4103.backend.model.EventBoothTransaction;
 import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.model.EventOrganiser;
-import com.is4103.backend.model.PopularEvent;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.TicketTransaction;
@@ -633,7 +632,7 @@ public class EventOrganiserService {
         for (SellerApplication sa : allSellerApplication) {
            
             if (sa.getEvent().getEventOrganiser().getId() == eo.getId()
-                    && sa.getPaymentStatus().toString().equals("COMPLETED") && isSameDay(convertToDateViaSqlTimestamp(sa.getApplicationDate()),now)) {
+                    && sa.getPaymentStatus().toString().equals("COMPLETED") && isSameDay(convertToDateViaSqlTimestamp(sa.getPaymentDate()),now)) {
 
                 PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
                 double amount = paymentIntent.getAmount();
@@ -658,7 +657,7 @@ public class EventOrganiserService {
           
             if (sa.getEvent().getEventOrganiser().getId() == eo.getId()
                     && sa.getPaymentStatus().toString().equals("COMPLETED")
-                    && (sa.getApplicationDate().getYear() == now.getYear()) && (sa.getApplicationDate().getMonth() == now.getMonth())){
+                    && (sa.getPaymentDate().getYear() == now.getYear()) && (sa.getPaymentDate().getMonth() == now.getMonth())){
 
                 PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
                 double amount = paymentIntent.getAmount();
@@ -682,7 +681,7 @@ public class EventOrganiserService {
          
             if (sa.getEvent().getEventOrganiser().getId() == eo.getId()
                     && sa.getPaymentStatus().toString().equals("COMPLETED")
-                    && (sa.getApplicationDate().getYear() == now.getYear())){
+                    && (sa.getPaymentDate().getYear() == now.getYear())){
 
                 PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
                 double amount = paymentIntent.getAmount();
@@ -739,6 +738,7 @@ public class EventOrganiserService {
         
     // }
 
+    // get most popular events all the time
     public List<Event>  getMostPopularEventList(EventOrganiser eo){
        List<Object[]> result = eventRepository.getMostPopularEventList();
        Map<BigInteger,BigInteger> map = new HashMap<BigInteger,BigInteger>();
@@ -760,7 +760,28 @@ public class EventOrganiserService {
      
     return popularEventList;
      }
-    
+     // get most popular event of the day.
+        public List<Event>  getMostPopularEventOfTheDay(EventOrganiser eo){
+       List<Object[]> result = eventRepository.getMostPopularEventList();
+       Map<BigInteger,BigInteger> map = new HashMap<BigInteger,BigInteger>();
+       List<Event> popularEventList = new ArrayList<>();
+       List<Event> eoEvents = eventService.getAllEventsByOrganiser(eo.getId());
+       System.out.println(eoEvents.size());
+       if(result != null && !result.isEmpty()){
+          map = new HashMap<BigInteger,BigInteger>();
+          for (Object[] object : result) {
+              for(Event e : eoEvents){
+                  if((BigInteger)object[1] == BigInteger.valueOf(e.getEid())){
+                    //  map.put(((BigInteger)object[1]),(BigInteger)object[0]);
+                     e.setApplicationCount((BigInteger)object[0]);
+                     popularEventList.add(e);
+                  }
+              }           
+          }
+       }
+     
+    return popularEventList;
+     }
 
 }
 

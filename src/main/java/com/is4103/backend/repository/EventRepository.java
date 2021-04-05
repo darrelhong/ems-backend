@@ -40,6 +40,18 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     @Query(value = "SELECT Count(id) as applicationCount, event_eid as eventId FROM seller_application sa GROUP BY event_eid", nativeQuery = true)
     List<Object[]> getMostPopularEventList();
     
+    // get most popular event of the day
+    @Query(value = "SELECT Count(id) as applicationCount, event_eid as eventId FROM seller_application sa GROUP BY event_eid", nativeQuery = true)
+    List<Object[]> getDailyMostPopularEventList();
+    
+    // get most popular event of the month
+    @Query(value = "SELECT Count(id) as applicationCount, event_eid as eventId FROM seller_application sa GROUP BY event_eid", nativeQuery = true)
+    List<Object[]> getMonthlyMostPopularEventList();
+    
+    // get most popular event of the year
+     @Query(value = "SELECT Count(id) as applicationCount, event_eid as eventId FROM seller_application sa GROUP BY event_eid", nativeQuery = true)
+    List<Object[]> getYearlyMostPopularEventList();
+
 
 
 }
