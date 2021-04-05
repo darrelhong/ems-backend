@@ -55,6 +55,8 @@ public class TicketingController {
     @PostMapping(value = "/checkout")
     public ResponseEntity<CheckoutResponse> createTransaction(@RequestBody @Valid CheckoutDto checkoutDto) {
         try {
+            System.out.println("eventid " + checkoutDto.getEventId());
+            System.out.println("ticketqty " + checkoutDto.getTicketQty());
             Attendee attendee = attendeeService
                     .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 

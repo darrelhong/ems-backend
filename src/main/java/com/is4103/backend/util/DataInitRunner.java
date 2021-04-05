@@ -252,6 +252,9 @@ public class DataInitRunner implements ApplicationRunner {
             bp.setName("Partner " + i);
             bp.setPassword(passwordEncoder.encode("password"));
             bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
+            Random rand = new Random();
+            int randomInt = rand.nextInt(eventCategories.length);
+            bp.setBusinessCategory(eventCategories[randomInt]);
             userRepository.save(bp);
         }
 
@@ -266,7 +269,8 @@ public class DataInitRunner implements ApplicationRunner {
         event.setAddress("Woodlands Avenue 6 #87-10");
         event.setDescriptions(
                 "The 14th Annual Academic Success Lecture featuring Dr. Kevin Gumienny is . This year's presentation will be held physically, and will focus on the topics of accessibility and universal design.");
-        event.setCategories(Arrays.asList(eventCategories));
+        // event.setCategories(Arrays.asList(eventCategories));
+        event.setEventCategory(eventCategories[0]);
         // setEventCategories(event);
         event.setPhysical(false);
         LocalDateTime eventStart1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
@@ -642,6 +646,7 @@ public class DataInitRunner implements ApplicationRunner {
         previous.setAddress("some location string");
         previous.setDescriptions("lorem ipsum dolor sit amet");
         previous.setPhysical(true);
+        previous.setEventCategory(eventCategories[7]);
         previous.setEventStartDate(LocalDateTime.now().minusMonths(1));
         previous.setEventEndDate(LocalDateTime.now().minusWeeks(3));
         previous.setSellingTicket(true);
@@ -749,15 +754,18 @@ public class DataInitRunner implements ApplicationRunner {
     private void setEventCategories(Event event) {
         Random rand = new Random();
         int upperBound = eventCategories.length;
-        int numberOfCategories = rand.nextInt(upperBound);
-        List<String> categories = new ArrayList<>();
-        for (int i = 0; i < numberOfCategories; i++) {
-            int categoryIndex = rand.nextInt(upperBound);
-            String categoryString = eventCategories[categoryIndex];
-            categories.add(categoryString);
-        }
-        event.setCategories(categories);
+        int randCategoryIndex = rand.nextInt(upperBound);
+        // List<String> categories = new ArrayList<>();
+        // for (int i = 0; i < numberOfCategories; i++) {
+        //     int categoryIndex = rand.nextInt(upperBound);
+        //     String categoryString = eventCategories[categoryIndex];
+        //     if (!categories.contains(categoryString))
+        //         categories.add(categoryString);
+        // }
+        // event.setCategories(categories);
         // return event;
+
+        event.setEventCategory(eventCategories[randCategoryIndex]);
     }
 
     @Transactional
@@ -852,7 +860,7 @@ public class DataInitRunner implements ApplicationRunner {
             }
             ;
             b.setProducts(sellerProfileProducts);
-            b.setBoothNumber(i);
+            b.setBoothNumber(rand.nextInt(70) + 1);
             b.setDescription(lorem.getWords(5, 20));
             b.setSellerProfile(sellerProfileRepository.findById(1L).get());
             boothRepository.save(b);
@@ -867,37 +875,97 @@ public class DataInitRunner implements ApplicationRunner {
         Random rand = new Random();
 
         // 4 TYPES OF APPLICATION TYPES
-        for (int count = 0; count < 4; count++) {
 
-            // THE STATUS ARRAYS ARE TO SHOW THE 4 DIFFERENT SCENARIOS OF PAYMENTSTATUS AND
-            // APPLICATIONSTATUS
-            // LATER WHEN I CREATE APPLICATIONS I'LL USE THE DIFFERENT COMBINATIONS
-            SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
-                    SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.REJECTED,
-                    SellerApplicationStatus.PENDING };
+        // THE STATUS ARRAYS ARE TO SHOW THE 4 DIFFERENT SCENARIOS OF PAYMENTSTATUS AND
+        // APPLICATIONSTATUS
+        // LATER WHEN I CREATE APPLICATIONS I'LL USE THE DIFFERENT COMBINATIONS
+        // COMBI 0 : APPROVED PENDING PAYMENT
+        // COMBI 1 : FINISHED PROCESS - SELLER PROFILE CREATED
+        // COMBI 2 : REJECTED
+        // COMBI 3 : NEW APPLICAION
 
-            PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED,
-                    PaymentStatus.PENDING, PaymentStatus.PENDING };
+        SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
+                SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.REJECTED, SellerApplicationStatus.PENDING };
 
-            // CREATE MORE FOR EVENT 1
-            Event firstEvent = eventRepository.findAll().get(0);
-            List<BusinessPartner> businessPartners = businessPartnerRepository.findAll();
-            for (BusinessPartner bp : businessPartners) {
+        PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED, PaymentStatus.PENDING,
+                PaymentStatus.PENDING };
+
+        // CREATE MORE FOR EVENT 1
+        Event firstEvent = eventRepository.findAll().get(0);
+        List<BusinessPartner> businessPartners = businessPartnerRepository.findAll();
+        for (BusinessPartner bp : businessPartners) {
+            SellerApplication application = new SellerApplication();
+            int count = rand.nextInt(4); // now just make the applications randomly
+            application.setBusinessPartner(bp);
+            application.setEvent(firstEvent);
+            application.setDescription(lorem.getWords(5, 20));
+            application.setComments(lorem.getWords(5, 20));
+            application.setBoothQuantity(rand.nextInt(300));
+            application.setSellerApplicationStatus(sellerApplicationStatusArray[count]);
+            application.setPaymentStatus(paymentStatusArray[count]);
+            application.setApplicationDate(firstEvent.getEventStartDate().minusDays(rand.nextInt(20)));
+            if (count == 1) {
+                // FOR NUMBER 1, THAT IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
+                // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
+                SellerProfile profile = new SellerProfile();
+                profile.setEvent(firstEvent);
+                profile.setBusinessPartner(bp);
+                profile.setDescription(lorem.getWords(5, 20));
+                profile.setBrochureImages(
+                        Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
+                                "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
+                                "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
+                SellerProfile savedProfile = sellerProfileRepository.save(profile);
+
+                // BOOTH SETUP FOR EACH PROFILE
+                for (int k = 1; k < 4; k++) {
+                    Booth b = new Booth();
+
+                    // setting random set of products
+                    List<Product> allProducts = productRepository.findProductsByBusinessPartner(bp.getId());
+                    // List<Product> allProducts = randomBp.getProducts();
+                    List<Product> sellerProfileProducts = new ArrayList<>();
+                    int numberOfProducts = rand.nextInt(allProducts.size());
+                    for (int j = 0; j < numberOfProducts; j++) {
+                        sellerProfileProducts.add(allProducts.get(j));
+                    }
+                    ;
+                    b.setProducts(sellerProfileProducts);
+                    b.setBoothNumber(rand.nextInt(70) + 1);
+                    b.setDescription(lorem.getWords(5, 20));
+                    b.setSellerProfile(savedProfile);
+                    boothRepository.save(b);
+                }
+                ;
+
+            }
+            sellerApplicationRepository.save(application);
+        }
+        // CREATE RANDOM NUMBERS FOR THE REST
+        List<Event> allEvents = eventRepository.findAll();
+        allEvents.remove(allEvents.get(0));
+        for (Event e : allEvents) {
+            for (int i = 0; i < 5; i++) {
+                // MAKE 2 APPLICATIONS FOR EACH EVENT
+                BusinessPartner randomBp = businessPartnerRepository.findAll()
+                        .get(rand.nextInt(businessPartners.size()));
                 SellerApplication application = new SellerApplication();
-                application.setBusinessPartner(bp);
-                application.setEvent(firstEvent);
+                application.setBusinessPartner(randomBp);
+                application.setEvent(e);
                 application.setDescription(lorem.getWords(5, 20));
                 application.setComments(lorem.getWords(5, 20));
                 application.setBoothQuantity(rand.nextInt(300));
-                application.setSellerApplicationStatus(sellerApplicationStatusArray[count]);
-                application.setPaymentStatus(paymentStatusArray[count]);
-                application.setApplicationDate(firstEvent.getEventStartDate().minusDays(rand.nextInt(20)));
-                if (count == 1) {
-                    // FOR NUMBER 1, THAT IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
+                int statusTypeIndex = rand.nextInt(3);
+                application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
+                application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
+                application.setApplicationDate(e.getEventStartDate().minusDays(rand.nextInt(20)));
+                if (statusTypeIndex == 1) {
+                    // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH
+                    // PAYMENT
                     // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
                     SellerProfile profile = new SellerProfile();
-                    profile.setEvent(firstEvent);
-                    profile.setBusinessPartner(bp);
+                    profile.setEvent(e);
+                    profile.setBusinessPartner(randomBp);
                     profile.setDescription(lorem.getWords(5, 20));
                     profile.setBrochureImages(Arrays.asList(
                             "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
@@ -910,7 +978,7 @@ public class DataInitRunner implements ApplicationRunner {
                         Booth b = new Booth();
 
                         // setting random set of products
-                        List<Product> allProducts = productRepository.findProductsByBusinessPartner(bp.getId());
+                        List<Product> allProducts = productRepository.findProductsByBusinessPartner(randomBp.getId());
                         // List<Product> allProducts = randomBp.getProducts();
                         List<Product> sellerProfileProducts = new ArrayList<>();
                         int numberOfProducts = rand.nextInt(allProducts.size());
@@ -919,7 +987,7 @@ public class DataInitRunner implements ApplicationRunner {
                         }
                         ;
                         b.setProducts(sellerProfileProducts);
-                        b.setBoothNumber(k);
+                        b.setBoothNumber(rand.nextInt(70) + 1);
                         b.setDescription(lorem.getWords(5, 20));
                         b.setSellerProfile(savedProfile);
                         boothRepository.save(b);
@@ -929,6 +997,7 @@ public class DataInitRunner implements ApplicationRunner {
                 }
                 sellerApplicationRepository.save(application);
             }
+
             // CREATE RANDOM NUMBERS FOR THE REST
             List<Event> allEvents = eventRepository.findAll();
             allEvents.remove(allEvents.get(0));
@@ -988,7 +1057,6 @@ public class DataInitRunner implements ApplicationRunner {
                 }
             }
         }
-
     }
 
 }

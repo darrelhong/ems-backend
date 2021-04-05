@@ -20,12 +20,17 @@ import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.model.SellerApplicationStatus;
 import com.is4103.backend.model.SellerProfile;
 import com.is4103.backend.repository.EventRepository;
+import com.is4103.backend.service.BusinessPartnerService;
 import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.service.EventService;
+import com.is4103.backend.service.SellerApplicationService;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,6 +54,11 @@ public class EventController {
     private EventOrganiserService eventOrganiserService;
 
     @Autowired
+    private SellerApplicationService saService;
+
+    @Autowired
+    private BusinessPartnerService bpService;
+  
     private ModelMapper modelMapper;
 
     @GetMapping(path = "/all")
@@ -165,6 +175,32 @@ public class EventController {
 
     // updated to only get events that start current time
     @GetMapping(path = "/get-events")
+//     public Page<Event> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
+//             @RequestParam(name = "size", defaultValue = "10") int size,
+//             @RequestParam(defaultValue = "all") String filter, @RequestParam(required = false) String sort,
+//             @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword,
+//             @RequestParam(required = false) String user) {
+//         System.out.println("*********filter********" + filter);
+//         System.out.println("*********user**********" + user);
+//         if (user != null) {
+//             // System.out.println(filter);
+//             List<Event> data = null;
+//             BusinessPartner partner = bpService.getBusinessPartnerById(Long.parseLong(user));
+//             if (filter.equals("favourite")) {
+//                 // System.out.println("reached??????????????????????????");
+//                 Pageable firstPageWithTwoELements = PageRequest.of(0, 2);
+//                 data = partner.getFavouriteEventList();
+//                 Page<Event> test12 = new PageImpl(data);
+//                 return test12;
+//             } else if (filter.equals("applied")) {
+//                 // data = saService.g
+//             } else if (filter.equals("pending payment")) {
+
+//             } else if (filter.equals("confirmed")) {
+
+//             }
+//         }
+//         return eventService.getPublishedEvents(page, size, sort, sortDir, keyword);
     public Page<EventCardDto> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
             @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword) {
@@ -213,6 +249,21 @@ public class EventController {
         return newApplications;
     }
 
+    @GetMapping("/recommended-bp/{id}")
+    public List<BusinessPartner> getRecommendedBusinessPartners(@PathVariable Long id) {
+        Event e = getEventById(id);
+        List<BusinessPartner> allBps = bpService.getAllBusinessPartners();
+        allBps.removeIf(bp -> !eventService.isBpRecommended(bp, e));
+        return allBps;
+    }
+
+    @PostMapping("/remove-pic")
+    public ResponseEntity<String> getNewAppliationsFromEvent(@RequestParam(name = "eid", defaultValue = "1") Long eid,
+            @RequestParam(name = "imageIndex", defaultValue = "0") int imageIndex) {
+        Event e = getEventById(eid);
+        return eventService.removePicture(e, imageIndex);
+    }
+  
     @GetMapping("/categories")
     public List<String> getDistinctCategories() {
         return eventService.getDistinctEventCategories();

@@ -1,7 +1,9 @@
 package com.is4103.backend.model;
-
 import java.time.LocalDateTime;
+import java.util.UUID;
 
+import javax.persistence.Column;
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,6 +14,7 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.GenericGenerator;
 
 import lombok.Data;
 
@@ -20,9 +23,15 @@ import lombok.Data;
 @JsonView(EventViews.Public.class)
 public class SellerApplication {
 
+//     @Id
+//     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//     private long id;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID id;
 
     // @ManyToOne
     // @JsonIgnoreProperties({ "events", "approved", "approvalMessage",

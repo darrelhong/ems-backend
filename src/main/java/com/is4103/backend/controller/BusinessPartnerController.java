@@ -19,8 +19,11 @@ import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
+import com.is4103.backend.model.Product;
+import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.service.BusinessPartnerService;
 import com.is4103.backend.service.FileStorageService;
+import com.is4103.backend.service.SellerApplicationService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 
@@ -57,7 +60,10 @@ public class BusinessPartnerController {
     @Autowired
     private FileStorageService fileStorageService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @Autowired
+    private SellerApplicationService sellerApplicationService;
+
+    // @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
     public List<BusinessPartner> getAllBusinessPartners() {
         return bpService.getAllBusinessPartners();
@@ -233,8 +239,19 @@ public class BusinessPartnerController {
 
     @GetMapping(value = "/getAllEventByBpId/{bpId}")
     public List<Event> getAllEventByBpId(@PathVariable Long bpId) {
-
         return bpService.getAllEventsByBp(bpId);
+    }
+
+    @GetMapping(value = "/products/{id}")
+    public List<Product> getProducts(@PathVariable Long id) {
+        return bpService.getProductsByBp(id);
+    }
+
+    // REMOVED CANCELLED APPLICATIONS FROM HERE
+    @GetMapping(value = "/applications/{id}")
+    public List<SellerApplication> getSellerApplications(@PathVariable Long id) {
+        BusinessPartner bp = getBusinessPartnerById(id);
+        return sellerApplicationService.removeCancelledApplications(bp.getSellerApplications());
     }
 
 }

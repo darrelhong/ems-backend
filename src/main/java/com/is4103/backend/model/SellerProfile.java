@@ -27,23 +27,23 @@ public class SellerProfile {
 
     @ManyToOne
     @ElementCollection(targetClass = Event.class)
-//     @JsonIgnoreProperties({ "sellerProfiles", "eventOrganiser", "favouriteBusinessPartners", "sellerApplications",
-        //     "ticketTransactions", "products" })
-    @JsonIgnore
+    @JsonIgnoreProperties({ "sellerProfiles", "eventOrganiser", "favouriteBusinessPartners", "sellerApplications",
+            "ticketTransactions", "products" })
+    // @JsonIgnore
     private Event event;
 
     @ManyToOne
     @ElementCollection(targetClass = BusinessPartner.class)
 //     @JsonIgnore
-    @JsonIgnoreProperties({ "businessCategory", "products", "events", "sellerProfiles", "favouriteEventList", "attendeeFollowers",
+    @JsonIgnoreProperties({ "roles","businessCategory", "products", "events", "sellerProfiles", "favouriteEventList", "attendeeFollowers",
             "followEventOrganisers", "sellerApplications", "enquiries" })
     private BusinessPartner businessPartner;
 
     private String description;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "sellerProfile")
-    // @JsonIgnoreProperties({"sellerProfile","products"})
-    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "sellerProfile")
+    @JsonIgnoreProperties({"sellerProfile","products"})
+    // @JsonIgnore
     private List<Booth> booths;
 
     @ElementCollection(targetClass = String.class)
