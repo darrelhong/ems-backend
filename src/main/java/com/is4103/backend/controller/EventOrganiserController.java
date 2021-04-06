@@ -467,4 +467,17 @@ public class EventOrganiserController {
 
     }
 
+     @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getAllEventSalesEarned")
+    public double getAllEventSalesEarned() {
+       
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if(user == null){
+            throw new AuthenticationServiceException("An error has occured");
+        }
+       return eoService.getAllEventSales(user);
+
+    }
+
 }
