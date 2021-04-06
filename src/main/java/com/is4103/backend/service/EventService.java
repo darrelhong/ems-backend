@@ -133,7 +133,8 @@ public class EventService {
     };
 
     public boolean isBpRecommended(BusinessPartner bp, Event e) {
-        List<String> eventCategories = e.getCategories();
+        // List<String> eventCategories = e.getCategories();
+        String eventCategory = e.getEventCategory();
         List<SellerApplication> applications = e.getSellerApplications();
         // CHECK 1: DONT RECO IF APPLIED ALR
         List<Long> bpIds = applications.stream().map(application -> application.getBusinessPartner().getId())
@@ -150,7 +151,8 @@ public class EventService {
         }
 
         // CHECK 3: RECO IF MATCHING CATEGORY
-        return eventCategories.contains(bp.getBusinessCategory());
+        return eventCategory.equals(bp.getBusinessCategory());
+        // return eventCategories.contains(bp.getBusinessCategory()); old implementation
         // btw this works but data init, i make applications for every single BP so
         // there isnt any more BPs that are suitable
     }
@@ -172,6 +174,7 @@ public class EventService {
             ex.printStackTrace();
             return ResponseEntity.ok("Error");
         }
+    }
 
     public List<String> getDistinctEventCategories() {
         return eventRepository.getDistinctEventCategories();
