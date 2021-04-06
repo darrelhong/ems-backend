@@ -445,7 +445,7 @@ public class EventOrganiserController {
             sales = eoService.getTotalSalesByEvent(eventId);
             return df2.format(sales);
         } catch (StripeException e) {
-           return e.toString();
+            return "An Error has occured";
         }
       
         }
@@ -552,11 +552,19 @@ public class EventOrganiserController {
             double allEventSales =  eoService.getAllEventSales(user);
             return df2.format(allEventSales);
         } catch (StripeException e) {
-            return e.toString();
+            return "An Error has occured";
         }
 
     }
 
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getCategoryRankList")
+    public Map<String, Long> getCategoryRankList() {
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        return eoService.getCategoryRankList(user);
+
+    }
 
    
 }

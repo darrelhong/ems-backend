@@ -969,6 +969,29 @@ public class EventOrganiserService {
         return boothCapacity;
     }
 
+    public  Map<String, Long> getCategoryRankList(EventOrganiser eo) {
+        List<Object[]> applicationRankList = eventRepository.getApplicationRankList();
+        Map<String, BigInteger> map = new HashMap<String, BigInteger>();
+        List<Event> categoryRankList = new ArrayList<>();
+        List<Event> eoEvents = eventService.getAllEventsByOrganiser(eo.getId());
+        System.out.println(eoEvents.size());
+        if (applicationRankList != null && !applicationRankList.isEmpty()) {
+            map = new HashMap<String, BigInteger>();
+            for (Object[] object : applicationRankList) {
+                for (Event e : eoEvents) {
+                    if ((BigInteger) object[0] == BigInteger.valueOf(e.getEid()) && !e.isHidden() && e.getEventStatus().toString().equals("CREATED")) {
+
+                        e.setApplicationCount((BigInteger)object[1]);
+                        categoryRankList.add(e);
+                    }
+                }
+            }
+        }
+        Map<String, Long> categoryCountMap = new HashMap<String, Long>();
+        categoryCountMap = categoryRankList.stream().collect(Collectors.groupingBy(Event::getCategory, Collectors.counting()));
+        System.out.println(categoryCountMap);
+        return categoryCountMap;
+    }
 
 
 }
