@@ -881,16 +881,17 @@ public class EventOrganiserService {
         List<SellerApplication> allSellerApplication = new ArrayList<>();
         allSellerApplication = sellerAppService.getAllSellerApplications();
         double totalSales = 0;
+      
         for (SellerApplication sa : allSellerApplication) {
 
-            if (sa.getEvent().getEid() == eventId && sa.getPaymentStatus().toString().equals("COMPLETED")) {
+            if (sa.getEvent().getEventOrganiser().getId() == eo.getId() sa.getPaymentStatus().toString().equals("COMPLETED")) {
                 PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
                 double amount = paymentIntent.getAmount();
                 totalSales += amount;
             }
         }
 
-        return bpNum;
+        return totalSales;
     }  
        
 
