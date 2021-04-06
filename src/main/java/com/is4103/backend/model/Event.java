@@ -87,7 +87,7 @@ public class Event {
     // @Column(nullable = false)
     private String address;
 
-    // @Column(nullable = false)
+    // @Column(nullable = false) 
     private String descriptions;
 
     private String eventCategory;
