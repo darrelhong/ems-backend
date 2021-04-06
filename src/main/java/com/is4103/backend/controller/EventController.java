@@ -3,6 +3,7 @@ package com.is4103.backend.controller;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.is4103.backend.dto.CreateEventRequest;
@@ -16,6 +17,7 @@ import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.model.EventViews;
+import com.is4103.backend.model.PaymentStatus;
 import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.model.SellerApplicationStatus;
 import com.is4103.backend.model.SellerProfile;
@@ -174,38 +176,44 @@ public class EventController {
     }
 
     // updated to only get events that start current time
-    // @GetMapping(path = "/get-events")
-    // public Page<Event> getEvents(@RequestParam(name = "page", defaultValue = "0")
-    // int page,
-    // @RequestParam(name = "size", defaultValue = "10") int size,
-    // @RequestParam(defaultValue = "all") String filter, @RequestParam(required =
-    // false) String sort,
-    // @RequestParam(required = false) String sortDir, @RequestParam(required =
-    // false) String keyword,
-    // @RequestParam(required = false) String user) {
-    // System.out.println("*********filter********" + filter);
-    // System.out.println("*********user**********" + user);
-    // if (user != null) {
-    // // System.out.println(filter);
-    // List<Event> data = null;
-    // BusinessPartner partner =
-    // bpService.getBusinessPartnerById(Long.parseLong(user));
-    // if (filter.equals("favourite")) {
-    // // System.out.println("reached??????????????????????????");
-    // Pageable firstPageWithTwoELements = PageRequest.of(0, 2);
-    // data = partner.getFavouriteEventList();
-    // Page<Event> test12 = new PageImpl(data);
-    // return test12;
-    // } else if (filter.equals("applied")) {
-    // // data = saService.g
-    // } else if (filter.equals("pending payment")) {
-
-    // } else if (filter.equals("confirmed")) {
-
-    // }
-    // }
-    // return eventService.getPublishedEvents(page, size, sort, sortDir, keyword);
-    // }
+    @GetMapping(path = "/get_events")
+    public Page<Event> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(defaultValue = "all") String filter, @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String user) {
+        // System.out.println("*********filter********" + filter);
+        // System.out.println("*********user**********" + user);
+        if (user != null) {
+            // System.out.println(filter);
+            List<Event> data = null;
+            BusinessPartner partner = bpService.getBusinessPartnerById(Long.parseLong(user));
+            if (filter.equals("favourite")) {
+                System.out.println(data);
+                // Pageable firstPageWithTwoELements = PageRequest.of(0, 2);
+                data = partner.getFavouriteEventList();
+                Page<Event> events = new PageImpl<>(data);
+                return events;
+            } else if (filter.equals("applied")) {
+                data = partner.getSellerApplications().stream().map(sa -> sa.getEvent()).collect(Collectors.toList());
+                Page<Event> events = new PageImpl<>(data);
+                return events;
+            } else if (filter.equals("pending payment")) {
+                data = partner.getSellerApplications().stream()
+                        .filter(sa -> sa.getPaymentStatus() == PaymentStatus.PENDING).map(sa -> sa.getEvent())
+                        .collect(Collectors.toList());
+                Page<Event> events = new PageImpl<>(data);
+                return events;
+            } else if (filter.equals("confirmed")) {
+                data = partner.getSellerApplications().stream()
+                        .filter(sa -> sa.getSellerApplicationStatus() == SellerApplicationStatus.CONFIRMED)
+                        .map(sa -> sa.getEvent()).collect(Collectors.toList());
+                Page<Event> events = new PageImpl<>(data);
+                return events;
+            }
+        }
+        return eventService.getPublishedEvents(page, size, sort, sortDir, keyword);
+    }
 
     @GetMapping(path = "/get-events")
     public Page<EventCardDto> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,

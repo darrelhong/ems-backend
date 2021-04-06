@@ -54,6 +54,36 @@ public class EventService {
         return eventRepository.findByIsPublished(true, PageRequest.of(page, size));
     }
 
+    public Page<Event> getPublishedEvents(int page, int size, String sortBy, String sortDir, String keyword) {
+        Sort sort = null;
+        LocalDateTime now = LocalDateTime.now();
+
+        if (sortBy != null && sortDir != null) {
+            if (sortDir.equals("desc")) {
+                sort = Sort.by(sortBy).descending();
+            } else {
+                sort = Sort.by(sortBy).ascending();
+            }
+        }
+        if (keyword != null) {
+            if (sort == null) {
+                return eventRepository.findByNameContainingAndIsPublishedAndEventStartDateGreaterThan(keyword, true,
+                        now, PageRequest.of(page, size));
+            } else {
+                return eventRepository.findByNameContainingAndIsPublishedAndEventStartDateGreaterThan(keyword, true,
+                        now, PageRequest.of(page, size, sort));
+            }
+        }
+
+        if (sort == null) {
+            return eventRepository.findByIsPublishedAndEventStartDateGreaterThan(true, now, PageRequest.of(page, size));
+        } else {
+            return eventRepository.findByIsPublishedAndEventStartDateGreaterThan(true, now,
+                    PageRequest.of(page, size, sort));
+        }
+
+    }
+
     public <T> Page<T> getPublishedEvents(int page, int size, String sortBy, String sortDir, String keyword,
             Class<T> type) {
         Sort sort = null;
@@ -142,7 +172,7 @@ public class EventService {
             ex.printStackTrace();
             return ResponseEntity.ok("Error");
         }
-      
+
     public List<String> getDistinctEventCategories() {
         return eventRepository.getDistinctEventCategories();
     }

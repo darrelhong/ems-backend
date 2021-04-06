@@ -54,6 +54,13 @@ public class SellerApplicationService {
                 .orElseThrow(() -> new SellerApplicationNotFoundException("Application Not Found!"));
     }
 
+    public Long getSellerApplicationEventId(String id)  throws SellerApplicationNotFoundException {
+        try {
+            SellerApplication sa = getSellerApplicationById(id);
+            return sa.getEvent().getEid();
+        }
+    }
+
     public SellerApplication createSellerApplication(SellerApplication sellerApplication) {
         return sellerApplicationRepository.save(sellerApplication);
     }
@@ -126,7 +133,8 @@ public class SellerApplicationService {
     }
 
     public List<SellerApplication> removeCancelledApplications(List<SellerApplication> applications) {
-        applications.removeIf(application -> application.getSellerApplicationStatus().equals(SellerApplicationStatus.CANCELLED));
+        applications.removeIf(
+                application -> application.getSellerApplicationStatus().equals(SellerApplicationStatus.CANCELLED));
         return applications;
     }
 }
