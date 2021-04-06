@@ -454,6 +454,7 @@ public class EventOrganiserController {
         }
     }
 
+     
     @PreAuthorize("hasAnyRole('EVNTORG')")
     @GetMapping(path = "/getNumberOfBusinessPartnerByEvent/{eventId}")
     public Long getNumberOfBusinessPartnerByEvent(@PathVariable Long eventId) {
@@ -467,17 +468,95 @@ public class EventOrganiserController {
 
     }
 
-     @PreAuthorize("hasAnyRole('EVNTORG')")
-    @GetMapping(path = "/getAllEventSalesEarned")
-    public double getAllEventSalesEarned() {
+    
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getNumberOfAllBoothApplications")
+    public Long getNumberOfBoothApplications() {
        
         EventOrganiser user = eoService
                 .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if(user == null){
             throw new AuthenticationServiceException("An error has occured");
         }
-       return eoService.getAllEventSales(user);
+       return eoService.getNumberOfBoothApplications(user);
 
     }
 
+ 
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getNumberOfBoothSoldByEvent/{eventId}")
+    public Long getNumberOfBoothSoldByEvent(@PathVariable Long eventId) {
+       
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if(user == null){
+            throw new AuthenticationServiceException("An error has occured");
+        }
+       return eoService.getNumberOfBoothSoldByEvent(eventId);
+
+    }
+
+ 
+       @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getNumberOfBoothCapacityByEvent/{eventId}")
+    public Long getNumberOfBoothCapacityByEvent(@PathVariable Long eventId) {
+       
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if(user == null){
+            throw new AuthenticationServiceException("An error has occured");
+        }
+       return eoService.getNumberOfBoothCapacityByEvent(eventId);
+
+    }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getNumberOfBoothSoldByAllEvent")
+    public Long getNumberOfBoothSoldByAllEvent() {
+       
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if(user == null){
+            throw new AuthenticationServiceException("An error has occured");
+        }
+       return eoService.getNumberOfBoothSoldByAllEvent(user);
+
+    }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getNumberofAllBoothCapacity")
+    public Long getNumberofAllBoothCapacity() {
+
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if (user == null) {
+            throw new AuthenticationServiceException("An error has occured");
+        }
+
+        return eoService.getNumberofAllBoothCapacity(user);
+
+    }
+    
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getAllEventSalesEarned")
+    public String getAllEventSalesEarned() {
+        DecimalFormat df2 = new DecimalFormat("#.##");
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if (user == null) {
+            throw new AuthenticationServiceException("An error has occured");
+        }
+        try {
+            double allEventSales =  eoService.getAllEventSales(user);
+            return df2.format(allEventSales);
+        } catch (StripeException e) {
+            return e.toString();
+        }
+
+    }
+
+
+   
 }

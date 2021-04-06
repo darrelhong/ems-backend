@@ -876,7 +876,23 @@ public class EventOrganiserService {
 
         return bpNum;
     }  
-     public double getAllEventSales(EventOrganiser eo){
+
+      
+    public Long getNumberOfBoothApplications(EventOrganiser eo){
+       
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+        Long boothAppNum = Long.valueOf(0);
+        for (SellerApplication sa : allSellerApplication) {
+
+            if (sa.getEvent().getEventOrganiser().getId() == eo.getId() && sa.getPaymentStatus().toString().equals("COMPLETED")) {
+              boothAppNum += 1;
+            }
+        }
+
+        return boothAppNum;
+    } 
+     public double getAllEventSales(EventOrganiser eo) throws StripeException{
        
         List<SellerApplication> allSellerApplication = new ArrayList<>();
         allSellerApplication = sellerAppService.getAllSellerApplications();
@@ -884,7 +900,7 @@ public class EventOrganiserService {
       
         for (SellerApplication sa : allSellerApplication) {
 
-            if (sa.getEvent().getEventOrganiser().getId() == eo.getId() && sa.getPaymentStatus().toString().equals("COMPLETED")) {
+            if (sa.getEvent().getEventOrganiser().getId().equals(eo.getId()) && sa.getPaymentStatus().toString().equals("COMPLETED")) {
                 PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
                 double amount = paymentIntent.getAmount();
                 totalSales += amount;
@@ -894,6 +910,66 @@ public class EventOrganiserService {
         return totalSales;
     }  
        
+    public Long getNumberOfBoothSoldByEvent(Long eventId) {
+
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+        Long numBoothSold = Long.valueOf(0);
+        for (SellerApplication sa : allSellerApplication) {
+
+            if (sa.getEvent().getEid() == eventId && sa.getPaymentStatus().toString().equals("COMPLETED")) {
+                numBoothSold += sa.getBoothQuantity();
+            }
+        }
+
+        return numBoothSold;
+    }
+
+    public Long getNumberOfBoothCapacityByEvent(Long eventId) {
+
+        
+        Event event = eventService.getEventById(eventId);
+        Long boothCapacity = Long.valueOf(0);
+      
+            if (event.getEventStatus().toString().equals("CREATED") && !event.isHidden()) {
+               boothCapacity += event.getBoothCapacity();
+            }  
+
+        return boothCapacity;
+    }
+
+    public Long getNumberOfBoothSoldByAllEvent(EventOrganiser eo) {
+
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+        Long boothSold = Long.valueOf(0);
+        for (SellerApplication sa : allSellerApplication) {
+
+            if (sa.getEvent().getEventOrganiser().getId() == eo.getId() && sa.getPaymentStatus().toString().equals("COMPLETED")) {
+                boothSold += sa.getBoothQuantity();
+            }
+        }
+
+        return boothSold;
+    }
+
+    public Long getNumberofAllBoothCapacity(EventOrganiser eo) {
+
+        List<Event> allEvents = new ArrayList<>();
+        allEvents = this.getValidBpEventsByEventOrgId(eo.getId());
+        Long boothCapacity = Long.valueOf(0);
+
+        for (Event e : allEvents) {
+
+            if (e.getEventStatus().toString().equals("CREATED") && !e.isHidden()){
+               boothCapacity += e.getBoothCapacity();
+            }
+        }
+
+        return boothCapacity;
+    }
+
+
 
 }
 
