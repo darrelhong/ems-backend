@@ -1,10 +1,10 @@
 package com.is4103.backend.controller;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -413,4 +413,58 @@ public class EventOrganiserController {
         return eoService.getBoothDashboardMostPopularEventOfTheYear(user);
 
     }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getEventRatingCountList")
+    public Map<Integer, Long> getEventRatingCountList() {
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        return eoService.getEventRatingCountList(user);
+
+    }
+    
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getOverallEventRating")
+    public String getOverAllEventRating() {
+        DecimalFormat df2 = new DecimalFormat("#.##");
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        double rating = eoService.getOverAllEventRating(user);
+        return df2.format(rating);
+
+    }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getTotalSalesByEvent/{eventId}")
+    public String getTotalSalesByEvent(@PathVariable Long eventId) {
+        DecimalFormat df2 = new DecimalFormat("#.##");
+        EventOrganiser user = eoService.getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if(user != null){
+        double sales;
+        try {
+            sales = eoService.getTotalSalesByEvent(eventId);
+            return df2.format(sales);
+        } catch (StripeException e) {
+           return e.toString();
+        }
+      
+        }
+        else{
+            throw new AuthenticationServiceException("An error has occured");
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getNumberOfBusinessPartnerByEvent/{eventId}")
+    public Long getNumberOfBusinessPartnerByEvent(@PathVariable Long eventId) {
+       
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if(user == null){
+            throw new AuthenticationServiceException("An error has occured");
+        }
+       return eoService.getNumberOfBusinessPartnerByEvent(eventId);
+
+    }
+
 }

@@ -10,9 +10,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.mail.internet.InternetAddress;
 import javax.transaction.Transactional;
@@ -29,6 +31,7 @@ import com.is4103.backend.model.Event;
 // import com.is4103.backend.model.EventBoothTransaction;
 import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.model.EventOrganiser;
+import com.is4103.backend.model.Review;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.TicketTransaction;
@@ -96,6 +99,9 @@ public class EventOrganiserService {
 
     @Autowired
     private TicketingService ttService;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @Value("${stripe.apikey}")
     private String stripeApiKey;
@@ -806,7 +812,87 @@ public class EventOrganiserService {
          return popularEventList;
      }
 
-     
+     public Map<Integer, Long> getEventRatingCountList(EventOrganiser eo){
+      List<Review> AllEoReviews = reviewService.getReviewsByEO(eo.getId());
+      Map<Integer, Long> result = AllEoReviews.stream().collect(Collectors.groupingBy(Review::getRating, Collectors.counting()));
+               
+     return result;
+     }
+
+      public double getOverAllEventRating(EventOrganiser eo){
+      List<Review> AllEoReviews = reviewService.getReviewsByEO(eo.getId());
+      Long totalRatingValue = Long.valueOf(0);
+      Long totalRatingCount =  Long.valueOf(0);
+      double rating = 0;
+      Map<Integer, Long> map = new HashMap<Integer,Long>();
+      map = AllEoReviews.stream().collect(Collectors.groupingBy(Review::getRating, Collectors.counting()));
+        if (map != null && !map.isEmpty()) {
+        Iterator it = map.entrySet().iterator();
+        while (it.hasNext()) {
+        Map.Entry<Integer,Long> pair = (Map.Entry<Integer,Long>)it.next();
+        System.out.println(pair.getKey() + " = " + pair.getValue());
+        totalRatingValue += pair.getKey() * pair.getValue();
+        totalRatingCount += pair.getValue();
+        it.remove(); // avoids a ConcurrentModificationException
+    }
+         rating = (double)totalRatingValue/totalRatingCount;
+           
+         }
+           System.out.println(rating);
+     return rating;
+     }
+
+     public double getTotalSalesByEvent(Long eventId) throws StripeException{
+         Stripe.apiKey = stripeSecretKey;
+
+         List<SellerApplication> allSellerApplication = new ArrayList<>();
+         Date now = new Date();
+         allSellerApplication = sellerAppService.getAllSellerApplications();
+
+         double totalSales = 0;
+         for (SellerApplication sa : allSellerApplication) {
+
+             if (sa.getEvent().getEid() == eventId && sa.getPaymentStatus().toString().equals("COMPLETED")){
+                 PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
+                 double amount = paymentIntent.getAmount();
+                 totalSales += amount;
+             }
+         }
+
+         return totalSales;
+     }
+  
+    public Long getNumberOfBusinessPartnerByEvent(Long eventId){
+       
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+        Long bpNum = Long.valueOf(0);
+        for (SellerApplication sa : allSellerApplication) {
+
+            if (sa.getEvent().getEid() == eventId && sa.getPaymentStatus().toString().equals("COMPLETED")) {
+              bpNum += 1;
+            }
+        }
+
+        return bpNum;
+    }  
+     public Long getAllEventSales(EventOrganiser eo){
+       
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+        double totalSales = 0;
+        for (SellerApplication sa : allSellerApplication) {
+
+            if (sa.getEvent().getEid() == eventId && sa.getPaymentStatus().toString().equals("COMPLETED")) {
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+            }
+        }
+
+        return bpNum;
+    }  
+       
 
 }
 
