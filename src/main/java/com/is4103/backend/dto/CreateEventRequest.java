@@ -38,8 +38,10 @@ public class CreateEventRequest {
     @NotEmpty
     private String descriptions;
 
-    @ElementCollection(targetClass = String.class)
-    private List<String> categories;
+    // @ElementCollection(targetClass = String.class)
+    // private List<String> categories;
+
+    private String eventCategory;
 
     private String website;
 

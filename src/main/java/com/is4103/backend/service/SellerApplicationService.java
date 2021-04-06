@@ -58,6 +58,8 @@ public class SellerApplicationService {
         try {
             SellerApplication sa = getSellerApplicationById(id);
             return sa.getEvent().getEid();
+        } catch (Exception e ) {
+            throw new SellerApplicationNotFoundException();
         }
     }
 

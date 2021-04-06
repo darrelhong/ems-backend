@@ -25,7 +25,6 @@ import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.service.BusinessPartnerService;
 import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.service.EventService;
-import com.is4103.backend.service.SellerApplicationService;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,9 +53,6 @@ public class EventController {
 
     @Autowired
     private EventOrganiserService eventOrganiserService;
-
-    @Autowired
-    private SellerApplicationService saService;
 
     @Autowired
     private BusinessPartnerService bpService;
@@ -151,7 +147,7 @@ public class EventController {
         event.setName(createEventRequest.getName());
         event.setAddress(createEventRequest.getAddress());
         event.setDescriptions(createEventRequest.getDescriptions());
-        event.setCategories(createEventRequest.getCategories());
+        event.setEventCategory(createEventRequest.getEventCategory());
         event.setSellingTicket(createEventRequest.isSellingTicket());
         event.setTicketPrice(createEventRequest.getTicketPrice());
         event.setTicketCapacity(createEventRequest.getTicketCapacity());
