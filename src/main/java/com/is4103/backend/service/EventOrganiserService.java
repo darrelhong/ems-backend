@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.time.temporal.ChronoUnit;
 
 import javax.mail.internet.InternetAddress;
 import javax.transaction.Transactional;
@@ -55,6 +56,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import ch.qos.logback.core.util.Duration;
 
 @Service
 public class EventOrganiserService {
@@ -718,6 +721,224 @@ public class EventOrganiserService {
         return totalSales;
 
     }
+
+    public double getMonthlyTicketSales(EventOrganiser eo) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+
+        double totalSales = 0;
+        for (TicketTransaction tt : allticketTrans) {
+
+            if (tt.getEvent().getEventOrganiser().getId() == eo.getId()
+                    && tt.getPaymentStatus().toString().equals("COMPLETED")
+                    && (tt.getDateTimeOrdered().getYear() == now.getYear()) && (tt.getDateTimeOrdered().getMonth() == now.getMonth())) {
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+            }
+        }
+
+        return totalSales;
+
+    }
+
+
+    
+    public double getYearlyTicketSales(EventOrganiser eo) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+
+        double totalSales = 0;
+        for (TicketTransaction tt : allticketTrans) {
+
+            if (tt.getEvent().getEventOrganiser().getId() == eo.getId()
+                    && tt.getPaymentStatus().toString().equals("COMPLETED")
+                    && (tt.getDateTimeOrdered().getYear() == now.getYear())) {
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+            }
+        }
+
+        return totalSales;
+
+    }
+
+
+    public double getTotalTicketSales(EventOrganiser eo)throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        // LocalDateTime now = LocalDateTime.now();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+
+        double totalSales = 0;
+        for (TicketTransaction tt : allticketTrans) {
+
+            if (tt.getEvent().getEventOrganiser().getId() == eo.getId()) {
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+            }
+        }
+
+        return totalSales;
+
+    }
+
+
+    
+    public double getTotalTicketSalesEvent(EventOrganiser eo, Long eventId)throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        // LocalDateTime now = LocalDateTime.now();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+
+        double totalSales = 0;
+        for (TicketTransaction tt : allticketTrans) {
+
+            if (tt.getEvent().getEventOrganiser().getId() == eo.getId() && tt.getEvent().getEid() == eventId) {
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+            }
+        }
+
+        return totalSales;
+
+    }
+
+    public int getTotalTicketSalesNumber(EventOrganiser eo)throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+        int count = 0; 
+        for (TicketTransaction tt : allticketTrans) {
+
+            if (tt.getEvent().getEventOrganiser().getId() == eo.getId()) {
+               count++;
+            }
+        }
+
+        return count;
+
+    }
+
+    public int getTotalTicketSalesNumberByEvent(EventOrganiser eo, Long eventId)throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+        int count = 0; 
+        for (TicketTransaction tt : allticketTrans) {
+
+            if (tt.getEvent().getEventOrganiser().getId() == eo.getId() && tt.getEvent().getEid() == eventId) {
+               count++;
+            }
+        }
+
+        return count;
+
+    }
+
+    public List<Event> getTopTicketSalesEvents(EventOrganiser eo) throws StripeException {
+    
+        Stripe.apiKey = stripeSecretKey;
+        List<Event> events = new ArrayList<>();
+        List<Event> finalEvents = new ArrayList<>();
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+        int getAllTen =0;
+        for (TicketTransaction tt : allticketTrans) {
+                if(!events.contains(tt.getEvent())){
+                    events.add(tt.getEvent());
+                }
+            }
+        while(getAllTen <11){
+            double highestSales= 0.0;
+            Event eventToBeRemoved = new Event();
+            if(events.size() > 0) {
+               for(int i=0; i<events.size(); i++){
+                List<TicketTransaction> transactions = events.get(i).getTicketTransactions();
+                double amount =0.0;
+                for(TicketTransaction tt : transactions){
+                    PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
+                    amount += paymentIntent.getAmount();
+                }
+                if(amount > highestSales){
+                    highestSales = amount;
+                    eventToBeRemoved = events.get(i);
+                }
+            }
+
+            finalEvents.add(eventToBeRemoved);
+            events.remove(eventToBeRemoved);
+            getAllTen += 1; 
+            } else{
+                break;
+            }
+            
+        }
+
+        return finalEvents;
+    
+    }
+
+    public List<Event> getEventsWithTicketTransactionsCurrent (EventOrganiser eo) {
+        List<Event> events = new ArrayList<>();
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+        LocalDateTime now = LocalDateTime.now();
+
+        for (TicketTransaction tt : allticketTrans) {
+                if(!events.contains(tt.getEvent()) && tt.getEvent().getSalesEndDate().isAfter(now)){
+                    events.add(tt.getEvent());
+                }
+            }
+        return events;
+    }
+
+    public List<Event> getEventsWithTicketTransactionsPast (EventOrganiser eo) {
+        List<Event> events = new ArrayList<>();
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+        LocalDateTime now = LocalDateTime.now();
+
+        for (TicketTransaction tt : allticketTrans) {
+                if(!events.contains(tt.getEvent()) && tt.getEvent().getSalesEndDate().isBefore(now)){
+                    events.add(tt.getEvent());
+                }
+            }
+        return events;
+    }
+
+
+    public Long getDaysToEndOfTicketSale(Long eventId) {
+        
+        LocalDateTime now = LocalDateTime.now();
+       Event event = eventService.getEventById(eventId);
+    //   long daysBetween = DAYS.between(now, event.getSalesEndDate());
+    return now.until(event.getSalesEndDate(), ChronoUnit.DAYS);
+    }
+
+    public Long getDaysToStartOfEvent(Long eventId) {
+        
+        LocalDateTime now = LocalDateTime.now();
+       Event event = eventService.getEventById(eventId);
+    //   long daysBetween = DAYS.between(now, event.getSalesEndDate());
+    return now.until(event.getEventStartDate(), ChronoUnit.DAYS);
+    }
+    
+
+
 
     //   public List<Event> getMostPopularEventList(EventOrganiser eo) {
     //    // Stripe.apiKey = stripeSecretKey;
