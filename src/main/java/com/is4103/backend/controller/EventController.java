@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.BeanUtils;
 
 @RestController
 @RequestMapping(path = "/event")
@@ -206,6 +207,8 @@ public class EventController {
                         .map(sa -> sa.getEvent()).collect(Collectors.toList());
                 Page<Event> events = new PageImpl<>(data);
                 return events;
+            } else if (filter.equals("past")) {
+                return eventService.getPastPublishedEvents(page, size, sort, sortDir, keyword);
             }
         }
         return eventService.getPublishedEvents(page, size, sort, sortDir, keyword);

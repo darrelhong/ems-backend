@@ -116,6 +116,36 @@ public class EventService {
 
     }
 
+    public Page<Event> getPastPublishedEvents(int page, int size, String sortBy, String sortDir, String keyword) {
+        Sort sort = null;
+        LocalDateTime now = LocalDateTime.now();
+
+        if (sortBy != null && sortDir != null) {
+            if (sortDir.equals("desc")) {
+                sort = Sort.by(sortBy).descending();
+            } else {
+                sort = Sort.by(sortBy).ascending();
+            }
+        }
+        if (keyword != null) {
+            if (sort == null) {
+                return eventRepository.findByNameContainingAndIsPublishedAndEventEndDateLessThan(keyword, true, now,
+                        PageRequest.of(page, size));
+            } else {
+                return eventRepository.findByNameContainingAndIsPublishedAndEventEndDateLessThan(keyword, true, now,
+                        PageRequest.of(page, size, sort));
+            }
+
+        }
+        if (sort == null) {
+            return eventRepository.findByIsPublishedAndEventEndDateLessThan(true, now, PageRequest.of(page, size));
+        } else {
+            return eventRepository.findByIsPublishedAndEventEndDateLessThan(true, now,
+                    PageRequest.of(page, size, sort));
+        }
+
+    }
+
     public List<Event> getAllEventsByOrganiser(Long oid) {
         return eventRepository.getAllEventsByOrganiser(oid);
     }
@@ -166,7 +196,7 @@ public class EventService {
         System.out.println(oldFilepath);
         try {
             Files.deleteIfExists(oldFilepath);
-            //at this point we remove it from the arraylist
+            // at this point we remove it from the arraylist
             e.getImages().remove(0);
             eventRepository.save(e);
             return ResponseEntity.ok("Success");
