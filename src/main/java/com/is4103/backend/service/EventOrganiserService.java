@@ -876,7 +876,7 @@ public class EventOrganiserService {
 
         return bpNum;
     }  
-     public Long getAllEventSales(EventOrganiser eo){
+     public double getAllEventSales(EventOrganiser eo){
        
         List<SellerApplication> allSellerApplication = new ArrayList<>();
         allSellerApplication = sellerAppService.getAllSellerApplications();
@@ -884,7 +884,7 @@ public class EventOrganiserService {
       
         for (SellerApplication sa : allSellerApplication) {
 
-            if (sa.getEvent().getEventOrganiser().getId() == eo.getId() sa.getPaymentStatus().toString().equals("COMPLETED")) {
+            if (sa.getEvent().getEventOrganiser().getId() == eo.getId() && sa.getPaymentStatus().toString().equals("COMPLETED")) {
                 PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
                 double amount = paymentIntent.getAmount();
                 totalSales += amount;
