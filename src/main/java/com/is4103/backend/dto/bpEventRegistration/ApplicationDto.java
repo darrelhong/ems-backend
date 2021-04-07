@@ -1,4 +1,4 @@
-package com.is4103.backend.dto.ticketing;
+package com.is4103.backend.dto.bpEventRegistration;
 
 import javax.validation.constraints.NotNull;
 
@@ -9,13 +9,16 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CheckoutDto {
+public class ApplicationDto {
 
     @NotNull
     private Long eventId;
 
     @NotNull
-    private Integer ticketQty;
+    private Integer boothQty;
 
-    private String paymentMethodId;
+    @NotNull
+    private String description;
+
+    private String comments;
 }

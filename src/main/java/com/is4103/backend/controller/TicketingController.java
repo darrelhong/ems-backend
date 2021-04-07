@@ -2,16 +2,19 @@ package com.is4103.backend.controller;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
 import com.is4103.backend.dto.ticketing.AdminTicketTransactionDto;
 import com.is4103.backend.dto.ticketing.CheckoutDto;
 import com.is4103.backend.dto.ticketing.CheckoutResponse;
+import com.is4103.backend.dto.ticketing.OrganiserTicketDto;
+import com.is4103.backend.dto.ticketing.TicketTransactionCriteria;
 import com.is4103.backend.dto.ticketing.TransactionListDto;
 import com.is4103.backend.dto.ticketing.TicketTransactionDto;
 import com.is4103.backend.dto.ticketing.TicketTransactionEventDto;
-import com.is4103.backend.dto.ticketing.TicketTransactionsResponse;
+import com.is4103.backend.dto.ticketing.AttendeeTicketTransactionsResponse;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.service.AttendeeService;
@@ -22,7 +25,9 @@ import com.is4103.backend.util.errors.ticketing.CheckoutException;
 import com.is4103.backend.util.errors.ticketing.TicketTransactionNotFoundException;
 import com.stripe.exception.StripeException;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,14 +49,19 @@ public class TicketingController {
     @Autowired
     private AttendeeService attendeeService;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @PostMapping(value = "/checkout")
     public ResponseEntity<CheckoutResponse> createTransaction(@RequestBody @Valid CheckoutDto checkoutDto) {
         try {
+            System.out.println("eventid " + checkoutDto.getEventId());
+            System.out.println("ticketqty " + checkoutDto.getTicketQty());
             Attendee attendee = attendeeService
                     .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
             CheckoutResponse result = ticketingService.createTransaction(checkoutDto.getEventId(),
-                    checkoutDto.getTicketQty(), attendee);
+                    checkoutDto.getTicketQty(), attendee, checkoutDto.getPaymentMethodId());
 
             if (result != null) {
                 return ResponseEntity.ok(result);
@@ -60,6 +70,19 @@ public class TicketingController {
         } catch (StripeException | UserNotFoundException e) {
             System.out.println(e.getMessage());
             throw new CheckoutException();
+        }
+    }
+
+    @GetMapping(value = "/payment-methods")
+    public ResponseEntity<?> getPaymentMethods() {
+        Attendee attendee = attendeeService
+                .getAttendeeByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        try {
+
+            return ResponseEntity.ok(ticketingService.getPaymentMethods(attendee).getData());
+        } catch (StripeException | UserNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -86,12 +109,13 @@ public class TicketingController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = "/attendee/{id}")
     public ResponseEntity<Collection<AdminTicketTransactionDto>> getTicketTransactionsById(@PathVariable Long id) {
-        return ResponseEntity.ok(ticketingService.getTicketTransactionsById(id, AdminTicketTransactionDto.class));
+        return ResponseEntity
+                .ok(ticketingService.getTicketTransactionsByAttendeeId(id, AdminTicketTransactionDto.class));
     }
 
     @PreAuthorize("hasRole('ATND')")
     @GetMapping(value = "/attendee")
-    public ResponseEntity<TicketTransactionsResponse> getTicketTransactionsAttendee(
+    public ResponseEntity<AttendeeTicketTransactionsResponse> getTicketTransactionsAttendee(
             @RequestParam(name = "period", defaultValue = "upcoming") String period) {
 
         if (period.equals("upcoming") || period.equals("previous")) {
@@ -102,9 +126,31 @@ public class TicketingController {
                     TicketTransactionDto.class);
             Collection<TicketTransactionEventDto> events = ticketingService.getDistinctEventsPurchased(attendee,
                     period);
-            TicketTransactionsResponse resp = new TicketTransactionsResponse(tickets, events);
+            AttendeeTicketTransactionsResponse resp = new AttendeeTicketTransactionsResponse(tickets, events);
             return ResponseEntity.ok(resp);
         }
-        return ResponseEntity.badRequest().body(new TicketTransactionsResponse());
+        return ResponseEntity.badRequest().body(new AttendeeTicketTransactionsResponse());
+    }
+
+    @PreAuthorize("hasRole('EVNTORG')")
+    @GetMapping(value = "/event/{eventId}")
+    public ResponseEntity<Page<OrganiserTicketDto>> getTicketTransactionsByEventId(@PathVariable Long eventId,
+            TicketTransactionCriteria ticketTransactionCriteria) {
+        ticketTransactionCriteria.setEventId(eventId);
+
+        Page<TicketTransaction> result = ticketingService.getTicketTransactionIdsByCriteria(ticketTransactionCriteria);
+        Page<OrganiserTicketDto> response = result.map(tt -> modelMapper.map(tt, OrganiserTicketDto.class));
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(value = "/payment-methods/remove")
+    public ResponseEntity<String> removePaymentMethod(@RequestBody Map<String, String> body) {
+        try {
+            ticketingService.removePaymentMethod(body.get("paymentMethodId"));
+            return ResponseEntity.ok("Success");
+        } catch (StripeException ex) {
+            System.out.println(ex.getMessage());
+            return ResponseEntity.badRequest().body("An error occured");
+        }
     }
 }

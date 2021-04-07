@@ -1,6 +1,4 @@
-package com.is4103.backend.dto;
-
-import java.time.LocalDateTime;
+package com.is4103.backend.dto.ticketing;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -10,16 +8,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class EventSearchCriteria {
+public class TicketTransactionCriteria {
     Integer size = 10;
-    Integer page;
+    Integer page = 0;
     String sort;
     String sortDir;
-    String category;
-    LocalDateTime eventStartAfter;
-    Boolean isPublished;
 
-    String keyword;
+    Long eventId;
 
     public PageRequest toPageRequest() {
         if (sort != null && sortDir != null) {

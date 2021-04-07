@@ -57,6 +57,8 @@ public class User {
     @Column(nullable = true)
     private String address;
 
+    private String stripeCustomerId;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(name = "USER_ROLES", joinColumns = { @JoinColumn(name = "USER_ID") }, inverseJoinColumns = {
             @JoinColumn(name = "ROLE_ID") })

@@ -53,7 +53,7 @@ public class BusinessPartner extends User {
 
     @OneToMany(mappedBy = "businessPartner")
     @ElementCollection(targetClass = SellerApplication.class)
-    @JsonIgnoreProperties({ "businessPartner", "event" })
+    @JsonIgnoreProperties({ "businessPartner" })
     private List<SellerApplication> sellerApplications;
 
     @OneToMany(mappedBy = "businessPartner")
@@ -76,6 +76,11 @@ public class BusinessPartner extends User {
     @OneToMany(mappedBy = "partner")
     @ElementCollection(targetClass = Review.class)
     private List<Review> reviews;
+
+    @JsonIgnore
+    @Column(nullable = true)
+    @OneToMany(mappedBy = "businessPartner")
+    private List<Rsvp> rsvps;
 
     // public BusinessPartner() {
     // super();

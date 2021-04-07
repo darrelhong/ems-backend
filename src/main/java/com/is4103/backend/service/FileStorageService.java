@@ -35,6 +35,12 @@ public class FileStorageService {
     @Autowired
     private static String EVENT_IMAGE = "eventimage";
 
+    @Autowired
+    private static String BOOTH_BROCHURE= "brochure";
+
+    @Autowired
+    private static String PRODUCT_IMAGE= "productImage";
+
     // upload profile pic
     @Autowired
     public FileStorageService() {
@@ -71,6 +77,14 @@ public class FileStorageService {
             this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() + "/eventImages")
                     .toAbsolutePath().normalize();
             System.out.println(this.fileStorageLocation);
+        } else if (filetype.equals(BOOTH_BROCHURE)) {
+            this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() + "/brochures")
+                    .toAbsolutePath().normalize();
+            System.out.println(this.fileStorageLocation);
+        } else if (filetype.equals(PRODUCT_IMAGE)) {
+            this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() + "/productImages")
+                    .toAbsolutePath().normalize();
+            System.out.println(this.fileStorageLocation);
         }
         try {
             // create the upload directory
@@ -103,6 +117,14 @@ public class FileStorageService {
                 UUID uuid = UUID.randomUUID();
                 String fileExtension = fileName.split("\\.")[1];
                 fileName = "eventimage-" + uuid + "." + fileExtension;
+            } else if (filetype.equals(BOOTH_BROCHURE)) {
+                UUID uuid = UUID.randomUUID();
+                String fileExtension = fileName.split("\\.")[1];
+                fileName = "brochure-" + uuid + "." + fileExtension;
+            } else if (filetype.equals(PRODUCT_IMAGE)) {
+                UUID uuid = UUID.randomUUID();
+                String fileExtension = fileName.split("\\.")[1];
+                fileName = "productImage-" + uuid + "." + fileExtension;
             }
             System.out.println(fileName);
             // Copy file to the target location (Replacing existing file with the same name)

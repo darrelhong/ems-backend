@@ -19,6 +19,7 @@ import com.is4103.backend.model.BoothApplicationStatus;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
+import com.is4103.backend.model.Product;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.SellerApplication;
@@ -374,4 +375,7 @@ public class BusinessPartnerService {
         return eventList;
     }
 
+    public List<Product> getProductsByBp(Long id) {
+        return bpRepository.findById(id).get().getProducts();
+    }
 }

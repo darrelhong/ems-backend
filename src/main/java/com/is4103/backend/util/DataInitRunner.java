@@ -55,6 +55,9 @@ public class DataInitRunner implements ApplicationRunner {
     private RoleRepository roleRepository;
 
     @Autowired
+    private AttendeeService attendeeService;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -249,6 +252,7 @@ public class DataInitRunner implements ApplicationRunner {
         List<BusinessPartner> bpFollowing = new ArrayList<>();
         bpFollowing.add(bp);
         atn.setFollowedBusinessPartners(bpFollowing);
+        atn.setStripeCustomerId("cus_JFCHLoDF4Gr3sI");
         userRepository.save(atn);
 
         // create second attendee
@@ -305,8 +309,12 @@ public class DataInitRunner implements ApplicationRunner {
             bp = new BusinessPartner();
             bp.setEmail("partner" + i + "@abc.com");
             bp.setName("Partner " + i);
+            bp.setEnabled(true);
             bp.setPassword(passwordEncoder.encode("password"));
             bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
+            Random rand = new Random();
+            int randomInt = rand.nextInt(eventCategories.length);
+            bp.setBusinessCategory(eventCategories[randomInt]);
             userRepository.save(bp);
         }
 
@@ -662,6 +670,64 @@ public class DataInitRunner implements ApplicationRunner {
         eventRepository.save(event8);
         eventRepository.save(event9);
 
+        Event previous = new Event();
+        previous.setEventOrganiser(eventOrg);
+        previous.setName("Previous event");
+        previous.setAddress("some location string");
+        previous.setDescriptions("lorem ipsum dolor sit amet");
+        previous.setPhysical(true);
+        previous.setCategory(eventCategories[7]);
+        previous.setEventStartDate(LocalDateTime.now().minusMonths(1));
+        previous.setEventEndDate(LocalDateTime.now().minusWeeks(3));
+        previous.setSellingTicket(true);
+        previous.setTicketPrice(24);
+        previous.setTicketCapacity(99);
+        previous.setSaleStartDate(LocalDateTime.now().minusMonths(1).minusWeeks(2));
+        previous.setSalesEndDate(LocalDateTime.now().minusMonths(1).minusWeeks(1));
+        previous.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/previous-event/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/previous-event/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/previous-event/image-3.jpg"));
+        previous.setBoothCapacity(305);
+        previous.setRating(5);
+        previous.setEventStatus(EventStatus.CREATED);
+        previous.setHidden(false);
+        previous.setPublished(true);
+        eventRepository.save(previous);
+
+        Attendee atnd = attendeeService.getAttendeeByEmail("attendee@abc.com");
+        TicketTransaction ttransaction = new TicketTransaction();
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(previous);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
+        ticketTransactionRepository.save(ttransaction);
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(previous);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
+        ticketTransactionRepository.save(ttransaction);
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(previous);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
+        ticketTransactionRepository.save(ttransaction);
+
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
+        ticketTransactionRepository.save(ttransaction);
+
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("test_id");
+        ticketTransactionRepository.save(ttransaction);
+
         List<Event> eoEvents = new ArrayList<>();
         // eoEvents = eventOrg.getEvents();
         eoEvents.add(event);
@@ -716,19 +782,22 @@ public class DataInitRunner implements ApplicationRunner {
         }
     }
 
-    // private void setEventCategories(Event event) {
-    //     Random rand = new Random();
-    //     int upperBound = eventCategories.length;
-    //     int numberOfCategories = rand.nextInt(upperBound);
-    //     List<String> categories = new ArrayList<>();
-    //     for (int i = 0; i < numberOfCategories; i++) {
-    //         int categoryIndex = rand.nextInt(upperBound);
-    //         String categoryString = eventCategories[categoryIndex];
-    //         categories.add(categoryString);
-    //     }
-    //     event.setCategories(categories);
-    //     // return event;
-    // }
+    private void setEventCategories(Event event) {
+        Random rand = new Random();
+        int upperBound = eventCategories.length;
+        int randCategoryIndex = rand.nextInt(upperBound);
+        // List<String> categories = new ArrayList<>();
+        // for (int i = 0; i < numberOfCategories; i++) {
+        // int categoryIndex = rand.nextInt(upperBound);
+        // String categoryString = eventCategories[categoryIndex];
+        // if (!categories.contains(categoryString))
+        // categories.add(categoryString);
+        // }
+        // event.setCategories(categories);
+        // return event;
+
+        event.setCategory(eventCategories[randCategoryIndex]);
+    }
 
     @Transactional
     private void createProducts() {
@@ -822,7 +891,7 @@ public class DataInitRunner implements ApplicationRunner {
             }
             ;
             b.setProducts(sellerProfileProducts);
-            b.setBoothNumber(i);
+            b.setBoothNumber(rand.nextInt(70) + 1);
             b.setDescription(lorem.getWords(5, 20));
             b.setSellerProfile(sellerProfileRepository.findById(1L).get());
             boothRepository.save(b);
@@ -837,49 +906,97 @@ public class DataInitRunner implements ApplicationRunner {
         Random rand = new Random();
 
         // 4 TYPES OF APPLICATION TYPES
-        for (int count = 0; count < 4; count++) {
 
-            // THE STATUS ARRAYS ARE TO SHOW THE 4 DIFFERENT SCENARIOS OF PAYMENTSTATUS AND
-            // APPLICATIONSTATUS
-            // LATER WHEN I CREATE APPLICATIONS I'LL USE THE DIFFERENT COMBINATIONS
-            SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
-                    SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.REJECTED,
-                    SellerApplicationStatus.PENDING };
+        // THE STATUS ARRAYS ARE TO SHOW THE 4 DIFFERENT SCENARIOS OF PAYMENTSTATUS AND
+        // APPLICATIONSTATUS
+        // LATER WHEN I CREATE APPLICATIONS I'LL USE THE DIFFERENT COMBINATIONS
+        // COMBI 0 : APPROVED PENDING PAYMENT
+        // COMBI 1 : FINISHED PROCESS - SELLER PROFILE CREATED
+        // COMBI 2 : REJECTED
+        // COMBI 3 : NEW APPLICAION
 
-            PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED,
-                    PaymentStatus.PENDING, PaymentStatus.PENDING };
+        SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
+                SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.REJECTED, SellerApplicationStatus.PENDING };
 
-            // CREATE MORE FOR EVENT 1
-            Event firstEvent = eventRepository.findAll().get(0);
-            List<BusinessPartner> businessPartners = businessPartnerRepository.findAll();
-            int bpCount = 0;
-            for (BusinessPartner bp : businessPartners) {
-               
+        PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED, PaymentStatus.PENDING,
+                PaymentStatus.PENDING };
+
+        // CREATE MORE FOR EVENT 1
+        Event firstEvent = eventRepository.findAll().get(0);
+        List<BusinessPartner> businessPartners = businessPartnerRepository.findAll();
+        for (BusinessPartner bp : businessPartners) {
+            SellerApplication application = new SellerApplication();
+            int count = rand.nextInt(4); // now just make the applications randomly
+            application.setBusinessPartner(bp);
+            application.setEvent(firstEvent);
+            application.setDescription(lorem.getWords(5, 20));
+            application.setComments(lorem.getWords(5, 20));
+            application.setBoothQuantity(rand.nextInt(300));
+            application.setSellerApplicationStatus(sellerApplicationStatusArray[count]);
+            application.setPaymentStatus(paymentStatusArray[count]);
+            application.setApplicationDate(firstEvent.getEventStartDate().minusDays(rand.nextInt(20)));
+            if (count == 1) {
+                // FOR NUMBER 1, THAT IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
+                // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
+                SellerProfile profile = new SellerProfile();
+                profile.setEvent(firstEvent);
+                profile.setBusinessPartner(bp);
+                profile.setDescription(lorem.getWords(5, 20));
+                profile.setBrochureImages(
+                        Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
+                                "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
+                                "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
+                SellerProfile savedProfile = sellerProfileRepository.save(profile);
+
+                // BOOTH SETUP FOR EACH PROFILE
+                for (int k = 1; k < 4; k++) {
+                    Booth b = new Booth();
+
+                    // setting random set of products
+                    List<Product> allProducts = productRepository.findProductsByBusinessPartner(bp.getId());
+                    // List<Product> allProducts = randomBp.getProducts();
+                    List<Product> sellerProfileProducts = new ArrayList<>();
+                    int numberOfProducts = rand.nextInt(allProducts.size());
+                    for (int j = 0; j < numberOfProducts; j++) {
+                        sellerProfileProducts.add(allProducts.get(j));
+                    }
+                    ;
+                    b.setProducts(sellerProfileProducts);
+                    b.setBoothNumber(rand.nextInt(70) + 1);
+                    b.setDescription(lorem.getWords(5, 20));
+                    b.setSellerProfile(savedProfile);
+                    boothRepository.save(b);
+                }
+                ;
+
+            }
+            sellerApplicationRepository.save(application);
+        }
+        // CREATE RANDOM NUMBERS FOR THE REST
+        List<Event> allEvents = eventRepository.findAll();
+        allEvents.remove(allEvents.get(0));
+        for (Event e : allEvents) {
+            for (int i = 0; i < 5; i++) {
+                // MAKE 2 APPLICATIONS FOR EACH EVENT
+                BusinessPartner randomBp = businessPartnerRepository.findAll()
+                        .get(rand.nextInt(businessPartners.size()));
                 SellerApplication application = new SellerApplication();
-                application.setBusinessPartner(bp);
-                application.setEvent(firstEvent);
+                application.setBusinessPartner(randomBp);
+                application.setEvent(e);
                 application.setDescription(lorem.getWords(5, 20));
                 application.setComments(lorem.getWords(5, 20));
                 application.setBoothQuantity(rand.nextInt(300));
-                // application.setSellerApplicationStatus(sellerApplicationStatus);
-                application.setSellerApplicationStatus(sellerApplicationStatusArray[count]);
-                // application.setPaymentStatus(paymentStatus);
-                application.setPaymentStatus(paymentStatusArray[count]);
-                // lili
-                LocalDateTime applicaionDate = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(bpCount).plusHours(
-                        bpCount % 3);
-                application.setApplicationDate(applicaionDate);
-                LocalDateTime paymentDate = LocalDateTime.of(2021, Month.APRIL, 2, 9, 0).plusDays(bpCount).plusHours(
-                        bpCount % 3);
-                application.setPaymentDate(paymentDate);
-
-                bpCount ++;
-                if (count == 1) {
-                    // FOR NUMBER 1, THAT IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
+                int statusTypeIndex = rand.nextInt(3);
+                application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
+                application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
+                application.setApplicationDate(e.getEventStartDate().minusDays(rand.nextInt(20)));
+                if (statusTypeIndex == 1) {
+                    // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH
+                    // PAYMENT
                     // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
                     SellerProfile profile = new SellerProfile();
-                    profile.setEvent(firstEvent);
-                    profile.setBusinessPartner(bp);
+                    profile.setEvent(e);
+                    profile.setBusinessPartner(randomBp);
                     profile.setDescription(lorem.getWords(5, 20));
                     profile.setBrochureImages(Arrays.asList(
                             "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
@@ -892,7 +1009,7 @@ public class DataInitRunner implements ApplicationRunner {
                         Booth b = new Booth();
 
                         // setting random set of products
-                        List<Product> allProducts = productRepository.findProductsByBusinessPartner(bp.getId());
+                        List<Product> allProducts = productRepository.findProductsByBusinessPartner(randomBp.getId());
                         // List<Product> allProducts = randomBp.getProducts();
                         List<Product> sellerProfileProducts = new ArrayList<>();
                         int numberOfProducts = rand.nextInt(allProducts.size());
@@ -901,7 +1018,7 @@ public class DataInitRunner implements ApplicationRunner {
                         }
                         
                         b.setProducts(sellerProfileProducts);
-                        b.setBoothNumber(k);
+                        b.setBoothNumber(rand.nextInt(70) + 1);
                         b.setDescription(lorem.getWords(5, 20));
                         b.setSellerProfile(savedProfile);
                         boothRepository.save(b);
@@ -912,70 +1029,126 @@ public class DataInitRunner implements ApplicationRunner {
                 sellerApplicationRepository.save(application);
             }
             // CREATE RANDOM NUMBERS FOR THE REST
-            List<Event> allEvents = eventRepository.findAll();
-            allEvents.remove(allEvents.get(0));
-            for (Event e : allEvents) {
-                for (int i = 0; i < 2; i++) {
-                    // MAKE 2 APPLICATIONS FOR EACH EVENT
-                    BusinessPartner randomBp = businessPartnerRepository.findAll()
-                            .get(rand.nextInt(businessPartners.size()));
-                    SellerApplication application = new SellerApplication();
-                    application.setBusinessPartner(randomBp);
-                    application.setEvent(e);
-                    application.setDescription(lorem.getWords(5, 20));
-                    application.setComments(lorem.getWords(5, 20));
-                    application.setBoothQuantity(rand.nextInt(300));
-                    int statusTypeIndex = rand.nextInt(3);
-                    application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
-                    application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
-                    LocalDateTime applicaionDate = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(i)
-                            .plusHours(i % 3);
-                    application.setApplicationDate(applicaionDate);
-                    LocalDateTime paymentDate = LocalDateTime.of(2021, Month.APRIL, 2, 9, 0).plusDays(bpCount)
-                            .plusHours(bpCount % 3);
-                    application.setPaymentDate(paymentDate);
+            // List<Event> allEvents = eventRepository.findAll();
+            // allEvents.remove(allEvents.get(0));
+            // for (Event e : allEvents) {
+            //     for (int i = 0; i < 2; i++) {
+            //         // MAKE 2 APPLICATIONS FOR EACH EVENT
+            //         BusinessPartner randomBp = businessPartnerRepository.findAll()
+            //                 .get(rand.nextInt(businessPartners.size()));
+            //         SellerApplication application = new SellerApplication();
+            //         application.setBusinessPartner(randomBp);
+            //         application.setEvent(e);
+            //         application.setDescription(lorem.getWords(5, 20));
+            //         application.setComments(lorem.getWords(5, 20));
+            //         application.setBoothQuantity(rand.nextInt(300));
+            //         int statusTypeIndex = rand.nextInt(3);
+            //         application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
+            //         application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
+            //         LocalDateTime applicaionDate = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(i)
+            //                 .plusHours(i % 3);
+            //         application.setApplicationDate(applicaionDate);
+            //         LocalDateTime paymentDate = LocalDateTime.of(2021, Month.APRIL, 2, 9, 0).plusDays(bpCount)
+            //                 .plusHours(bpCount % 3);
+            //         application.setPaymentDate(paymentDate);
 
-                    if (statusTypeIndex == 1) {
-                        // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
-                        // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
-                        SellerProfile profile = new SellerProfile();
-                        profile.setEvent(e);
-                        profile.setBusinessPartner(randomBp);
-                        profile.setDescription(lorem.getWords(5, 20));
-                        profile.setBrochureImages(Arrays.asList(
-                                "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
-                                "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
-                                "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
-                        SellerProfile savedProfile = sellerProfileRepository.save(profile);
+            //         if (statusTypeIndex == 1) {
+            //             // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
+            //             // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
+            //             SellerProfile profile = new SellerProfile();
+            //             profile.setEvent(e);
+            //             profile.setBusinessPartner(randomBp);
+            //             profile.setDescription(lorem.getWords(5, 20));
+            //             profile.setBrochureImages(Arrays.asList(
+            //                     "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
+            //                     "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
+            //                     "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
+            //             SellerProfile savedProfile = sellerProfileRepository.save(profile);
 
-                        // BOOTH SETUP FOR EACH PROFILE
-                        for (int k = 1; k < 4; k++) {
-                            Booth b = new Booth();
+            //             // BOOTH SETUP FOR EACH PROFILE
+            //             for (int k = 1; k < 4; k++) {
+            //                 Booth b = new Booth();
 
-                            // setting random set of products
-                            List<Product> allProducts = productRepository
-                                    .findProductsByBusinessPartner(randomBp.getId());
-                            // List<Product> allProducts = randomBp.getProducts();
-                            List<Product> sellerProfileProducts = new ArrayList<>();
-                            int numberOfProducts = rand.nextInt(allProducts.size());
-                            for (int j = 0; j < numberOfProducts; j++) {
-                                sellerProfileProducts.add(allProducts.get(j));
-                            }
-                            ;
-                            b.setProducts(sellerProfileProducts);
-                            b.setBoothNumber(k);
-                            b.setDescription(lorem.getWords(5, 20));
-                            b.setSellerProfile(savedProfile);
-                            boothRepository.save(b);
-                        }
-                        ;
+            //                 // setting random set of products
+            //                 List<Product> allProducts = productRepository
+            //                         .findProductsByBusinessPartner(randomBp.getId());
+            //                 // List<Product> allProducts = randomBp.getProducts();
+            //                 List<Product> sellerProfileProducts = new ArrayList<>();
+            //                 int numberOfProducts = rand.nextInt(allProducts.size());
+            //                 for (int j = 0; j < numberOfProducts; j++) {
+            //                     sellerProfileProducts.add(allProducts.get(j));
+            //                 }
+            //                 ;
+            //                 b.setProducts(sellerProfileProducts);
+            //                 b.setBoothNumber(k);
+            //                 b.setDescription(lorem.getWords(5, 20));
+            //                 b.setSellerProfile(savedProfile);
+            //                 boothRepository.save(b);
+            //             }
+            //             ;
 
-                    }
-                    sellerApplicationRepository.save(application);
-                }
-            }
+            // SECOND COPY OF SAME CODE
+            // List<Event> allEvents = eventRepository.findAll();
+            // allEvents.remove(allEvents.get(0));
+            // for (Event e : allEvents) {
+            // for (int i = 0; i < 2; i++) {
+            // // MAKE 2 APPLICATIONS FOR EACH EVENT
+            // BusinessPartner randomBp = businessPartnerRepository.findAll()
+            // .get(rand.nextInt(businessPartners.size()));
+            // SellerApplication application = new SellerApplication();
+            // application.setBusinessPartner(randomBp);
+            // application.setEvent(e);
+            // application.setDescription(lorem.getWords(5, 20));
+            // application.setComments(lorem.getWords(5, 20));
+            // application.setBoothQuantity(rand.nextInt(300));
+            // int statusTypeIndex = rand.nextInt(3);
+            // application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
+            // application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
+            // application.setApplicationDate(e.getEventStartDate().minusDays(rand.nextInt(20)));
+            // if (statusTypeIndex == 1) {
+            // // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH
+            // // PAYMENT
+            // // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
+            // SellerProfile profile = new SellerProfile();
+            // profile.setEvent(e);
+            // profile.setBusinessPartner(randomBp);
+            // profile.setDescription(lorem.getWords(5, 20));
+            // profile.setBrochureImages(Arrays.asList(
+            // "https://storage.googleapis.com/ems-images/events/event-" + 1 +
+            // "/image-1.jpg",
+            // "https://storage.googleapis.com/ems-images/events/event-" + 2 +
+            // "/image-2.jpg",
+            // "https://storage.googleapis.com/ems-images/events/event-" + 3 +
+            // "/image-3.jpg"));
+            // SellerProfile savedProfile = sellerProfileRepository.save(profile);
+
+            // // BOOTH SETUP FOR EACH PROFILE
+            // for (int k = 1; k < 4; k++) {
+            // Booth b = new Booth();
+
+            // // setting random set of products
+            // List<Product> allProducts = productRepository
+            // .findProductsByBusinessPartner(randomBp.getId());
+            // // List<Product> allProducts = randomBp.getProducts();
+            // List<Product> sellerProfileProducts = new ArrayList<>();
+            // int numberOfProducts = rand.nextInt(allProducts.size());
+            // for (int j = 0; j < numberOfProducts; j++) {
+            // sellerProfileProducts.add(allProducts.get(j));
+            // }
+            // ;
+            // b.setProducts(sellerProfileProducts);
+            // b.setBoothNumber(k);
+            // b.setDescription(lorem.getWords(5, 20));
+            // b.setSellerProfile(savedProfile);
+            // boothRepository.save(b);
+            // }
+            // ;
+
+            // }
+            // sellerApplicationRepository.save(application);
+            // }
+            // }
         }
-
     }
 
 }

@@ -13,9 +13,11 @@ import com.is4103.backend.model.TicketTransaction;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
-public interface TicketTransactionRepository extends JpaRepository<TicketTransaction, UUID> {
+public interface TicketTransactionRepository
+        extends JpaRepository<TicketTransaction, UUID>, JpaSpecificationExecutor<TicketTransaction> {
 
     Long countByEvent(Event event);
 

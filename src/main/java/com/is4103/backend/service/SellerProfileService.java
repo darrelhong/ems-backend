@@ -37,4 +37,22 @@ public class SellerProfileService {
     public List<SellerProfile> getSellerProfilesByEventId(Long id) {
         return eventRepository.findById(id).get().getSellerProfiles();
     }
+
+    public SellerProfile updateSellerProfileDescription(Long id, String description) {
+        SellerProfile sp = sellerProfileRepository.findById(id).get();
+        sp.setDescription(description);
+        return sellerProfileRepository.save(sp);
+    }
+
+    public SellerProfile addBrochureImage(SellerProfile sp, String imageUrl) {
+        List<String> images = sp.getBrochureImages();
+        images.add(imageUrl);
+        sp.setBrochureImages(images);
+        return sellerProfileRepository.save(sp);
+    }
+
+    public void deleteProfileById(Long id) {
+        SellerProfile sp = sellerProfileRepository.findById(id).get();
+        sellerProfileRepository.delete(sp);
+    }
 }

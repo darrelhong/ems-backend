@@ -14,24 +14,24 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
 
-    <T> Optional<T> findByEid(Long id, Class<T> type);
+        <T> Optional<T> findByEid(Long id, Class<T> type);
 
-    Page<Event> findByEventStatus(EventStatus eventStatus, Pageable pageable);
+        Page<Event> findByEventStatus(EventStatus eventStatus, Pageable pageable);
 
-    @Query("SELECT e from Event e where e.eventOrganiser.id = ?1")
-    List<Event> getAllEventsByOrganiser(Long oid);
+        @Query("SELECT e from Event e where e.eventOrganiser.id = ?1")
+        List<Event> getAllEventsByOrganiser(Long oid);
 
-    Page<Event> findByIsPublished(boolean isPublished, Pageable pageable);
+        Page<Event> findByIsPublished(boolean isPublished, Pageable pageable);
 
-    Page<Event> findByNameContainingAndIsPublished(String name, boolean isPublished, Pageable pageable);
+        Page<Event> findByNameContainingAndIsPublished(String name, boolean isPublished, Pageable pageable);
 
-    List<Event> findByName(String name);
+        List<Event> findByName(String name);
 
-    <T> Page<T> findByNameContainingAndIsPublishedAndEventStartDateGreaterThan(String name, boolean isPublished,
-            LocalDateTime eventStartDate, Pageable pageable, Class<T> type);
+        Page<Event> findByNameContainingAndIsPublishedAndEventStartDateGreaterThan(String name, boolean isPublished,
+                        LocalDateTime eventStartDate, Pageable pageable);
 
-    <T> Page<T> findByIsPublishedAndEventStartDateGreaterThan(boolean isPublished, LocalDateTime eventStartDate,
-            Pageable pageable, Class<T> type);
+        Page<Event> findByIsPublishedAndEventStartDateGreaterThan(boolean isPublished, LocalDateTime eventStartDate,
+                        Pageable pageable);
 
     @Query(value = "SELECT DISTINCT categories FROM event_categories", nativeQuery = true)
     List<String> getDistinctEventCategories();
@@ -60,4 +60,18 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     
 
 
+        <T> Page<T> findByNameContainingAndIsPublishedAndEventStartDateGreaterThan(String name, boolean isPublished,
+                        LocalDateTime eventStartDate, Pageable pageable, Class<T> type);
+
+        <T> Page<T> findByIsPublishedAndEventStartDateGreaterThan(boolean isPublished, LocalDateTime eventStartDate,
+                        Pageable pageable, Class<T> type);
+
+        Page<Event> findByNameContainingAndIsPublishedAndEventEndDateLessThan(String name, boolean isPublished,
+                        LocalDateTime eventStartDate, Pageable pageable);
+
+        Page<Event> findByIsPublishedAndEventEndDateLessThan(boolean isPublished, LocalDateTime eventStartDate,
+                        Pageable pageable);
+
+        // @Query(value = "SELECT DISTINCT categories FROM event_categories", nativeQuery = true)
+        // List<String> getDistinctEventCategories();
 }

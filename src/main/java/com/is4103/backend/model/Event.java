@@ -57,7 +57,7 @@ public class Event {
     @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @ElementCollection(targetClass = SellerApplication.class)
-    @JsonIgnoreProperties("event")
+    @JsonIgnoreProperties({ "event", "businessPartner" })
     private List<SellerApplication> sellerApplications;
 
     // @JsonView(EventViews.Private.class)
@@ -96,8 +96,11 @@ public class Event {
     // @Column(nullable = false)
     private String address;
 
-    // @Column(nullable = false)
+    // @Column(nullable = false) 
     private String descriptions;
+
+
+    // private String eventCategory;
 
     // @ElementCollection(targetClass = String.class)
     // @CollectionTable(name = "event_categories")
@@ -155,6 +158,11 @@ public class Event {
     private boolean isHidden;
 
     private boolean isPublished;
+
+    @JsonIgnore
+    @Column(nullable = true)
+    @OneToMany(mappedBy = "event")
+    private List<Rsvp> rsvps;
 
     public boolean getAvailableForSale() {
         if (this.isSellingTicket && this.saleStartDate != null && this.salesEndDate != null) {
