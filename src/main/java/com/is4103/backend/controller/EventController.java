@@ -134,7 +134,7 @@ public class EventController {
         event.setName(createEventRequest.getName());
         event.setAddress(createEventRequest.getAddress());
         event.setDescriptions(createEventRequest.getDescriptions());
-        event.setCategories(createEventRequest.getCategories());
+        event.setCategory(createEventRequest.getCategory());
         event.setSellingTicket(createEventRequest.isSellingTicket());
         event.setTicketPrice(createEventRequest.getTicketPrice());
         event.setTicketCapacity(createEventRequest.getTicketCapacity());

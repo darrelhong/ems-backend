@@ -99,10 +99,12 @@ public class Event {
     // @Column(nullable = false)
     private String descriptions;
 
-    @ElementCollection(targetClass = String.class)
-    @CollectionTable(name = "event_categories")
-    @Column(name = "categories")
-    private List<String> categories;
+    // @ElementCollection(targetClass = String.class)
+    // @CollectionTable(name = "event_categories")
+    // @Column(name = "categories")
+    // private List<String> categories;
+
+    private String category;
 
     private boolean isSellingTicket;
 

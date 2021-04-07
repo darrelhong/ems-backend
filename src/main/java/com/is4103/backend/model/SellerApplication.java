@@ -59,6 +59,9 @@ public class SellerApplication {
 
     private LocalDateTime applicationDate;
 
+    private LocalDateTime paymentDate;
+
+
 
     // @OneToOne(targetEntity = EventBoothTransaction.class, fetch =
     // FetchType.EAGER)

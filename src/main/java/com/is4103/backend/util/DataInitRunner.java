@@ -321,8 +321,8 @@ public class DataInitRunner implements ApplicationRunner {
         event.setAddress("Woodlands Avenue 6 #87-10");
         event.setDescriptions(
                 "The 14th Annual Academic Success Lecture featuring Dr. Kevin Gumienny is . This year's presentation will be held physically, and will focus on the topics of accessibility and universal design.");
-        event.setCategories(Arrays.asList(eventCategories));
-        // setEventCategories(event);
+       // event.setCategories(Arrays.asList(eventCategories));
+        event.setCategory(eventCategories[0]);
         event.setPhysical(false);
         LocalDateTime eventStart1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd1 = LocalDateTime.of(2021, Month.JUNE, 2, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -362,7 +362,7 @@ public class DataInitRunner implements ApplicationRunner {
         event2.setName("IT Fair 2021");
         event2.setAddress("Sembwang2");
         event2.setDescriptions("Description 2");
-        setEventCategories(event2);
+        event2.setCategory(eventCategories[0]);
         event2.setPhysical(false);
         LocalDateTime eventStart = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         event2.setEventStartDate(eventStart);
@@ -389,7 +389,7 @@ public class DataInitRunner implements ApplicationRunner {
         event3.setName("Career Fair");
         event3.setAddress("Sembwang3");
         event3.setDescriptions("Some description two3");
-        setEventCategories(event3);
+        event3.setCategory(eventCategories[1]);
         event3.setPhysical(false);
         LocalDateTime eventStart3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd3 = LocalDateTime.of(2021, Month.JUNE, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -416,7 +416,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4.setName("Fintech 2021");
         event4.setAddress("Sembwang4");
         event4.setDescriptions("Some description 4");
-        setEventCategories(event4);
+        event4.setCategory(eventCategories[1]);
         event4.setPhysical(false);
         LocalDateTime eventStart4 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -444,7 +444,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4_1.setName("SG Career Fair 2021");
         event4_1.setAddress("Sembwang4");
         event4_1.setDescriptions("Some description 4");
-        setEventCategories(event4_1);
+        event4_1.setCategory(eventCategories[1]);
         event4_1.setPhysical(false);
         LocalDateTime eventStart4_1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4_1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -472,7 +472,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4_2.setName("Tech Festival 2021");
         event4_2.setAddress("Sembwang4");
         event4_2.setDescriptions("Some description 4");
-        setEventCategories(event4_2);
+        event4_2.setCategory(eventCategories[2]);
         event4_2.setPhysical(false);
         LocalDateTime eventStart4_2 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4_2 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -500,7 +500,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4_3.setName("Viva Technology 2021");
         event4_3.setAddress("Sembwang4");
         event4_3.setDescriptions("Some description 4");
-        setEventCategories(event4_3);
+        event4_3.setCategory(eventCategories[2]);
         event4_3.setPhysical(false);
         LocalDateTime eventStart4_3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4_3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -528,7 +528,7 @@ public class DataInitRunner implements ApplicationRunner {
         event5.setName("Singapore Food Festival");
         event5.setAddress("Sembwang 5");
         event5.setDescriptions("Some description 5");
-        setEventCategories(event5);
+        event5.setCategory(eventCategories[2]);
         event5.setPhysical(false);
         LocalDateTime eventStart5 = LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd5 = LocalDateTime.of(2021, Month.JANUARY, 2, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -553,7 +553,7 @@ public class DataInitRunner implements ApplicationRunner {
         event6.setName("Singapore Tech Conferences 2020");
         event6.setAddress("Sembwang 6");
         event6.setDescriptions("Some description 6");
-        setEventCategories(event6);
+        event6.setCategory(eventCategories[2]);
         event6.setPhysical(false);
         event6.setEventStartDate(LocalDateTime.now());
         event6.setEventEndDate(LocalDateTime.now());
@@ -574,7 +574,7 @@ public class DataInitRunner implements ApplicationRunner {
         event7.setName("Tech Analystics 2020");
         event7.setAddress("Sembwang 6");
         event7.setDescriptions("Some description 6");
-        setEventCategories(event7);
+        event7.setCategory(eventCategories[2]);
         event7.setPhysical(false);
         event7.setEventStartDate(LocalDateTime.now());
         event7.setEventEndDate(LocalDateTime.now());
@@ -595,7 +595,7 @@ public class DataInitRunner implements ApplicationRunner {
         event8.setName("Tech Conferences 2020");
         event8.setAddress("Sembwang 6");
         event8.setDescriptions("Some description 6");
-        setEventCategories(event8);
+        event8.setCategory(eventCategories[3]);
         event8.setPhysical(false);
         event8.setEventStartDate(LocalDateTime.now());
         event8.setEventEndDate(LocalDateTime.now());
@@ -616,7 +616,7 @@ public class DataInitRunner implements ApplicationRunner {
         event9.setName("Tech Conferences 2020");
         event9.setAddress("Sembwang 6");
         event9.setDescriptions("Some description 6");
-        setEventCategories(event9);
+        event9.setCategory(eventCategories[4]);
         event9.setPhysical(false);
         event9.setEventStartDate(LocalDateTime.now());
         event9.setEventEndDate(LocalDateTime.now());
@@ -695,7 +695,7 @@ public class DataInitRunner implements ApplicationRunner {
             e.setDescriptions("description testtestest");
             e.setTicketPrice(Math.round(rand.nextFloat() * 20));
             e.setTicketCapacity(rand.nextInt(100));
-            setEventCategories(e);
+            e.setCategory(eventCategories[6]);
             e.setPhysical(true);
             LocalDateTime eventStart = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(i).plusHours(i % 3);
             e.setEventStartDate(eventStart);
@@ -716,19 +716,19 @@ public class DataInitRunner implements ApplicationRunner {
         }
     }
 
-    private void setEventCategories(Event event) {
-        Random rand = new Random();
-        int upperBound = eventCategories.length;
-        int numberOfCategories = rand.nextInt(upperBound);
-        List<String> categories = new ArrayList<>();
-        for (int i = 0; i < numberOfCategories; i++) {
-            int categoryIndex = rand.nextInt(upperBound);
-            String categoryString = eventCategories[categoryIndex];
-            categories.add(categoryString);
-        }
-        event.setCategories(categories);
-        // return event;
-    }
+    // private void setEventCategories(Event event) {
+    //     Random rand = new Random();
+    //     int upperBound = eventCategories.length;
+    //     int numberOfCategories = rand.nextInt(upperBound);
+    //     List<String> categories = new ArrayList<>();
+    //     for (int i = 0; i < numberOfCategories; i++) {
+    //         int categoryIndex = rand.nextInt(upperBound);
+    //         String categoryString = eventCategories[categoryIndex];
+    //         categories.add(categoryString);
+    //     }
+    //     event.setCategories(categories);
+    //     // return event;
+    // }
 
     @Transactional
     private void createProducts() {
@@ -869,6 +869,10 @@ public class DataInitRunner implements ApplicationRunner {
                 LocalDateTime applicaionDate = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(bpCount).plusHours(
                         bpCount % 3);
                 application.setApplicationDate(applicaionDate);
+                LocalDateTime paymentDate = LocalDateTime.of(2021, Month.APRIL, 2, 9, 0).plusDays(bpCount).plusHours(
+                        bpCount % 3);
+                application.setPaymentDate(paymentDate);
+
                 bpCount ++;
                 if (count == 1) {
                     // FOR NUMBER 1, THAT IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
@@ -895,7 +899,7 @@ public class DataInitRunner implements ApplicationRunner {
                         for (int j = 0; j < numberOfProducts; j++) {
                             sellerProfileProducts.add(allProducts.get(j));
                         }
-                        ;
+                        
                         b.setProducts(sellerProfileProducts);
                         b.setBoothNumber(k);
                         b.setDescription(lorem.getWords(5, 20));
@@ -927,6 +931,10 @@ public class DataInitRunner implements ApplicationRunner {
                     LocalDateTime applicaionDate = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(i)
                             .plusHours(i % 3);
                     application.setApplicationDate(applicaionDate);
+                    LocalDateTime paymentDate = LocalDateTime.of(2021, Month.APRIL, 2, 9, 0).plusDays(bpCount)
+                            .plusHours(bpCount % 3);
+                    application.setPaymentDate(paymentDate);
+
                     if (statusTypeIndex == 1) {
                         // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
                         // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
