@@ -52,7 +52,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
      @Query(value = "SELECT Count(id) as applicationCount, event_eid as eventId, DATE(payment_date) as payment_date, payment_status FROM seller_application sa GROUP BY event_eid, DATE(payment_date), payment_status HAVING YEAR(payment_date) = YEAR(NOW()) and payment_status = 'COMPLETED'", nativeQuery = true)
     List<Object[]> getBoothDashboardYearlyMostPopularEventList();
 
-    @Query(value = "SELECT event_eid, Count(event_eid) as applicationCount FROM seller_application sa GROUP BY sa.event_eid, sa.payment_status HAVING sa.payment_status ='COMPLETED'",nativeQuery = true)
+    @Query(value = "SELECT event_eid, Count(event_eid) as applicationCount FROM seller_application sa GROUP BY sa.event_eid, sa.payment_status HAVING sa.payment_status !='CANCELLED'",nativeQuery = true)
      List<Object[]> getApplicationRankList();
 
 //     @Query(value = "SELECT Count(category), e.category from event e GROUP BY e.category, event_status, e.is_hidden,e.event_organiser_id HAVING e.event_status = 'CREATED' and e.is_hidden = 0 and e.event_organiser_id = ?1",nativeQuery = true)

@@ -442,7 +442,7 @@ public class EventOrganiserController {
         if(user != null){
         double sales;
         try {
-            sales = eoService.getTotalSalesByEvent(eventId);
+            sales = eoService.getTotalSalesByEvent(eventId,user);
             return df2.format(sales);
         } catch (StripeException e) {
             return "An Error has occured";
@@ -464,7 +464,7 @@ public class EventOrganiserController {
         if(user == null){
             throw new AuthenticationServiceException("An error has occured");
         }
-       return eoService.getNumberOfBusinessPartnerByEvent(eventId);
+       return eoService.getNumberOfBusinessPartnerByEvent(eventId,user);
 
     }
 
@@ -493,7 +493,7 @@ public class EventOrganiserController {
         if(user == null){
             throw new AuthenticationServiceException("An error has occured");
         }
-       return eoService.getNumberOfBoothSoldByEvent(eventId);
+       return eoService.getNumberOfBoothSoldByEvent(eventId,user);
 
     }
 
@@ -507,7 +507,7 @@ public class EventOrganiserController {
         if(user == null){
             throw new AuthenticationServiceException("An error has occured");
         }
-       return eoService.getNumberOfBoothCapacityByEvent(eventId);
+       return eoService.getNumberOfBoothCapacityByEvent(eventId,user);
 
     }
 
@@ -565,6 +565,19 @@ public class EventOrganiserController {
         return eoService.getCategoryRankList(user);
 
     }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getAllEventForBoothDashboard")
+    public List<Event> getAllEventForBoothDashboard() {
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        return eoService.getValidBpEventsByEventOrgIdForDashboard(user.getId());
+
+    }
+
+    
+
+
 
    
 }

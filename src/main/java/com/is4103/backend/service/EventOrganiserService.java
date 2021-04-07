@@ -258,6 +258,18 @@ public class EventOrganiserService {
         return validEventListForAtt;
     }
 
+
+    public List<Event> getValidBpEventsByEventOrgIdForDashboard(Long eoId) {
+
+        List<Event> eventlist = eventService.getAllEventsByOrganiser(eoId);
+        List<Event> validEventListForBp = new ArrayList<>();
+        for (Event event : eventlist) {
+            if (event.getEventStatus().toString().equals("CREATED")) {
+                validEventListForBp.add(event);
+            }
+        }
+        return validEventListForBp;
+    }
     public List<Event> getAllEventsByEoIdRoleStatus(Long eoId, String role, String status) {
         // List<Event> eventlist = eventService.getAllEvents();
         List<Event> eventlist = eventService.getAllEventsByOrganiser(eoId);
@@ -343,23 +355,25 @@ public class EventOrganiserService {
                     }
                 }
 
-            } else if (status.equals("upcoming")) {
-                filterEventList = new ArrayList<>();
-                for (int a = 0; a < eventlist.size(); a++) {
-                    Event eventItem = eventlist.get(a);
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
-                    LocalDateTime now = LocalDateTime.now();
+            } 
+            
+            // else if (status.equals("upcoming")) {
+            //     filterEventList = new ArrayList<>();
+            //     for (int a = 0; a < eventlist.size(); a++) {
+            //         Event eventItem = eventlist.get(a);
+            //         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+            //         LocalDateTime now = LocalDateTime.now();
 
-                    if (eventItem.getEventStatus().toString().equals("CREATED") && !eventItem.isHidden() == true
-                            && (eventItem.getEventStartDate().isAfter(now)
-                                    || eventItem.getEventStartDate().isEqual(now))
-                            && (eventItem.getSaleStartDate().isAfter(now)
-                                    || eventItem.getSaleStartDate().isEqual(now))) {
-                        filterEventList.add(eventItem);
-                    }
-                }
+            //         if (eventItem.getEventStatus().toString().equals("CREATED") && !eventItem.isHidden()
+            //                 && (eventItem.getEventStartDate().isAfter(now)
+            //                         || eventItem.getEventStartDate().isEqual(now))
+            //                 && (eventItem.getSaleStartDate().isAfter(now)
+            //                         || eventItem.getSaleStartDate().isEqual(now))) {
+            //             filterEventList.add(eventItem);
+            //         }
+            //     }
 
-            }
+            // }
 
         }
         return filterEventList;
@@ -842,7 +856,7 @@ public class EventOrganiserService {
      return rating;
      }
 
-     public double getTotalSalesByEvent(Long eventId) throws StripeException{
+     public double getTotalSalesByEvent(Long eventId,EventOrganiser eo) throws StripeException{
          Stripe.apiKey = stripeSecretKey;
 
          List<SellerApplication> allSellerApplication = new ArrayList<>();
@@ -852,7 +866,7 @@ public class EventOrganiserService {
          double totalSales = 0;
          for (SellerApplication sa : allSellerApplication) {
 
-             if (sa.getEvent().getEid() == eventId && sa.getPaymentStatus().toString().equals("COMPLETED")){
+             if (sa.getEvent().getEid() == eventId && sa.getEvent().getEventOrganiser().getId().equals(eo.getId()) && sa.getPaymentStatus().toString().equals("COMPLETED")){
                  PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
                  double amount = paymentIntent.getAmount();
                  totalSales += amount;
@@ -862,14 +876,14 @@ public class EventOrganiserService {
          return totalSales;
      }
   
-    public Long getNumberOfBusinessPartnerByEvent(Long eventId){
+    public Long getNumberOfBusinessPartnerByEvent(Long eventId,EventOrganiser eo){
        
         List<SellerApplication> allSellerApplication = new ArrayList<>();
         allSellerApplication = sellerAppService.getAllSellerApplications();
         Long bpNum = Long.valueOf(0);
         for (SellerApplication sa : allSellerApplication) {
 
-            if (sa.getEvent().getEid() == eventId && sa.getPaymentStatus().toString().equals("COMPLETED")) {
+            if (sa.getEvent().getEid() == eventId && sa.getEvent().getEventOrganiser().getId().equals(eo.getId()) && sa.getPaymentStatus().toString().equals("COMPLETED")){
               bpNum += 1;
             }
         }
@@ -885,7 +899,7 @@ public class EventOrganiserService {
         Long boothAppNum = Long.valueOf(0);
         for (SellerApplication sa : allSellerApplication) {
 
-            if (sa.getEvent().getEventOrganiser().getId() == eo.getId() && sa.getPaymentStatus().toString().equals("COMPLETED")) {
+            if (sa.getEvent().getEventOrganiser().getId().equals(eo.getId()) && sa.getPaymentStatus().toString().equals("COMPLETED")) {
               boothAppNum += 1;
             }
         }
@@ -900,7 +914,7 @@ public class EventOrganiserService {
       
         for (SellerApplication sa : allSellerApplication) {
 
-            if (sa.getEvent().getEventOrganiser().getId().equals(eo.getId()) && sa.getPaymentStatus().toString().equals("COMPLETED")) {
+            if (sa.getEvent().getEventOrganiser().getId().equals(eo.getId()) && sa.getPaymentStatus().toString().equals("COMPLETED") ) {
                 PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
                 double amount = paymentIntent.getAmount();
                 totalSales += amount;
@@ -910,14 +924,14 @@ public class EventOrganiserService {
         return totalSales;
     }  
        
-    public Long getNumberOfBoothSoldByEvent(Long eventId) {
+    public Long getNumberOfBoothSoldByEvent(Long eventId,EventOrganiser eo) {
 
         List<SellerApplication> allSellerApplication = new ArrayList<>();
         allSellerApplication = sellerAppService.getAllSellerApplications();
         Long numBoothSold = Long.valueOf(0);
         for (SellerApplication sa : allSellerApplication) {
 
-            if (sa.getEvent().getEid() == eventId && sa.getPaymentStatus().toString().equals("COMPLETED")) {
+            if (sa.getEvent().getEid() == eventId && sa.getEvent().getEventOrganiser().getId().equals(eo.getId()) && sa.getPaymentStatus().toString().equals("COMPLETED") && sa.getSellerApplicationStatus().toString().equals("CONFIRMED")) {
                 numBoothSold += sa.getBoothQuantity();
             }
         }
@@ -925,13 +939,12 @@ public class EventOrganiserService {
         return numBoothSold;
     }
 
-    public Long getNumberOfBoothCapacityByEvent(Long eventId) {
+    public Long getNumberOfBoothCapacityByEvent(Long eventId, EventOrganiser eo) {
 
-        
         Event event = eventService.getEventById(eventId);
         Long boothCapacity = Long.valueOf(0);
       
-            if (event.getEventStatus().toString().equals("CREATED") && !event.isHidden()) {
+            if (event.getEventOrganiser().getId() == eo.getId() && event.getEventStatus().toString().equals("CREATED")) {
                boothCapacity += event.getBoothCapacity();
             }  
 
@@ -956,12 +969,12 @@ public class EventOrganiserService {
     public Long getNumberofAllBoothCapacity(EventOrganiser eo) {
 
         List<Event> allEvents = new ArrayList<>();
-        allEvents = this.getValidBpEventsByEventOrgId(eo.getId());
+        allEvents = this.getValidBpEventsByEventOrgIdForDashboard(eo.getId());
         Long boothCapacity = Long.valueOf(0);
 
         for (Event e : allEvents) {
 
-            if (e.getEventStatus().toString().equals("CREATED") && !e.isHidden()){
+            if (e.getEventStatus().toString().equals("CREATED")){
                boothCapacity += e.getBoothCapacity();
             }
         }
@@ -979,7 +992,7 @@ public class EventOrganiserService {
             map = new HashMap<String, BigInteger>();
             for (Object[] object : applicationRankList) {
                 for (Event e : eoEvents) {
-                    if ((BigInteger) object[0] == BigInteger.valueOf(e.getEid()) && !e.isHidden() && e.getEventStatus().toString().equals("CREATED")) {
+                    if ((BigInteger) object[0] == BigInteger.valueOf(e.getEid()) && e.getEventStatus().toString().equals("CREATED")) {
 
                         e.setApplicationCount((BigInteger)object[1]);
                         categoryRankList.add(e);
