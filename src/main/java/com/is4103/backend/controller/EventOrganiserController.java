@@ -488,18 +488,58 @@ public class EventOrganiserController {
 
     @PreAuthorize("hasAnyRole('EVNTORG')")
     @GetMapping(path = "/getTopTicketSalesEvents")
-    public List<Event> getTopTicketsSalesEventsByEo() {
-        List<Event> events = new ArrayList<>();
+    public List<Event> getTopTicketsSalesEventsByEo() throws StripeException {
+       
         EventOrganiser user = eoService
                 .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
-        try {
             return eoService.getTopTicketSalesEvents(user);
-        } catch (StripeException ex) {
-            System.out.println(ex);
+      
+    }
 
-        }
-        return events;
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getTopSales")
+    public List<Double> getTopTicketsSales() throws StripeException {
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        List<Event> events = eoService.getTopTicketSalesEvents(user);
+
+            return eoService.topSalesEvent(events);
+      
+    }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getCurrentSales")
+    public List<Double> getCurrentTicketsSales() throws StripeException {
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        List<Event> events = eoService.getEventsWithTicketTransactionsCurrent(user);
+
+            return eoService.topSalesEvent(events);
+      
+    }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getCurrentNumber")
+    public List<Integer> getCurrentTicketsNumberSales() throws StripeException {
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        List<Event> events = eoService.getEventsWithTicketTransactionsCurrent(user);
+
+            return eoService.topNumTicketsEvent(events);
+      
+    }
+
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getTopNumber")
+    public List<Integer> getTopTicketsNumberSales() throws StripeException {
+        EventOrganiser user = eoService
+                .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        List<Event> events = eoService.getTopTicketSalesEvents(user);
+
+            return eoService.topNumTicketsEvent(events);
+      
     }
 
     @PreAuthorize("hasAnyRole('EVNTORG')")
@@ -539,6 +579,16 @@ public class EventOrganiserController {
     public Long getDaysToStartEvent(@PathVariable Long eventId) {
              
             return eoService.getDaysToStartOfEvent(eventId);
+       
+    }
+
+    @PreAuthorize("hasAnyRole('EVNTORG')")
+    @GetMapping(path = "/getUpcomingEvent")
+    public Event getUpcomingEvent() {
+        EventOrganiser user = eoService
+        .getEventOrganiserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+             
+            return eoService.upcomingEvent(user);
        
     }
 

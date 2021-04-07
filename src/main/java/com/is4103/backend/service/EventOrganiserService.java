@@ -875,7 +875,8 @@ public class EventOrganiserService {
                 }
                 if(amount > highestSales){
                     highestSales = amount;
-                    eventToBeRemoved = events.get(i);
+                    // eventToBeRemoved = events.get(i);
+                    eventToBeRemoved = eventService.getEventById(events.get(i).getEid());
                 }
             }
 
@@ -887,9 +888,39 @@ public class EventOrganiserService {
             }
             
         }
-
+        // System.out.println("eventsTop" + finalEvents);
         return finalEvents;
     
+    }
+
+ 
+
+    public List<Double> topSalesEvent(List<Event> events) throws StripeException{
+        List<Double> sales = new ArrayList<>();
+        for(int i=0; i<events.size(); i++){
+            List<TicketTransaction> transactions = events.get(i).getTicketTransactions();
+            double amount =0.0;
+            for(TicketTransaction tt : transactions){
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
+                amount += paymentIntent.getAmount();
+            }
+            sales.add(amount);
+        }
+
+        return sales;
+        
+    }
+
+    public List<Integer> topNumTicketsEvent(List<Event> events){
+        List<Integer> sales = new ArrayList<>();
+        for(int i=0; i<events.size(); i++){
+            List<TicketTransaction> transactions = events.get(i).getTicketTransactions();
+          
+            sales.add(transactions.size());
+        }
+
+        return sales;
+        
     }
 
     public List<Event> getEventsWithTicketTransactionsCurrent (EventOrganiser eo) {
@@ -959,6 +990,33 @@ public class EventOrganiserService {
 
         
     // }
+
+    public Event upcomingEvent(EventOrganiser eo) {
+        List<Event> events = getEventsWithTicketTransactionsCurrent(eo);
+        LocalDateTime now = LocalDateTime.now();
+        long days =360;
+        Event eventFinal = new Event();
+        if(events.size() >0){
+           for(Event event : events){
+            if(event.getSalesEndDate().isAfter(now) && now.until(event.getSalesEndDate(), ChronoUnit.DAYS) < days){
+                days = now.until(event.getSalesEndDate(), ChronoUnit.DAYS);
+                eventFinal = event;
+            }
+        }  
+        }else{
+            events = getEventsWithTicketTransactionsPast(eo);
+            for(Event event : events){
+                if(event.getEventStartDate().isAfter(now) && now.until(event.getEventStartDate(), ChronoUnit.DAYS) < days){
+                    days = now.until(event.getSalesEndDate(), ChronoUnit.DAYS);
+                    eventFinal = event;
+                }
+            }
+        }
+        
+        return eventFinal;
+
+
+    }
 
     public List<Event>  getMostPopularEventList(EventOrganiser eo){
        List<Object[]> result = eventRepository.getMostPopularEventList();
