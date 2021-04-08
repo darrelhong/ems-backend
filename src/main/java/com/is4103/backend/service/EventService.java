@@ -400,4 +400,38 @@ public class EventService {
 
         return filterEventList;
     }
+
+    public List<Event> getVipEvents() {
+        List<Event> eventList = getAllEvents();
+        List<Event> vipEvents = new ArrayList<>();
+        
+        for (Event event : eventList) {
+            if (event.isVip()) {
+                vipEvents.add(event);
+            }
+        }
+
+        return vipEvents;
+    }
+
+    public List<Event> getVipEvents(Long page) {
+        List<Event> eventList = getAllEvents();
+        List<Event> vipEvents = new ArrayList<>();
+        int currentEventNo = 0;
+        
+        for (Event event : eventList) {
+            if (event.isVip()) {
+                currentEventNo += 1;
+                
+                if (!(currentEventNo < (10 * (page - 1) + 1))) {
+                    vipEvents.add(event);
+                    if (vipEvents.size() == 10) {
+                        return vipEvents;
+                    }
+                }
+            }
+        }
+
+        return vipEvents;
+    }
 }

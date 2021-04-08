@@ -252,4 +252,14 @@ public class EventController {
     public List<Event> getTopTenEvents() {
         return eventService.getTopTenEvents();
     }
+
+    @GetMapping("/getVipEvents")
+    public List<Event> getVipEvents() {
+        return eventService.getVipEvents();
+    }
+
+    @GetMapping("/getVipEvents/{pageParam}")
+    public List<Event> getVipEvents(@PathVariable Long pageParam) {
+        return eventService.getVipEvents(pageParam);
+    }
 }
