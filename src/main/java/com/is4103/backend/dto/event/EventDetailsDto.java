@@ -42,6 +42,10 @@ public interface EventDetailsDto {
 
     List<SellerProfileSummary> getSellerProfiles();
 
+    Integer getBoothCapacity();
+
+    Float getBoothPrice();
+
     interface EventOrganiserDetails {
         String getName();
     }
