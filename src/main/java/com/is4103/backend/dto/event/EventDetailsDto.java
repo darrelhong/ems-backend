@@ -36,7 +36,7 @@ public interface EventDetailsDto {
 
     Boolean getAvailableForSale();
 
-    List<String> getCategories();
+    List<String> getEventCategory();
 
     EventOrganiserDetails getEventOrganiser();
 
