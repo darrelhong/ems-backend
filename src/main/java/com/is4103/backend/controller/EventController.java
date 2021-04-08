@@ -208,7 +208,13 @@ public class EventController {
                 Page<Event> events = new PageImpl<>(data);
                 return events;
             } else if (filter.equals("past")) {
-                return eventService.getPastPublishedEvents(page, size, sort, sortDir, keyword);
+                // return eventService.getPastPublishedEvents(page, size, sort, sortDir,
+                // keyword);
+                LocalDateTime now = LocalDateTime.now();
+                data = partner.getSellerProfiles().stream().map(sp -> sp.getEvent())
+                        .filter(e -> e.getEventEndDate().isBefore(now)).collect(Collectors.toList());
+                Page<Event> events = new PageImpl<>(data);
+                return events;
             }
         }
         return eventService.getPublishedEvents(page, size, sort, sortDir, keyword);
