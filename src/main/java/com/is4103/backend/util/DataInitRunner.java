@@ -955,7 +955,7 @@ public class DataInitRunner implements ApplicationRunner {
                 application.setEvent(e);
                 application.setDescription(lorem.getWords(5, 20));
                 application.setComments(lorem.getWords(5, 20));
-                application.setBoothQuantity(rand.nextInt(300));
+                application.setBoothQuantity(3);
                 int statusTypeIndex = rand.nextInt(3);
                 application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
                 application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
