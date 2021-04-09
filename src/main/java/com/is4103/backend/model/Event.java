@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -54,7 +53,7 @@ public class Event {
     @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @ElementCollection(targetClass = SellerApplication.class)
-    @JsonIgnoreProperties("event")
+    @JsonIgnoreProperties({ "event", "businessPartner" })
     private List<SellerApplication> sellerApplications;
 
     // @JsonView(EventViews.Private.class)
@@ -90,10 +89,11 @@ public class Event {
     // @Column(nullable = false)
     private String descriptions;
 
-    @ElementCollection(targetClass = String.class)
-    @CollectionTable(name = "event_categories")
-    @Column(name = "categories")
-    private List<String> categories;
+    private String eventCategory;
+    // @ElementCollection(targetClass = String.class)
+    // @CollectionTable(name = "event_categories")
+    // @Column(name = "categories")
+    // private List<String> categories;
 
     private boolean isSellingTicket;
 
@@ -144,6 +144,11 @@ public class Event {
     private boolean isHidden;
 
     private boolean isPublished;
+
+    @JsonIgnore
+    @Column(nullable = true)
+    @OneToMany(mappedBy = "event")
+    private List<Rsvp> rsvps;
 
     public boolean getAvailableForSale() {
         if (this.isSellingTicket && this.saleStartDate != null && this.salesEndDate != null) {

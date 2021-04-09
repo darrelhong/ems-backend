@@ -17,6 +17,7 @@ import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
+import com.is4103.backend.model.Product;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.SellerApplication;
@@ -377,7 +378,7 @@ public class BusinessPartnerService {
         thirdDay = thirdDay.withHour(0).withMinute(0).withSecond(0).withNano(0);
         
         for (Event event : eventList) {
-            if (event.getCategories().contains(bizCat)
+            if (event.getEventCategory() == bizCat
                     && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                     && !(event.getEventStartDate().isBefore(thirdDay))
                     && !(event.getSalesEndDate().isBefore(now))) {
@@ -399,7 +400,7 @@ public class BusinessPartnerService {
         thirdDay = thirdDay.withHour(0).withMinute(0).withSecond(0).withNano(0);
         
         for (Event event : eventList) {
-            if (event.getCategories().contains(bizCat)
+            if (event.getEventCategory() == bizCat
                     && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                     && !(event.getEventStartDate().isBefore(thirdDay))
                     && !(event.getSalesEndDate().isBefore(now))) {
@@ -417,4 +418,7 @@ public class BusinessPartnerService {
         return filterEventList;
     }
 
+    public List<Product> getProductsByBp(Long id) {
+        return bpRepository.findById(id).get().getProducts();
+    }
 }

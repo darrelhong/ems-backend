@@ -3,6 +3,7 @@ package com.is4103.backend.controller;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.is4103.backend.dto.CreateEventRequest;
@@ -16,16 +17,19 @@ import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.model.EventViews;
+import com.is4103.backend.model.PaymentStatus;
 import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.model.SellerApplicationStatus;
 import com.is4103.backend.model.SellerProfile;
 import com.is4103.backend.repository.EventRepository;
+import com.is4103.backend.service.BusinessPartnerService;
 import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.service.EventService;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +51,9 @@ public class EventController {
 
     @Autowired
     private EventOrganiserService eventOrganiserService;
+
+    @Autowired
+    private BusinessPartnerService bpService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -74,7 +81,7 @@ public class EventController {
         return eventService.getEventById(id, EventDetailsDto.class);
     }
 
-    @GetMapping("/details/public/{id}")
+    @GetMapping("/public/details/{id}")
     public EventDetailsDto getEventDetailsPublic(@PathVariable Long id) {
         return eventService.getEventById(id, EventDetailsDto.class);
     }
@@ -139,7 +146,7 @@ public class EventController {
         event.setName(createEventRequest.getName());
         event.setAddress(createEventRequest.getAddress());
         event.setDescriptions(createEventRequest.getDescriptions());
-        event.setCategories(createEventRequest.getCategories());
+        event.setEventCategory(createEventRequest.getEventCategory());
         event.setSellingTicket(createEventRequest.isSellingTicket());
         event.setTicketPrice(createEventRequest.getTicketPrice());
         event.setTicketCapacity(createEventRequest.getTicketCapacity());
@@ -164,6 +171,53 @@ public class EventController {
     }
 
     // updated to only get events that start current time
+    @GetMapping(path = "/get_events")
+    public Page<Event> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(defaultValue = "all") String filter, @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String sortDir, @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String user) {
+        // System.out.println("*********filter********" + filter);
+        // System.out.println("*********user**********" + user);
+        if (user != null) {
+            // System.out.println(filter);
+            List<Event> data = null;
+            BusinessPartner partner = bpService.getBusinessPartnerById(Long.parseLong(user));
+            if (filter.equals("favourite")) {
+                System.out.println(data);
+                // Pageable firstPageWithTwoELements = PageRequest.of(0, 2);
+                data = partner.getFavouriteEventList();
+                Page<Event> events = new PageImpl<>(data);
+                return events;
+            } else if (filter.equals("applied")) {
+                data = partner.getSellerApplications().stream().map(sa -> sa.getEvent()).collect(Collectors.toList());
+                Page<Event> events = new PageImpl<>(data);
+                return events;
+            } else if (filter.equals("pending payment")) {
+                data = partner.getSellerApplications().stream()
+                        .filter(sa -> sa.getPaymentStatus() == PaymentStatus.PENDING).map(sa -> sa.getEvent())
+                        .collect(Collectors.toList());
+                Page<Event> events = new PageImpl<>(data);
+                return events;
+            } else if (filter.equals("confirmed")) {
+                data = partner.getSellerApplications().stream()
+                        .filter(sa -> sa.getSellerApplicationStatus() == SellerApplicationStatus.CONFIRMED)
+                        .map(sa -> sa.getEvent()).collect(Collectors.toList());
+                Page<Event> events = new PageImpl<>(data);
+                return events;
+            } else if (filter.equals("past")) {
+                // return eventService.getPastPublishedEvents(page, size, sort, sortDir,
+                // keyword);
+                LocalDateTime now = LocalDateTime.now();
+                data = partner.getSellerProfiles().stream().map(sp -> sp.getEvent())
+                        .filter(e -> e.getEventEndDate().isBefore(now)).collect(Collectors.toList());
+                Page<Event> events = new PageImpl<>(data);
+                return events;
+            }
+        }
+        return eventService.getPublishedEvents(page, size, sort, sortDir, keyword);
+    }
+
     @GetMapping(path = "/get-events")
     public Page<EventCardDto> getEvents(@RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size, @RequestParam(required = false) String sort,
@@ -211,6 +265,21 @@ public class EventController {
         newApplications
                 .removeIf(application -> (application.getSellerApplicationStatus() != SellerApplicationStatus.PENDING));
         return newApplications;
+    }
+
+    @GetMapping("/recommended-bp/{id}")
+    public List<BusinessPartner> getRecommendedBusinessPartners(@PathVariable Long id) {
+        Event e = getEventById(id);
+        List<BusinessPartner> allBps = bpService.getAllBusinessPartners();
+        allBps.removeIf(bp -> !eventService.isBpRecommended(bp, e));
+        return allBps;
+    }
+
+    @PostMapping("/remove-pic")
+    public ResponseEntity<String> getNewAppliationsFromEvent(@RequestParam(name = "eid", defaultValue = "1") Long eid,
+            @RequestParam(name = "imageIndex", defaultValue = "0") int imageIndex) {
+        Event e = getEventById(eid);
+        return eventService.removePicture(e, imageIndex);
     }
 
     @GetMapping("/categories")
