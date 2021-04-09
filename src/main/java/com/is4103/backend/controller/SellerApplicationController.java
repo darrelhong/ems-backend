@@ -77,7 +77,7 @@ public class SellerApplicationController {
     public List<SellerApplication> getApplicationsByEo(@PathVariable Long id) {
         List<Event> eoEvents = eventOrganiserService.getAllEventsByEoId(id);
         List<SellerApplication> allApplications = sellerApplicationService.getAllSellerApplications();
-        allApplications.removeIf(application -> eoEvents.indexOf(application.getEvent()) < 0); 
+        allApplications.removeIf(application -> eoEvents.indexOf(application.getEvent()) < 0);
         // take out if the application doesnt belong to his list of events
         return allApplications;
     }
@@ -126,23 +126,30 @@ public class SellerApplicationController {
     }
 
     @PostMapping(value = "/cancel/{id}")
-    public SellerApplication cancelSellerApplication(@PathVariable String id) throws SellerApplicationNotFoundException {
+    public SellerApplication cancelSellerApplication(@PathVariable String id)
+            throws SellerApplicationNotFoundException {
         SellerApplication app = sellerApplicationService.getSellerApplicationById(id);
         app.setSellerApplicationStatus(SellerApplicationStatus.CANCELLED);
         try {
-            //DELETING THE PROFILE
+            // DELETING THE PROFILE
             Long sellerProfileId = getSellerProfileIdFromApplication(id);
             sellerProfileService.deleteProfileById(sellerProfileId);
         } catch (Exception e) {
-            //either no seller profile found, or cannot delete
+            // either no seller profile found, or cannot delete
             System.out.println(e);
         }
         return sellerApplicationService.updateSellerApplication(app);
-    };    
+    };
 
-    @GetMapping(value ="/get-sellerprofile-id/{id}")
+    @GetMapping(value = "/get-sellerprofile-id/{id}")
     public Long getSellerProfileIdFromApplication(@PathVariable String id) throws SellerApplicationNotFoundException {
         return sellerApplicationService.getSellerProfileIdFromApplication(id);
+    }
+
+    @GetMapping(value = "/get-organiser/{id}")
+    public EventOrganiser getOrganiserFromApplication(@PathVariable String id)
+            throws SellerApplicationNotFoundException {
+        return sellerApplicationService.getSellerApplicationById(id).getEvent().getEventOrganiser();
     }
     // NOT WORKING FOR SOME REASON,UNABLE TO RECEIVE THE REQ BODY IT TURNS OUT BLANK
     // IN SELLERPROFILECONTROLLER
