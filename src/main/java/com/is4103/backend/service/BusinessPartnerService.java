@@ -176,17 +176,13 @@ public class BusinessPartnerService {
 
     public BusinessPartner likeEvent(BusinessPartner user, Long eid) {
         Event event = eventService.getEventById(eid);
-        List<Event> likedEvents = user.getFavouriteEventList();
-        likedEvents.add(event);
-        user.setFavouriteEventList(likedEvents);
+        user.getFavouriteEventList().add(event);
         return bpRepository.save(user);
     }
 
     public BusinessPartner unlikeEvent(BusinessPartner user, Long eid) {
         Event event = eventService.getEventById(eid);
-        List<Event> likedEvents = user.getFavouriteEventList();
-        likedEvents.remove(event);
-        user.setFavouriteEventList(likedEvents);
+        user.getFavouriteEventList().remove(event);
         return bpRepository.save(user);
     }
 

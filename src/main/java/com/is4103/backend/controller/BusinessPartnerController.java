@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -15,6 +16,7 @@ import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
 import com.is4103.backend.dto.UpdatePartnerRequest;
 import com.is4103.backend.dto.UploadFileResponse;
+import com.is4103.backend.dto.event.FavouriteEventDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
@@ -27,6 +29,7 @@ import com.is4103.backend.service.SellerApplicationService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +56,9 @@ public class BusinessPartnerController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ModelMapper modelmapper;
 
     @Autowired
     private FileStorageProperties fileStorageProperties;
@@ -137,6 +143,18 @@ public class BusinessPartnerController {
     @GetMapping(path = "/following/{id}")
     public List<EventOrganiser> getFollowing(@PathVariable Long id) {
         return bpService.getFollowingById(id);
+    }
+
+    @PreAuthorize("hasRole('BIZPTNR')")
+    @GetMapping(value = "/get-favourite-events")
+    public ResponseEntity<?> getFavouriteEvent() {
+        BusinessPartner partner = bpService
+                .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        List<Event> favourites = partner.getFavouriteEventList();
+        List<FavouriteEventDto> resp = favourites.stream().map(event -> modelmapper.map(event, FavouriteEventDto.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(resp);
     }
 
     @PostMapping(path = "/like/{bpId}/{eid}")

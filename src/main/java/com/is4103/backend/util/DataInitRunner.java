@@ -103,7 +103,7 @@ public class DataInitRunner implements ApplicationRunner {
             roleRepository.save(new Role(RoleEnum.EVNTORG, "Event Organiser"));
         }
         if (roleRepository.findByRoleEnum(RoleEnum.BIZPTNR) == null) {
-            roleRepository.save(new Role(RoleEnum.BIZPTNR, "Business Partnr"));
+            roleRepository.save(new Role(RoleEnum.BIZPTNR, "Business Partner"));
         }
         if (roleRepository.findByRoleEnum(RoleEnum.ATND) == null) {
             roleRepository.save(new Role(RoleEnum.ATND, "Attendee"));
