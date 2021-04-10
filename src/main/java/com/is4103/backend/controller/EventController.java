@@ -2,6 +2,7 @@ package com.is4103.backend.controller;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,7 @@ import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.service.BusinessPartnerService;
 import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.service.EventService;
+import com.is4103.backend.service.SellerApplicationService;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,9 @@ public class EventController {
 
     @Autowired
     private EventOrganiserService eventOrganiserService;
+
+    @Autowired
+    private SellerApplicationService saService;
 
     @Autowired
     private BusinessPartnerService bpService;
@@ -190,18 +195,39 @@ public class EventController {
                 Page<Event> events = new PageImpl<>(data);
                 return events;
             } else if (filter.equals("applied")) {
-                data = partner.getSellerApplications().stream().map(sa -> sa.getEvent()).collect(Collectors.toList());
+                List<SellerApplication> temp = partner.getSellerApplications();
+                // removing all cancelled applications
+                temp = saService.removeCancelledApplications(temp);
+                data = temp.stream().map(sa -> sa.getEvent()).collect(Collectors.toList());
+                Page<Event> events = new PageImpl<>(data);
+                return events;
+            } else if (filter.equals("pending approval")) {
+                List<SellerApplication> temp = partner.getSellerApplications();
+                temp = saService.removeCancelledApplications(temp);
+                data = temp.stream().filter(sa -> sa.getSellerApplicationStatus() == SellerApplicationStatus.PENDING)
+                        .map(sa -> sa.getEvent()).collect(Collectors.toList());
                 Page<Event> events = new PageImpl<>(data);
                 return events;
             } else if (filter.equals("pending payment")) {
-                data = partner.getSellerApplications().stream()
-                        .filter(sa -> sa.getPaymentStatus() == PaymentStatus.PENDING).map(sa -> sa.getEvent())
-                        .collect(Collectors.toList());
+                List<SellerApplication> temp = partner.getSellerApplications();
+                temp = saService.removeCancelledApplications(temp);
+                data = temp.stream().filter(sa -> sa.getPaymentStatus() == PaymentStatus.PENDING)
+                        .filter(sa -> sa.getSellerApplicationStatus() == SellerApplicationStatus.APPROVED)
+                        .filter(sa -> sa.getBoothQuantity() > 0).map(sa -> sa.getEvent()).collect(Collectors.toList());
                 Page<Event> events = new PageImpl<>(data);
                 return events;
             } else if (filter.equals("confirmed")) {
-                data = partner.getSellerApplications().stream()
-                        .filter(sa -> sa.getSellerApplicationStatus() == SellerApplicationStatus.CONFIRMED)
+                List<SellerApplication> temp = partner.getSellerApplications();
+                temp = saService.removeCancelledApplications(temp);
+                data = temp.stream().filter(sa -> sa.getSellerApplicationStatus() == SellerApplicationStatus.CONFIRMED)
+                        .map(sa -> sa.getEvent()).collect(Collectors.toList());
+                data = this.removePastEvents(data);
+                Page<Event> events = new PageImpl<>(data);
+                return events;
+            } else if (filter.equals("rejected")) {
+                List<SellerApplication> temp = partner.getSellerApplications();
+                temp = saService.removeCancelledApplications(temp);
+                data = temp.stream().filter(sa -> sa.getSellerApplicationStatus() == SellerApplicationStatus.REJECTED)
                         .map(sa -> sa.getEvent()).collect(Collectors.toList());
                 Page<Event> events = new PageImpl<>(data);
                 return events;
@@ -330,5 +356,11 @@ public class EventController {
     @GetMapping("/getVipEvents/{pageParam}")
     public List<Event> getVipEvents(@PathVariable Long pageParam) {
         return eventService.getVipEvents(pageParam);
+    }
+
+    public List<Event> removePastEvents(List<Event> events) {
+        LocalDateTime now = LocalDateTime.now();
+        events.removeIf(e -> e.getEventEndDate().isBefore(now));
+        return events;
     }
 }
