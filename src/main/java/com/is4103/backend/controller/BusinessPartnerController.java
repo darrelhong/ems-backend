@@ -242,6 +242,26 @@ public class BusinessPartnerController {
         return bpService.getAllEventsByBp(bpId);
     }
 
+    @GetMapping(path = "/getEventsByBpFollowers/{id}")
+    public List<Event> getEventsByBpFollowers(@PathVariable Long id) {
+        return bpService.getEventsByBpFollowers(id);
+    }
+
+    @GetMapping(path = "/getEventsByBpFollowers/{id}/{pageParam}")
+    public List<Event> getEventsByBpFollowers(@PathVariable Long id, @PathVariable Long pageParam) {
+        return bpService.getEventsByBpFollowers(id, pageParam);
+    }
+
+    @GetMapping(path = "/getEventsByBpBusinessCategory/{id}")
+    public List<Event> getEventsByBpBusinessCategory(@PathVariable Long id) {
+        return bpService.getEventsByBpBusinessCategory(id);
+    }
+
+    @GetMapping(path = "/getEventsByBpBusinessCategory/{id}/{pageParam}")
+    public List<Event> getEventsByBpBusinessCategory(@PathVariable Long id, @PathVariable Long pageParam) {
+        return bpService.getEventsByBpBusinessCategory(id, pageParam);
+    }
+    
     @GetMapping(value = "/products/{id}")
     public List<Product> getProducts(@PathVariable Long id) {
         return bpService.getProductsByBp(id);

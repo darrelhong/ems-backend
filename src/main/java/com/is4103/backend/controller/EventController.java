@@ -286,4 +286,49 @@ public class EventController {
     public List<String> getDistinctCategories() {
         return eventService.getDistinctEventCategories();
     }
+
+    @GetMapping("/getEventsThisWeekend")
+    public List<Event> getEventsThisWeekend() {
+        return eventService.getEventsThisWeekend();
+    }
+
+    @GetMapping("/getEventsThisWeekend/{pageParam}")
+    public List<Event> getEventsThisWeekend(@PathVariable Long pageParam) {
+        return eventService.getEventsThisWeekend(pageParam);
+    }
+
+    @GetMapping("/getEventsNextWeek")
+    public List<Event> getEventsNextWeek() {
+        return eventService.getEventsNextWeek();
+    }
+
+    @GetMapping("/getEventsNextWeek/{pageParam}")
+    public List<Event> getEventsNextWeek(@PathVariable Long pageParam) {
+        return eventService.getEventsNextWeek(pageParam);
+    }
+
+    @GetMapping("/getEventsInNext30Days")
+    public List<Event> getEventsInNext30Days() {
+        return eventService.getEventsInNext30Days();
+    }
+
+    @GetMapping("/getEventsInNext30Days/{pageParam}")
+    public List<Event> getEventsInNext30Days(@PathVariable Long pageParam) {
+        return eventService.getEventsInNext30Days(pageParam);
+    }
+
+    @GetMapping("/getTopTenEvents")
+    public List<Event> getTopTenEvents() {
+        return eventService.getTopTenEvents();
+    }
+
+    @GetMapping("/getVipEvents")
+    public List<Event> getVipEvents() {
+        return eventService.getVipEvents();
+    }
+
+    @GetMapping("/getVipEvents/{pageParam}")
+    public List<Event> getVipEvents(@PathVariable Long pageParam) {
+        return eventService.getVipEvents(pageParam);
+    }
 }

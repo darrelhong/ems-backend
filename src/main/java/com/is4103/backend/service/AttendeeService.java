@@ -11,9 +11,11 @@ import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
+import com.is4103.backend.model.User;
 import com.is4103.backend.repository.AttendeeRepository;
 import com.is4103.backend.repository.BusinessPartnerRepository;
 import com.is4103.backend.repository.EventOrganiserRepository;
+import com.is4103.backend.repository.UserRepository;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
@@ -23,9 +25,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -44,6 +48,9 @@ public class AttendeeService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private RoleService roleService;
@@ -127,15 +134,32 @@ public class AttendeeService {
         return atn;
     }
 
+    //@Transactional
+    //public Attendee updateAttendee(Attendee user, UpdateAttendeeRequest updateAttendeeRequest) {
+    //    user.setName(updateAttendeeRequest.getName());
+    //    user.setDescription(updateAttendeeRequest.getDescription());
+    //    user.setAddress(updateAttendeeRequest.getAddress());
+    //    user.setPhonenumber(updateAttendeeRequest.getPhonenumber());
+    //    user.setCategoryPreferences(updateAttendeeRequest.getCategoryPreferences());
+//
+    //    return atnRepository.save(user);
+    //}
+
     @Transactional
-    public Attendee updateAttendee(Attendee user, UpdateAttendeeRequest updateAttendeeRequest) {
+    public Attendee updateAttendeeProfile(
+            Attendee user, UpdateAttendeeRequest updateAttendeeRequest, String profilepicurl) {
+
         user.setName(updateAttendeeRequest.getName());
         user.setDescription(updateAttendeeRequest.getDescription());
         user.setAddress(updateAttendeeRequest.getAddress());
         user.setPhonenumber(updateAttendeeRequest.getPhonenumber());
         user.setCategoryPreferences(updateAttendeeRequest.getCategoryPreferences());
+        
+        if (profilepicurl != null) {
+            user.setProfilePic(profilepicurl);
+        }
 
-        return atnRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Transactional
@@ -199,5 +223,134 @@ public class AttendeeService {
         }
         atnRepository.save(attendee);
         return attendee.getFavouriteEvents();
+    }
+
+    public List<Event> getEventsByAtnFollowers(Long atnId) {
+        List<Event> filterEventList = new ArrayList<>();
+        List<BusinessPartner> bpFollowerList = getFollowingBp(atnId);
+        List<EventOrganiser> eoFollowerList = getFollowingEo(atnId);
+        LocalDateTime now = LocalDateTime.now();
+
+        for (int i = 0; i < bpFollowerList.size(); i++) {
+            BusinessPartner bp = bpFollowerList.get(i);
+            List<Event> bpEventList = bpController.getAllEventByBpId(bp.getId());
+            for (Event event : bpEventList) {
+                if (!filterEventList.contains(event)
+                        && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                        && !(event.getSalesEndDate().isBefore(now))) {
+                    filterEventList.add(event);
+                }
+            }
+        }
+
+        for (int i = 0; i < eoFollowerList.size(); i++) {
+            EventOrganiser eo = eoFollowerList.get(i);
+            List<Event> eoEventList = eoController.getAllEventsByEventOrgId(eo.getId());
+            for (Event event : eoEventList) {
+                if (!filterEventList.contains(event)
+                        && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                        && !(event.getSalesEndDate().isBefore(now))) {
+                    filterEventList.add(event);
+                }
+            }
+        }
+
+        return filterEventList;
+    }
+
+    public List<Event> getEventsByAtnFollowers(Long atnId, Long page) {
+        List<Event> filterEventList = new ArrayList<>();
+        List<BusinessPartner> bpFollowerList = getFollowingBp(atnId);
+        List<EventOrganiser> eoFollowerList = getFollowingEo(atnId);
+        LocalDateTime now = LocalDateTime.now();
+        int currentEventNo = 0;
+
+        for (int i = 0; i < bpFollowerList.size(); i++) {
+            BusinessPartner bp = bpFollowerList.get(i);
+            List<Event> bpEventList = bpController.getAllEventByBpId(bp.getId());
+            for (Event event : bpEventList) {
+                if (!filterEventList.contains(event)
+                        && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                        && !(event.getSalesEndDate().isBefore(now))) {
+                    currentEventNo += 1;
+
+                    if (!(currentEventNo < (10 * (page - 1) + 1))) {
+                        filterEventList.add(event);
+                        if (filterEventList.size() == 10) {
+                            return filterEventList;
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < eoFollowerList.size(); i++) {
+            EventOrganiser eo = eoFollowerList.get(i);
+            List<Event> eoEventList = eoController.getAllEventsByEventOrgId(eo.getId());
+            for (Event event : eoEventList) {
+                if (!filterEventList.contains(event)
+                        && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                        && !(event.getSalesEndDate().isBefore(now))) {
+                    currentEventNo += 1;
+
+                    if (!(currentEventNo < (10 * (page - 1) + 1))) {
+                        filterEventList.add(event);
+                        if (filterEventList.size() == 10) {
+                            return filterEventList;
+                        }
+                    }
+                }
+            }
+        }
+
+        return filterEventList;
+    }
+
+    public List<Event> getEventsByAtnCategoryPreferences(Long atnId) {
+        List<Event> eventList = eventService.getAllEvents();
+        List<String> categoryList = getAttendeeById(atnId).getCategoryPreferences();
+        List<Event> filterEventList = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        
+        for (Event event : eventList) {
+            for (String category : categoryList) {
+                if (event.getEventCategory() == category
+                        && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                        && !(event.getSalesEndDate().isBefore(now))) {
+                    filterEventList.add(event);
+                    break;
+                }
+            }
+        }
+
+        return filterEventList;
+    }
+
+    public List<Event> getEventsByAtnCategoryPreferences(Long atnId, Long page) {
+        List<Event> eventList = eventService.getAllEvents();
+        List<String> categoryList = getAttendeeById(atnId).getCategoryPreferences();
+        List<Event> filterEventList = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        int currentEventNo = 0;
+        
+        for (Event event : eventList) {
+            for (String category : categoryList) {
+                if (event.getEventCategory() == category
+                        && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                        && !(event.getSalesEndDate().isBefore(now))) {
+                    currentEventNo += 1;
+
+                    if (!(currentEventNo < (10 * (page - 1) + 1))) {
+                        filterEventList.add(event);
+                        if (filterEventList.size() == 10) {
+                            return filterEventList;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        return filterEventList;
     }
 }
