@@ -1,6 +1,5 @@
 package com.is4103.backend.dto;
 
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,10 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UploadBizSupportFileRequest {
-   
-
-    @NotNull
-    private Long id;
-
+public class UpdateEmailNotiRequest {
+    //private boolean systemEmailNoti;
+    private boolean eoEmailNoti;
 }

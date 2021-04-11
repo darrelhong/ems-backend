@@ -2,6 +2,7 @@ package com.is4103.backend.repository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import com.is4103.backend.dto.ticketing.TicketTransactionEventDto;
@@ -45,4 +46,8 @@ public interface TicketTransactionRepository
     @Query("SELECT DISTINCT(tt.event.eid) as eid, tt.event.name as name FROM TicketTransaction tt WHERE tt.attendee = ?1 AND tt.paymentStatus = ?2 AND tt.event.eventStartDate < ?3")
     Collection<TicketTransactionEventDto> findDistinctEventsByAttendeePrevious(Attendee attendee,
             PaymentStatus paymentStatus, LocalDateTime eventStartDate);
+
+    @Query("SELECT tt from TicketTransaction tt")
+    List<TicketTransaction> getAllEventTickets();
+
 }

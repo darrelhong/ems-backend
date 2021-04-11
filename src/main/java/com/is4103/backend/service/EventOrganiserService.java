@@ -1,11 +1,23 @@
 package com.is4103.backend.service;
 
+import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.time.temporal.ChronoUnit;
+
+import java.util.stream.Collectors;
+
 
 import javax.mail.internet.InternetAddress;
 import javax.transaction.Transactional;
@@ -22,16 +34,22 @@ import com.is4103.backend.model.Event;
 // import com.is4103.backend.model.EventBoothTransaction;
 import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.model.EventOrganiser;
+
+import com.is4103.backend.model.Review;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.model.User;
 import com.is4103.backend.repository.EventOrganiserRepository;
+import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.repository.OrganiserSpecification;
 import com.is4103.backend.repository.UserRepository;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +61,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import ch.qos.logback.core.util.Duration;
 
 @Service
 public class EventOrganiserService {
@@ -77,6 +97,25 @@ public class EventOrganiserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private EventRepository eventRepository;
+
+    @Autowired
+    private SellerApplicationService sellerAppService;
+
+    @Autowired
+    private TicketingService ttService;
+
+    @Autowired
+    private ReviewService reviewService;
+
+    @Value("${stripe.apikey}")
+    private String stripeApiKey;
+
+    @Value("${stripe.secretkey}")
+    private String stripeSecretKey;
+
+    
     public List<EventOrganiser> getAllEventOrganisers() {
         return eoRepository.findAll();
     }
@@ -88,6 +127,12 @@ public class EventOrganiserService {
 
     public EventOrganiser getEventOrganiserById(Long eoId) {
         return eoRepository.findById(eoId).orElseThrow(() -> new UserNotFoundException());
+    }
+    
+    public EventOrganiser getEventOrganiserByEmail(String email) {
+        System.out.println("getEventOrganiserByEmail");
+         System.out.println(eoRepository.findByEmail(email).getEmail());
+        return eoRepository.findByEmail(email);
     }
 
     @Transactional
@@ -101,7 +146,7 @@ public class EventOrganiserService {
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         newEo.setRoles(roles);
-        // newEo.setSupportDocsUrl(bizsupportdocdownloadurl);
+        //newEo.setSupportDocsUrl(bizsupportdocdownloadurl);
 
         if (enabled) {
             newEo.setEnabled(true);
@@ -219,6 +264,18 @@ public class EventOrganiserService {
         return validEventListForAtt;
     }
 
+
+    public List<Event> getValidBpEventsByEventOrgIdForDashboard(Long eoId) {
+
+        List<Event> eventlist = eventService.getAllEventsByOrganiser(eoId);
+        List<Event> validEventListForBp = new ArrayList<>();
+        for (Event event : eventlist) {
+            if (event.getEventStatus().toString().equals("CREATED")) {
+                validEventListForBp.add(event);
+            }
+        }
+        return validEventListForBp;
+    }
     public List<Event> getAllEventsByEoIdRoleStatus(Long eoId, String role, String status) {
         // List<Event> eventlist = eventService.getAllEvents();
         List<Event> eventlist = eventService.getAllEventsByOrganiser(eoId);
@@ -304,30 +361,33 @@ public class EventOrganiserService {
                     }
                 }
 
-            } else if (status.equals("upcoming")) {
-                filterEventList = new ArrayList<>();
-                for (int a = 0; a < eventlist.size(); a++) {
-                    Event eventItem = eventlist.get(a);
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
-                    LocalDateTime now = LocalDateTime.now();
+            } 
+            
+            // else if (status.equals("upcoming")) {
+            //     filterEventList = new ArrayList<>();
+            //     for (int a = 0; a < eventlist.size(); a++) {
+            //         Event eventItem = eventlist.get(a);
+            //         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+            //         LocalDateTime now = LocalDateTime.now();
 
-                    if (eventItem.getEventStatus().toString().equals("CREATED") && !eventItem.isHidden() == true
-                            && (eventItem.getEventStartDate().isAfter(now)
-                                    || eventItem.getEventStartDate().isEqual(now))
-                            && (eventItem.getSaleStartDate().isAfter(now)
-                                    || eventItem.getSaleStartDate().isEqual(now))) {
-                        filterEventList.add(eventItem);
-                    }
-                }
+            //         if (eventItem.getEventStatus().toString().equals("CREATED") && !eventItem.isHidden()
+            //                 && (eventItem.getEventStartDate().isAfter(now)
+            //                         || eventItem.getEventStartDate().isEqual(now))
+            //                 && (eventItem.getSaleStartDate().isAfter(now)
+            //                         || eventItem.getSaleStartDate().isEqual(now))) {
+            //             filterEventList.add(eventItem);
+            //         }
+            //     }
 
-            }
+            // }
 
         }
         return filterEventList;
     }
 
     @Transactional
-    public User updateEoProfile(User user, UpdateUserRequest updateUserRequest, String profilepicurl) {
+    public EventOrganiser updateEoProfile(
+            EventOrganiser user, UpdateUserRequest updateUserRequest, String profilepicurl) {
 
         user.setName(updateUserRequest.getName());
         user.setDescription(updateUserRequest.getDescription());
@@ -487,16 +547,21 @@ public class EventOrganiserService {
     @Transactional
     public void broadcastToFollowers(User eo, BroadcastMessageToFollowersRequest broadcastMessageToFollowersRequest) {
 
-        String subject = broadcastMessageToFollowersRequest.getSubject();
+        //String subject = broadcastMessageToFollowersRequest.getSubject();
         String broadcastOption = broadcastMessageToFollowersRequest.getBroadcastOption();
         List<String> emailList = new ArrayList<>();
+        System.out.println("broadcast message");
+        System.out.println(broadcastMessageToFollowersRequest.getContent());
+        System.out.println(broadcastMessageToFollowersRequest.getBroadcastOption());
 
         if (broadcastOption.equals("AllBpFollowers")) {
 
             List<BusinessPartner> BpFollowersList = new ArrayList<>();
             BpFollowersList = this.getPartnerFollowersById(eo.getId());
             for (BusinessPartner bp : BpFollowersList) {
+                if(bp.isEoEmailNoti()){
                 emailList.add(bp.getEmail());
+                }
             }
 
         } else if (broadcastOption.equals("AllAttFollowers")) {
@@ -505,7 +570,9 @@ public class EventOrganiserService {
             AttFollowersList = this.getAttendeeFollowersById(eo.getId());
 
             for (Attendee att : AttFollowersList) {
+                 if(att.isEoEmailNoti()){
                 emailList.add(att.getEmail());
+                 }
             }
 
         } else if (broadcastOption.equals("Both")) {
@@ -515,11 +582,15 @@ public class EventOrganiserService {
             AttFollowersList = this.getAttendeeFollowersById(eo.getId());
 
             for (BusinessPartner bp : BpFollowersList) {
+                 if(bp.isEoEmailNoti()){
                 emailList.add(bp.getEmail());
+                }
             }
 
             for (Attendee att : AttFollowersList) {
+                  if(att.isEoEmailNoti()){
                 emailList.add(att.getEmail());
+                  }
             }
 
         }
@@ -529,11 +600,14 @@ public class EventOrganiserService {
         SimpleMailMessage email = new SimpleMailMessage();
 
         String[] mailArray = emailList.toArray(new String[0]);
-        System.out.println("mailArray");
-        System.out.println(mailArray);
+        // System.out.println("mailArray");
+        // System.out.println(mailArray);
+        //  System.out.println(mailArray.length);
+        // System.out.println(mailArray[0]);
+
         email.setFrom(fromEmail);
         email.setTo(mailArray);
-        email.setSubject(subject);
+        email.setSubject("New Message from EventStop");
         email.setText("You have received the following message from " + eo.getName() + ":" + "\r\n\r\n" + "\"" + message
                 + "\"" + " " + "\r\n\r\n" + "<b>"
                 + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>"
@@ -541,6 +615,704 @@ public class EventOrganiserService {
         // cc the person who submitted the enquiry.
         email.setCc(eo.getEmail());
         javaMailSender.send(email);
+          System.out.println(email);
+          System.out.println("sent");
     }
 
+    //dashboards
+
+    public List<SellerApplication> getAllPendingSellerApplicationByUser(EventOrganiser eo){
+       
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        List<SellerApplication> filteredSellerApplication = new ArrayList<>();
+       
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+      
+        for(SellerApplication sa:allSellerApplication){
+            if(sa.getEvent().getEventOrganiser().getId().equals(eo.getId()) && sa.getSellerApplicationStatus().toString().equals("PENDING")){
+                 filteredSellerApplication.add(sa);
+            }
+        }
+       
+       return filteredSellerApplication;
+    }
+
+    public static boolean isSameDay(Date date1, Date date2) {
+    SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+
+    return fmt.format(date1).equals(fmt.format(date2));
+    }
+
+    public Date convertToDateViaSqlTimestamp(LocalDateTime dateToConvert) {
+    return java.sql.Timestamp.valueOf(dateToConvert);
 }
+
+    public double getDailyBoothSales(EventOrganiser eo) throws StripeException{
+        Stripe.apiKey = stripeSecretKey;
+        
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        Date now = new Date();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+      
+        double totalSales = 0;
+        for (SellerApplication sa : allSellerApplication) {
+           
+            if (sa.getEvent().getEventOrganiser().getId().equals(eo.getId())
+                    && sa.getPaymentStatus().toString().equals("COMPLETED") && isSameDay(convertToDateViaSqlTimestamp(sa.getPaymentDate()),now)) {
+
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;  
+            }
+        }
+    
+        return totalSales;
+       
+    }
+
+    public double getMonthlyBoothSales(EventOrganiser eo) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+
+        double totalSales = 0;
+         LocalDateTime now = LocalDateTime.now();
+        for (SellerApplication sa : allSellerApplication) {
+           
+          
+            if (sa.getEvent().getEventOrganiser().getId().equals(eo.getId())
+                    && sa.getPaymentStatus().toString().equals("COMPLETED")
+                    && (sa.getPaymentDate().getYear() == now.getYear()) && (sa.getPaymentDate().getMonth() == now.getMonth())){
+
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+                }
+
+            }
+
+        return totalSales;
+
+    }
+      public double getYearlyBoothSales(EventOrganiser eo) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+
+        double totalSales = 0;
+         LocalDateTime now = LocalDateTime.now();
+        for (SellerApplication sa : allSellerApplication) {
+         
+            if (sa.getEvent().getEventOrganiser().getId().equals(eo.getId())
+                    && sa.getPaymentStatus().toString().equals("COMPLETED")
+                    && (sa.getPaymentDate().getYear() == now.getYear())){
+
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+                }
+
+            }
+
+        return totalSales;
+
+    }
+
+    
+    public double getDailyTicketSales(EventOrganiser eo) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        Date now = new Date();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+
+        double totalSales = 0;
+        for (TicketTransaction tt : allticketTrans) {
+
+            if (tt.getEvent().getEventOrganiser().getId().equals(eo.getId())
+                    && tt.getPaymentStatus().toString().equals("COMPLETED")
+                    && isSameDay(convertToDateViaSqlTimestamp(tt.getDateTimeOrdered()), now)) {
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+            }
+        }
+
+        return totalSales;
+
+    }
+
+
+    public double getMonthlyTicketSales(EventOrganiser eo) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+
+        double totalSales = 0;
+        for (TicketTransaction tt : allticketTrans) {
+
+            if (tt.getEvent().getEventOrganiser().getId() == eo.getId()
+                    && tt.getPaymentStatus().toString().equals("COMPLETED")
+                    && (tt.getDateTimeOrdered().getYear() == now.getYear()) && (tt.getDateTimeOrdered().getMonth() == now.getMonth())) {
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+            }
+        }
+
+        return totalSales;
+
+    }
+
+
+    
+    public double getYearlyTicketSales(EventOrganiser eo) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+
+        double totalSales = 0;
+        for (TicketTransaction tt : allticketTrans) {
+
+            if (tt.getEvent().getEventOrganiser().getId() == eo.getId()
+                    && tt.getPaymentStatus().toString().equals("COMPLETED")
+                    && (tt.getDateTimeOrdered().getYear() == now.getYear())) {
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+            }
+        }
+
+        return totalSales;
+
+    }
+
+
+    public double getTotalTicketSales(EventOrganiser eo)throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        // LocalDateTime now = LocalDateTime.now();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+
+        double totalSales = 0;
+        for (TicketTransaction tt : allticketTrans) {
+
+            if (tt.getEvent().getEventOrganiser().getId() == eo.getId()) {
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+            }
+        }
+
+        return totalSales;
+
+    }
+
+
+    
+    public double getTotalTicketSalesEvent(EventOrganiser eo, Long eventId)throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        // LocalDateTime now = LocalDateTime.now();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+
+        double totalSales = 0;
+        for (TicketTransaction tt : allticketTrans) {
+
+            if (tt.getEvent().getEventOrganiser().getId() == eo.getId() && tt.getEvent().getEid() == eventId) {
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+            }
+        }
+
+        return totalSales;
+
+    }
+
+    public int getTotalTicketSalesNumber(EventOrganiser eo)throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+        int count = 0; 
+        for (TicketTransaction tt : allticketTrans) {
+
+            if (tt.getEvent().getEventOrganiser().getId() == eo.getId()) {
+               count++;
+            }
+        }
+
+        return count;
+
+    }
+
+    public int getTotalTicketSalesNumberByEvent(EventOrganiser eo, Long eventId)throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+        int count = 0; 
+        for (TicketTransaction tt : allticketTrans) {
+
+            if (tt.getEvent().getEventOrganiser().getId() == eo.getId() && tt.getEvent().getEid() == eventId) {
+               count++;
+            }
+        }
+
+        return count;
+
+    }
+
+    public List<Event> getTopTicketSalesEvents(EventOrganiser eo) throws StripeException {
+    
+        Stripe.apiKey = stripeSecretKey;
+        List<Event> events = new ArrayList<>();
+        List<Event> finalEvents = new ArrayList<>();
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+        int getAllTen =0;
+        for (TicketTransaction tt : allticketTrans) {
+                if(!events.contains(tt.getEvent())){
+                    events.add(tt.getEvent());
+                }
+            }
+        while(getAllTen <11){
+            double highestSales= 0.0;
+            Event eventToBeRemoved = new Event();
+            if(events.size() > 0) {
+               for(int i=0; i<events.size(); i++){
+                List<TicketTransaction> transactions = events.get(i).getTicketTransactions();
+                double amount =0.0;
+                for(TicketTransaction tt : transactions){
+                    PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
+                    amount += paymentIntent.getAmount();
+                }
+                if(amount > highestSales){
+                    highestSales = amount;
+                    // eventToBeRemoved = events.get(i);
+                    eventToBeRemoved = eventService.getEventById(events.get(i).getEid());
+                }
+            }
+
+            finalEvents.add(eventToBeRemoved);
+            events.remove(eventToBeRemoved);
+            getAllTen += 1; 
+            } else{
+                break;
+            }
+            
+        }
+        // System.out.println("eventsTop" + finalEvents);
+        return finalEvents;
+    
+    }
+
+ 
+
+    public List<Double> topSalesEvent(List<Event> events) throws StripeException{
+        List<Double> sales = new ArrayList<>();
+        for(int i=0; i<events.size(); i++){
+            List<TicketTransaction> transactions = events.get(i).getTicketTransactions();
+            double amount =0.0;
+            for(TicketTransaction tt : transactions){
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(tt.getStripePaymentId());
+                amount += paymentIntent.getAmount();
+            }
+            sales.add(amount);
+        }
+
+        return sales;
+        
+    }
+
+    public List<Integer> topNumTicketsEvent(List<Event> events){
+        List<Integer> sales = new ArrayList<>();
+        for(int i=0; i<events.size(); i++){
+            List<TicketTransaction> transactions = events.get(i).getTicketTransactions();
+          
+            sales.add(transactions.size());
+        }
+
+        return sales;
+        
+    }
+
+    public List<Event> getEventsWithTicketTransactionsCurrent (EventOrganiser eo) {
+        List<Event> events = new ArrayList<>();
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+        LocalDateTime now = LocalDateTime.now();
+
+        for (TicketTransaction tt : allticketTrans) {
+                if(!events.contains(tt.getEvent()) && tt.getEvent().getSalesEndDate().isAfter(now)){
+                    events.add(tt.getEvent());
+                }
+            }
+        return events;
+    }
+
+    public List<Event> getEventsWithTicketTransactionsPast (EventOrganiser eo) {
+        List<Event> events = new ArrayList<>();
+        List<TicketTransaction> allticketTrans = new ArrayList<>();
+        allticketTrans = ttService.getAllTicketTransacionByEo(eo);
+        LocalDateTime now = LocalDateTime.now();
+
+        for (TicketTransaction tt : allticketTrans) {
+                if(!events.contains(tt.getEvent()) && tt.getEvent().getSalesEndDate().isBefore(now)){
+                    events.add(tt.getEvent());
+                }
+            }
+        return events;
+    }
+
+
+    public Long getDaysToEndOfTicketSale(Long eventId) {
+        
+        LocalDateTime now = LocalDateTime.now();
+       Event event = eventService.getEventById(eventId);
+    //   long daysBetween = DAYS.between(now, event.getSalesEndDate());
+    return now.until(event.getSalesEndDate(), ChronoUnit.DAYS);
+    }
+
+    public Long getDaysToStartOfEvent(Long eventId) {
+        
+        LocalDateTime now = LocalDateTime.now();
+       Event event = eventService.getEventById(eventId);
+    //   long daysBetween = DAYS.between(now, event.getSalesEndDate());
+    return now.until(event.getEventStartDate(), ChronoUnit.DAYS);
+    }
+    
+
+
+
+    //   public List<Event> getMostPopularEventList(EventOrganiser eo) {
+    //    // Stripe.apiKey = stripeSecretKey;
+
+
+    //     List<Event> allEventsOfEo = new ArrayList<>();
+    //     allEventsOfEo = eventService.getAllEventsByOrganiser(eo.getId());
+    //     List<?> mostPopularEventList = new ArrayList<>();
+    //     mostPopularEventList = eventRepository.getMostPopularEventList();
+    //     System.out.println(mostPopularEventList.size());
+    //     System.out.println(mostPopularEventList.toArray());
+        
+    //     for(Object e:mostPopularEventList){
+    //     System.out.println(e[0]);
+    //     System.out.println(e.toString());
+    //     }
+    //     return allEventsOfEo;
+
+        
+    // }
+
+    public Event upcomingEvent(EventOrganiser eo) {
+        List<Event> events = getEventsWithTicketTransactionsCurrent(eo);
+        LocalDateTime now = LocalDateTime.now();
+        long days =360;
+        Event eventFinal = new Event();
+        if(events.size() >0){
+           for(Event event : events){
+            if(event.getSalesEndDate().isAfter(now) && now.until(event.getSalesEndDate(), ChronoUnit.DAYS) < days){
+                days = now.until(event.getSalesEndDate(), ChronoUnit.DAYS);
+                eventFinal = event;
+            }
+        }  
+        }else{
+            events = getEventsWithTicketTransactionsPast(eo);
+            for(Event event : events){
+                if(event.getEventStartDate().isAfter(now) && now.until(event.getEventStartDate(), ChronoUnit.DAYS) < days){
+                    days = now.until(event.getSalesEndDate(), ChronoUnit.DAYS);
+                    eventFinal = event;
+                }
+            }
+        }
+        
+        return eventFinal;
+
+
+    }
+
+    // public List<Event>  getMostPopularEventList(EventOrganiser eo){
+    //    List<Object[]> result = eventRepository.getMostPopularEventList();
+
+    // get most popular events all the time
+    // public List<Event>  getMostPopularEventList(EventOrganiser eo){
+    //    List<Object[]> result = eventRepository.getMostPopularEventList();
+    //    Map<BigInteger,BigInteger> map = new HashMap<BigInteger,BigInteger>();
+    //    List<Event> popularEventList = new ArrayList<>();
+    //    List<Event> eoEvents = eventService.getAllEventsByOrganiser(eo.getId());
+    //    System.out.println(eoEvents.size());
+    //    if(result != null && !result.isEmpty()){
+    //       map = new HashMap<BigInteger,BigInteger>();
+    //       for (Object[] object : result) {
+    //           for(Event e : eoEvents){
+    //               if((BigInteger)object[1] == BigInteger.valueOf(e.getEid())){
+    //                 //  map.put(((BigInteger)object[1]),(BigInteger)object[0]);
+    //                  e.setApplicationCount((BigInteger)object[0]);
+    //                  popularEventList.add(e);
+    //               }
+    //           }           
+    //       }
+    //    }
+    // return popularEventList;
+    //  }
+     // get most popular event of the day.
+        public List<Event>  getBoothDashboardMostPopularEventOfTheDay(EventOrganiser eo){
+       List<Object[]> result = eventRepository.getBoothDashboardDailyMostPopularEventList();
+
+       Map<BigInteger,BigInteger> map = new HashMap<BigInteger,BigInteger>();
+       List<Event> popularEventList = new ArrayList<>();
+       List<Event> eoEvents = eventService.getAllEventsByOrganiser(eo.getId());
+       System.out.println(eoEvents.size());
+       if(result != null && !result.isEmpty()){
+          map = new HashMap<BigInteger,BigInteger>();
+          for (Object[] object : result) {
+              for(Event e : eoEvents){
+                  if((BigInteger)object[1] == BigInteger.valueOf(e.getEid())){
+                    //  map.put(((BigInteger)object[1]),(BigInteger)object[0]);
+                     e.setApplicationCount((BigInteger)object[0]);
+                     popularEventList.add(e);
+                  }
+              }           
+          }
+       }
+     
+    return popularEventList;
+     }
+     
+     public List<Event> getBoothDashboardMostPopularEventOfTheMonth(EventOrganiser eo) {
+         List<Object[]> result = eventRepository.getBoothDashboardMonthlyMostPopularEventList();
+         Map<BigInteger, BigInteger> map = new HashMap<BigInteger, BigInteger>();
+         List<Event> popularEventList = new ArrayList<>();
+         List<Event> eoEvents = eventService.getAllEventsByOrganiser(eo.getId());
+         System.out.println(eoEvents.size());
+         if (result != null && !result.isEmpty()) {
+             map = new HashMap<BigInteger, BigInteger>();
+             for (Object[] object : result) {
+                 for (Event e : eoEvents) {
+                     if ((BigInteger) object[1] == BigInteger.valueOf(e.getEid())) {
+                         // map.put(((BigInteger)object[1]),(BigInteger)object[0]);
+                         e.setApplicationCount((BigInteger) object[0]);
+                         popularEventList.add(e);
+                     }
+                 }
+             }
+         }
+
+         return popularEventList;
+     }
+
+     public List<Event> getBoothDashboardMostPopularEventOfTheYear(EventOrganiser eo) {
+         List<Object[]> result = eventRepository.getBoothDashboardYearlyMostPopularEventList();
+         Map<BigInteger, BigInteger> map = new HashMap<BigInteger, BigInteger>();
+         List<Event> popularEventList = new ArrayList<>();
+         List<Event> eoEvents = eventService.getAllEventsByOrganiser(eo.getId());
+         System.out.println(eoEvents.size());
+         if (result != null && !result.isEmpty()) {
+             map = new HashMap<BigInteger, BigInteger>();
+             for (Object[] object : result) {
+                 for (Event e : eoEvents) {
+                     if ((BigInteger) object[1] == BigInteger.valueOf(e.getEid())) {
+                         // map.put(((BigInteger)object[1]),(BigInteger)object[0]);
+                         e.setApplicationCount((BigInteger) object[0]);
+                         popularEventList.add(e);
+                     }
+                 }
+             }
+         }
+
+         return popularEventList;
+     }
+
+     public Map<Integer, Long> getEventRatingCountList(EventOrganiser eo){
+      List<Review> AllEoReviews = reviewService.getReviewsByEO(eo.getId());
+      Map<Integer, Long> result = AllEoReviews.stream().collect(Collectors.groupingBy(Review::getRating, Collectors.counting()));
+               
+     return result;
+     }
+
+      public double getOverAllEventRating(EventOrganiser eo){
+      List<Review> AllEoReviews = reviewService.getReviewsByEO(eo.getId());
+      Long totalRatingValue = Long.valueOf(0);
+      Long totalRatingCount =  Long.valueOf(0);
+      double rating = 0;
+      Map<Integer, Long> map = new HashMap<Integer,Long>();
+      map = AllEoReviews.stream().collect(Collectors.groupingBy(Review::getRating, Collectors.counting()));
+        if (map != null && !map.isEmpty()) {
+        Iterator it = map.entrySet().iterator();
+        while (it.hasNext()) {
+        Map.Entry<Integer,Long> pair = (Map.Entry<Integer,Long>)it.next();
+        System.out.println(pair.getKey() + " = " + pair.getValue());
+        totalRatingValue += pair.getKey() * pair.getValue();
+        totalRatingCount += pair.getValue();
+        it.remove(); // avoids a ConcurrentModificationException
+    }
+         rating = (double)totalRatingValue/totalRatingCount;
+           
+         }
+           System.out.println(rating);
+     return rating;
+     }
+
+     public double getTotalSalesByEvent(Long eventId,EventOrganiser eo) throws StripeException{
+         Stripe.apiKey = stripeSecretKey;
+
+         List<SellerApplication> allSellerApplication = new ArrayList<>();
+         Date now = new Date();
+         allSellerApplication = sellerAppService.getAllSellerApplications();
+
+         double totalSales = 0;
+         for (SellerApplication sa : allSellerApplication) {
+
+             if (sa.getEvent().getEid() == eventId && sa.getEvent().getEventOrganiser().getId().equals(eo.getId()) && sa.getPaymentStatus().toString().equals("COMPLETED")){
+                 PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
+                 double amount = paymentIntent.getAmount();
+                 totalSales += amount;
+             }
+         }
+
+         return totalSales;
+     }
+  
+    public Long getNumberOfBusinessPartnerByEvent(Long eventId,EventOrganiser eo){
+       
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+        Long bpNum = Long.valueOf(0);
+        for (SellerApplication sa : allSellerApplication) {
+
+            if (sa.getEvent().getEid() == eventId && sa.getEvent().getEventOrganiser().getId().equals(eo.getId()) && sa.getPaymentStatus().toString().equals("COMPLETED")){
+              bpNum += 1;
+            }
+        }
+
+        return bpNum;
+    }  
+
+      
+    public Long getNumberOfBoothApplications(EventOrganiser eo){
+       
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+        Long boothAppNum = Long.valueOf(0);
+        for (SellerApplication sa : allSellerApplication) {
+
+            if (sa.getEvent().getEventOrganiser().getId().equals(eo.getId()) && sa.getPaymentStatus().toString().equals("COMPLETED")) {
+              boothAppNum += 1;
+            }
+        }
+
+        return boothAppNum;
+    } 
+     public double getAllEventSales(EventOrganiser eo) throws StripeException{
+       
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+        double totalSales = 0;
+      
+        for (SellerApplication sa : allSellerApplication) {
+
+            if (sa.getEvent().getEventOrganiser().getId().equals(eo.getId()) && sa.getPaymentStatus().toString().equals("COMPLETED") ) {
+                PaymentIntent paymentIntent = PaymentIntent.retrieve(sa.getStripePaymentId());
+                double amount = paymentIntent.getAmount();
+                totalSales += amount;
+            }
+        }
+
+        return totalSales;
+    }  
+       
+    public Long getNumberOfBoothSoldByEvent(Long eventId,EventOrganiser eo) {
+
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+        Long numBoothSold = Long.valueOf(0);
+        for (SellerApplication sa : allSellerApplication) {
+
+            if (sa.getEvent().getEid() == eventId && sa.getEvent().getEventOrganiser().getId().equals(eo.getId()) && sa.getPaymentStatus().toString().equals("COMPLETED") && sa.getSellerApplicationStatus().toString().equals("CONFIRMED")) {
+                numBoothSold += sa.getBoothQuantity();
+            }
+        }
+
+        return numBoothSold;
+    }
+
+    public Long getNumberOfBoothCapacityByEvent(Long eventId, EventOrganiser eo) {
+
+        Event event = eventService.getEventById(eventId);
+        Long boothCapacity = Long.valueOf(0);
+      
+            if (event.getEventOrganiser().getId() == eo.getId() && event.getEventStatus().toString().equals("CREATED")) {
+               boothCapacity += event.getBoothCapacity();
+            }  
+
+        return boothCapacity;
+    }
+
+    public Long getNumberOfBoothSoldByAllEvent(EventOrganiser eo) {
+
+        List<SellerApplication> allSellerApplication = new ArrayList<>();
+        allSellerApplication = sellerAppService.getAllSellerApplications();
+        Long boothSold = Long.valueOf(0);
+        for (SellerApplication sa : allSellerApplication) {
+
+            if (sa.getEvent().getEventOrganiser().getId() == eo.getId() && sa.getPaymentStatus().toString().equals("COMPLETED")) {
+                boothSold += sa.getBoothQuantity();
+            }
+        }
+
+        return boothSold;
+    }
+
+    public Long getNumberofAllBoothCapacity(EventOrganiser eo) {
+
+        List<Event> allEvents = new ArrayList<>();
+        allEvents = this.getValidBpEventsByEventOrgIdForDashboard(eo.getId());
+        Long boothCapacity = Long.valueOf(0);
+
+        for (Event e : allEvents) {
+
+            if (e.getEventStatus().toString().equals("CREATED")){
+               boothCapacity += e.getBoothCapacity();
+            }
+        }
+
+        return boothCapacity;
+    }
+
+    public  Map<String, Long> getCategoryRankList(EventOrganiser eo) {
+        List<Object[]> applicationRankList = eventRepository.getApplicationRankList();
+        Map<String, BigInteger> map = new HashMap<String, BigInteger>();
+        List<Event> categoryRankList = new ArrayList<>();
+        List<Event> eoEvents = eventService.getAllEventsByOrganiser(eo.getId());
+        System.out.println(eoEvents.size());
+        if (applicationRankList != null && !applicationRankList.isEmpty()) {
+            map = new HashMap<String, BigInteger>();
+            for (Object[] object : applicationRankList) {
+                for (Event e : eoEvents) {
+                    if ((BigInteger) object[0] == BigInteger.valueOf(e.getEid()) && e.getEventStatus().toString().equals("CREATED")) {
+
+                        e.setApplicationCount((BigInteger)object[1]);
+                        categoryRankList.add(e);
+                    }
+                }
+            }
+        }
+        Map<String, Long> categoryCountMap = new HashMap<String, Long>();
+        categoryCountMap = categoryRankList.stream().collect(Collectors.groupingBy(Event::getCategory, Collectors.counting()));
+        System.out.println(categoryCountMap);
+        return categoryCountMap;
+    }
+
+
+}
+

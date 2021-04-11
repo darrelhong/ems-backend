@@ -1,11 +1,15 @@
 package com.is4103.backend.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.Valid;
 
 import com.is4103.backend.config.JwtTokenUtil;
+import com.is4103.backend.dto.AddCardResponse;
+import com.is4103.backend.dto.AddCardRequest;
 import com.is4103.backend.dto.AuthToken;
 import com.is4103.backend.dto.ChangePasswordRequest;
 import com.is4103.backend.dto.ChangePasswordResponse;
@@ -16,11 +20,15 @@ import com.is4103.backend.dto.LoginUserResponse;
 import com.is4103.backend.dto.ResetPasswordDto;
 import com.is4103.backend.dto.SendEnquiryRequest;
 import com.is4103.backend.dto.SignupRequest;
+import com.is4103.backend.dto.UpdateEmailNotiRequest;
 import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.model.Role;
 import com.is4103.backend.model.RoleEnum;
 import com.is4103.backend.model.User;
 
+import com.is4103.backend.model.BusinessPartner;
+import com.is4103.backend.model.Event;
+import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.service.EventService;
 
@@ -29,6 +37,9 @@ import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.errors.InvalidTokenException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentMethod;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -77,6 +88,12 @@ public class UserController {
 
     @Autowired
     private EventService eventService;
+
+    @Value("${stripe.apikey}")
+    private String stripeApiKey;
+
+    @Value("${stripe.secretkey}")
+    private String stripeSecretKey;
 
     @GetMapping(path = "/all")
     public List<User> getAllUsers() {
@@ -287,4 +304,119 @@ public class UserController {
 
         return ResponseEntity.ok("Success");
     }
+    @GetMapping(value = "/getPaymentMethod")
+    public String getPaymentMethod() {
+
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+         PaymentMethod paymentMethod = new PaymentMethod();
+        if(user != null){
+        
+        try {
+        Stripe.apiKey = stripeSecretKey;
+        paymentMethod = PaymentMethod.retrieve(user.getPaymentMethodId());
+            
+        } catch (StripeException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }      
+     
+        }
+
+        return paymentMethod.toJson();
 }
+
+  @PostMapping(value = "/deleteCardPayment")
+  public User deleteCard() {
+      User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+  
+        User userRes = userService.deletePaymentMethod(user);
+
+        return userRes;
+  }
+
+    @PostMapping(value = "/addCardPayment")
+    public AddCardResponse addCard(@RequestBody @Valid AddCardRequest addCardRequest) {
+        System.out.println("call addCardPayment ");
+        String resMsg = "";
+        String cardholderName = addCardRequest.getCardholdername();
+          // System.out.println(cardholderName);
+         String cardnumber = addCardRequest.getCardnumber();
+        System.out.println(cardnumber);
+         String cvc = addCardRequest.getCvc();
+          System.out.println(cvc);
+         String expMth = addCardRequest.getExpMth();
+          System.out.println(expMth);
+         String expYear = addCardRequest.getExpYear();
+          System.out.println(expYear);
+
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        if(user != null){
+            Stripe.apiKey = stripeApiKey;
+            Map<String, Object> card = new HashMap<>();
+            card.put("number", cardnumber);
+            card.put("exp_month", Integer.valueOf(expMth));
+            card.put("exp_year", Integer.valueOf(expYear));
+            card.put("cvc", cvc);
+
+             Map<String, Object> billing_details = new HashMap<>();
+            billing_details.put("name", cardholderName);
+            billing_details.put("email", user.getEmail());
+            if(user.getPhonenumber() != null){
+            billing_details.put("phone", user.getPhonenumber());
+            }
+            Map<String, Object> params = new HashMap<>();
+            params.put("type", "card");
+            params.put("card", card);
+            params.put("billing_details",billing_details);
+           
+            PaymentMethod paymentMethod;
+            try {
+                paymentMethod = PaymentMethod.create(params);
+                System.out.println("print payment ID");
+                System.out.println(paymentMethod.getId());
+                if (paymentMethod.getId() != null) {
+                    User userRes = userService.savePaymentMethod(user,paymentMethod.getId());
+                    if(userRes != null){
+                    resMsg = "success_added";
+                    }else{
+                        resMsg = "dbError";
+                    }
+                }
+
+            } catch (StripeException e) {
+                // TODO Auto-generated catch block
+                System.out.println("error");
+                System.out.println(e);
+                resMsg = e.toString();
+
+            }
+        }else{
+            resMsg = "dbError";
+        }
+
+       
+       
+         return new AddCardResponse(resMsg);
+        
+    }
+
+     @PostMapping(value = "/updateEmailNoti")
+    public User updateEmailNoti(@RequestBody @Valid UpdateEmailNotiRequest updateEmailNotiRequest) {
+        
+       boolean eoEmailNoti  = updateEmailNotiRequest.isEoEmailNoti();
+      // boolean systemEmailNoti = updateEmailNotiRequest.isSystemEmailNoti();
+       User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+       User userRes = userService.updateNotiSetting(user, eoEmailNoti);
+        
+       return userRes;
+    }
+
+}
+
+
+
+
+
+

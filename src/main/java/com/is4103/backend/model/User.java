@@ -68,4 +68,13 @@ public class User {
     @Fetch(value = FetchMode.SUBSELECT)
     @ElementCollection(targetClass = Notification.class)
     private List<Notification> notifications;
+
+    @Column(nullable = true)
+    private String paymentMethodId;
+    
+    @Column(nullable = true)
+    private boolean systemEmailNoti = true;
+   
+    @Column(nullable = true)
+    private boolean eoEmailNoti = true;
 }

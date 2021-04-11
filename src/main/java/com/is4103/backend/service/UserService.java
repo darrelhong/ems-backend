@@ -178,6 +178,7 @@ public class UserService {
         user.setAddress(updateUserRequest.getAddress());
         user.setPhonenumber(updateUserRequest.getPhonenumber());
 
+
         return userRepository.save(user);
     }
 
@@ -333,5 +334,23 @@ public class UserService {
         // cc the person who submitted the enquiry.
         email.setCc(sendEnquiry.getSenderEmail());
         javaMailSender.send(email);
+    }
+
+    public User savePaymentMethod(User user,String paymentMethodId){
+        user.setPaymentMethodId(paymentMethodId);
+        return userRepository.save(user);
+
+    }
+    public User deletePaymentMethod(User user){
+        user.setPaymentMethodId(null);
+        return userRepository.save(user);
+
+    }
+    
+    public User updateNotiSetting(User user,boolean eoEmailNoti) {
+        user.setEoEmailNoti(eoEmailNoti);
+       // user.setSystemEmailNoti(systemEmailNoti);
+        return userRepository.save(user);
+
     }
 }

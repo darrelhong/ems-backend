@@ -15,6 +15,7 @@ import com.is4103.backend.dto.event.EventDetailsDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
+
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.TicketTransaction;
 import com.is4103.backend.model.EventViews;
@@ -151,7 +152,7 @@ public class EventController {
         event.setName(createEventRequest.getName());
         event.setAddress(createEventRequest.getAddress());
         event.setDescriptions(createEventRequest.getDescriptions());
-        event.setEventCategory(createEventRequest.getEventCategory());
+        event.setCategory(createEventRequest.getCategory());
         event.setSellingTicket(createEventRequest.isSellingTicket());
         event.setTicketPrice(createEventRequest.getTicketPrice());
         event.setTicketCapacity(createEventRequest.getTicketCapacity());

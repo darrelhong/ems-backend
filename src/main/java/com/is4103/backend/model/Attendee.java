@@ -1,14 +1,18 @@
 package com.is4103.backend.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Transient;
@@ -20,6 +24,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class Attendee extends User {
+
 
     @Column(nullable = true)
     @ElementCollection(targetClass = String.class)
@@ -33,12 +38,14 @@ public class Attendee extends User {
     @OneToMany(mappedBy = "attendee")
     private List<TicketTransaction> ticketTransactions;
 
-    @Transient
-    @JsonIgnore
-    @Column(nullable = true)
+    //  @Transient
+     @JsonIgnore
+     @Column(nullable = true)
     @OneToMany(mappedBy = "attendee")
-    @ElementCollection(targetClass = Review.class)
+    // @ElementCollection(targetClass = Review.class)
     private List<Review> reviews;
+
+
 
     @JsonIgnore
     @ManyToMany
@@ -53,9 +60,9 @@ public class Attendee extends User {
         super();
     }
 
-    public Attendee(List<String> categoryPreferences, List<EventOrganiser> followedEventOrgs,
-            List<BusinessPartner> followedBusinessPartners) {
-        this();
+
+    public Attendee(List<String> categoryPreferences, List<EventOrganiser> followedEventOrgs, List<BusinessPartner> followedBusinessPartners) {
+       this();
         this.categoryPreferences = categoryPreferences;
         this.followedEventOrganisers = followedEventOrgs;
         this.followedBusinessPartners = followedBusinessPartners;

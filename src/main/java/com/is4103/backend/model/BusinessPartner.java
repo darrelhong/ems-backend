@@ -12,6 +12,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+// import org.hibernate.mapping.Set;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import lombok.Data;
 
@@ -27,12 +34,14 @@ public class BusinessPartner extends User {
     @ElementCollection(targetClass = Event.class)
     private List<Event> favouriteEventList;
 
+
     @JsonIgnore
     @Column(nullable = true)
     @ManyToMany
     private List<Attendee> attendeeFollowers;
 
-    @JsonIgnoreProperties("businessPartner")
+    @JsonIgnore
+    // @JsonIgnoreProperties("businessPartner")
     @Column(nullable = true)
     @ManyToMany(mappedBy = "businessPartnerFollowers")
     private List<EventOrganiser> followEventOrganisers;

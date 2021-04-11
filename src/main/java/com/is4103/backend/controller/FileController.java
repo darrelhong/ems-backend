@@ -77,7 +77,7 @@ public class FileController {
             }
         }
 
-        // user = userService.updateProfilePic(user, fileDownloadUri);
+       //  user = userService.updateProfilePic(user, fileDownloadUri);
 
         return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
     }

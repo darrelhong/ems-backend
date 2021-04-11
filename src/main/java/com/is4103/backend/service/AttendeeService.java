@@ -42,6 +42,7 @@ public class AttendeeService {
 
     @Autowired
     private EventOrganiserRepository eoRepository;
+    
 
     @Autowired
     private EventOrganiserController eoController;
@@ -100,6 +101,8 @@ public class AttendeeService {
         return following;
     }
 
+   
+
     @Transactional
     public Attendee registerNewAttendee(SignupRequest signupRequest, boolean enabled)
             throws UserAlreadyExistsException {
@@ -133,6 +136,22 @@ public class AttendeeService {
 
         return atn;
     }
+    
+
+    // @Transactional
+    // public Attendee updateAttendee(Attendee user, UpdateAttendeeRequest updateAttendeeRequest) {
+    //     user.setName(updateAttendeeRequest.getName());
+    //     user.setDescription(updateAttendeeRequest.getDescription());
+    //     user.setAddress(updateAttendeeRequest.getAddress());
+    //     user.setPhonenumber(updateAttendeeRequest.getPhonenumber());
+    //     user.setCategoryPreferences(updateAttendeeRequest.getCategoryPreferences());
+
+    //     return atnRepository.save(user);
+    // }
+
+    //  @Transactional
+    // public Attendee updateAttendeeProfile(
+    //         Attendee user, UpdateAttendeeRequest updateAttendeeRequest, String profilepicurl) {
 
     //@Transactional
     //public Attendee updateAttendee(Attendee user, UpdateAttendeeRequest updateAttendeeRequest) {
@@ -161,6 +180,8 @@ public class AttendeeService {
 
         return userRepository.save(user);
     }
+
+    
 
     @Transactional
     public Attendee followBusinessPartner(Attendee user, FollowRequest followRequest) {
@@ -208,8 +229,9 @@ public class AttendeeService {
         List<EventOrganiser> follow = user.getFollowedEventOrgs();
         follow.remove(eo);
         user.setFollowedEventOrgs(follow);
+
         List<Attendee> followers = eo.getAttendeeFollowers();
-        followers.remove(user);
+         followers.remove(user);
         eoRepository.save(eo);
         return atnRepository.save(user);
     }
@@ -314,7 +336,7 @@ public class AttendeeService {
         
         for (Event event : eventList) {
             for (String category : categoryList) {
-                if (event.getEventCategory() == category
+                if (event.getCategory() == category
                         && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                         && !(event.getSalesEndDate().isBefore(now))) {
                     filterEventList.add(event);
@@ -335,7 +357,7 @@ public class AttendeeService {
         
         for (Event event : eventList) {
             for (String category : categoryList) {
-                if (event.getEventCategory() == category
+                if (event.getECategory() == category
                         && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                         && !(event.getSalesEndDate().isBefore(now))) {
                     currentEventNo += 1;

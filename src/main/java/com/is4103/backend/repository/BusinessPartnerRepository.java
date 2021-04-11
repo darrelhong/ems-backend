@@ -3,6 +3,7 @@ package com.is4103.backend.repository;
 import com.is4103.backend.model.BusinessPartner;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

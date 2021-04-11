@@ -23,6 +23,7 @@ public class ReviewController {
     @Autowired
     private ReviewService reviewService;
 
+   
     @GetMapping(path = "/{id}")
     public List<Review> getReviewsByEventId(@PathVariable Long id) {
         return reviewService.getReviewsByEventId(id);
@@ -36,6 +37,6 @@ public class ReviewController {
     @PostMapping(value = "/create")
     public Review createNewReview(@RequestBody @Valid CreateReview reviewRequest) {
         return reviewService.createNewReview(reviewRequest);
-
     }
+
 }

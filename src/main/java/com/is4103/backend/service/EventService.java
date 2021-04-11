@@ -173,7 +173,7 @@ public class EventService {
 
     public boolean isBpRecommended(BusinessPartner bp, Event e) {
         // List<String> eventCategories = e.getCategories();
-        String eventCategory = e.getEventCategory();
+        String eventCategory = e.getCategory();
         List<SellerApplication> applications = e.getSellerApplications();
         // CHECK 1: DONT RECO IF APPLIED ALR
         List<Long> bpIds = applications.stream().map(application -> application.getBusinessPartner().getId())

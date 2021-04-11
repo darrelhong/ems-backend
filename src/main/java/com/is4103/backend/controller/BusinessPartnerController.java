@@ -9,18 +9,21 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.is4103.backend.dto.DisabledAccountRequest;
 import com.is4103.backend.dto.FileStorageProperties;
 import com.is4103.backend.dto.FollowRequest;
 import com.is4103.backend.dto.PartnerSearchCriteria;
 import com.is4103.backend.dto.SignupRequest;
 import com.is4103.backend.dto.SignupResponse;
 import com.is4103.backend.dto.UpdatePartnerRequest;
+import com.is4103.backend.dto.UpdateUserRequest;
 import com.is4103.backend.dto.UploadFileResponse;
 import com.is4103.backend.dto.event.FavouriteEventDto;
 import com.is4103.backend.model.Attendee;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
+import com.is4103.backend.model.User;
 import com.is4103.backend.model.Product;
 import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.service.BusinessPartnerService;
@@ -198,6 +201,17 @@ public class BusinessPartnerController {
     // @PreAuthorize("hasAnyRole('BIZPTNR')")
     // @PostMapping(value = "/update")
     // public ResponseEntity<BusinessPartner> updatePartner(
+    //         @RequestBody @Valid UpdatePartnerRequest updatePartnerRequest) {
+    //     BusinessPartner user = bpService
+    //             .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+    //     // verify user id
+    //     if (updatePartnerRequest.getId() != user.getId()) {
+    //         throw new AuthenticationServiceException("An error has occured");
+    //     }
+
+    //     user = bpService.updatePartner(user, updatePartnerRequest);
+    //     return ResponseEntity.ok(user);
     // @RequestBody @Valid UpdatePartnerRequest updatePartnerRequest) {
     // BusinessPartner user = bpService
     // .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -243,7 +257,6 @@ public class BusinessPartnerController {
                 try {
                     Files.deleteIfExists(oldFilepath);
                 } catch (IOException e) {
-
                     e.printStackTrace();
                 }
 
@@ -259,6 +272,16 @@ public class BusinessPartnerController {
     public List<Event> getAllEventByBpId(@PathVariable Long bpId) {
         return bpService.getAllEventsByBp(bpId);
     }
+
+
+
+    @GetMapping(value = "/events/{bpId}/{role}/{status}")
+    public List<Event> getAllEventByBpIdStatus(@PathVariable Long bpId, @PathVariable String role, @PathVariable String status) {
+
+        return bpService.getAllEventsByBpIdStatus(bpId, role ,status);
+    }
+    
+
 
     @GetMapping(path = "/getEventsByBpFollowers/{id}")
     public List<Event> getEventsByBpFollowers(@PathVariable Long id) {
@@ -291,5 +314,6 @@ public class BusinessPartnerController {
         BusinessPartner bp = getBusinessPartnerById(id);
         return sellerApplicationService.removeCancelledApplications(bp.getSellerApplications());
     }
+
 
 }
