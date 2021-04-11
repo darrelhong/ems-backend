@@ -46,6 +46,8 @@ public interface EventDetailsDto {
 
     Float getBoothPrice();
 
+    String getBoothLayout();
+
     interface EventOrganiserDetails {
         String getName();
     }

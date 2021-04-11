@@ -551,4 +551,8 @@ public class EventService {
 
         return vipEvents;
     }
+
+    public Event updateEvent(Event e) {
+        return eventRepository.save(e);
+    }
 }

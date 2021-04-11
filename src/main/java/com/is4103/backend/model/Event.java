@@ -150,6 +150,8 @@ public class Event {
     @OneToMany(mappedBy = "event")
     private List<Rsvp> rsvps;
 
+    private String boothLayout;
+    
     public boolean getAvailableForSale() {
         if (this.isSellingTicket && this.saleStartDate != null && this.salesEndDate != null) {
             // if (this.saleStartDate != null && this.salesEndDate != null) {
