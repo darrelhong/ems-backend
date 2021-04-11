@@ -118,6 +118,43 @@ public class FileController {
         return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
     }
 
+    @PostMapping("/uploadBoothlayout")
+    public UploadFileResponse uploadBoothlayout(@RequestParam("file") MultipartFile file,
+            @RequestParam(name = "eid", defaultValue = "1") Long eventId) {
+        String fileName = fileStorageService.storeFile(file, "boothlayout", "");
+
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        long userId = user.getId();
+
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
+                .path(fileName).toUriString();
+
+        // if (user.getProfilePic() != null) {
+        // String profilepicpath = user.getProfilePic();
+        // String oldpicfilename =
+        // profilepicpath.substring(profilepicpath.lastIndexOf("/") + 1);
+
+        // System.out.println(oldpicfilename);
+        // Path oldFilepath = Paths.get(this.fileStorageProperties.getUploadDir() +
+        // "/eventPics/" + eventId + oldpicfilename)
+        // .toAbsolutePath().normalize();
+        // System.out.println(oldFilepath);
+        // try {
+        // Files.deleteIfExists(oldFilepath);
+        // } catch (IOException e) {
+        // // TODO Auto-generated catch block
+        // e.printStackTrace();
+        // }
+        // }
+
+        Event event = eventService.getEventById(eventId);
+        // user = userService.updateProfilePic(user, fileDownloadUri);
+        event.setBoothLayout(fileDownloadUri);
+        eventService.updateEvent(event);
+
+        return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
+    }
+
     @PostMapping("/uploadMultipleFiles")
     public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile files) {
         return Arrays.asList(files).stream().map(file -> uploadFile(file)).collect(Collectors.toList());

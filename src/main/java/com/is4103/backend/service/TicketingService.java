@@ -46,6 +46,10 @@ public class TicketingService {
     @Autowired
     private AttendeeService attendeeService;
 
+    public List<TicketTransaction> getAllTransactions() {
+        return ttRepository.findAll();
+    }
+
     public TicketTransaction findById(String id) throws TicketTransactionNotFoundException {
         return ttRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new TicketTransactionNotFoundException("Ticket Transaction Not Found"));

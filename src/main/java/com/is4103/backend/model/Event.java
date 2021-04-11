@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -96,7 +95,7 @@ public class Event {
     // @Column(nullable = false)
     private String address;
 
-    // @Column(nullable = false) 
+    // @Column(nullable = false)
     private String descriptions;
 
 
@@ -164,6 +163,8 @@ public class Event {
     @OneToMany(mappedBy = "event")
     private List<Rsvp> rsvps;
 
+    private String boothLayout;
+    
     public boolean getAvailableForSale() {
         if (this.isSellingTicket && this.saleStartDate != null && this.salesEndDate != null) {
             // if (this.saleStartDate != null && this.salesEndDate != null) {

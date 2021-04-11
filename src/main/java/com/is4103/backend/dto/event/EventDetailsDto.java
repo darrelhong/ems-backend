@@ -36,11 +36,59 @@ public interface EventDetailsDto {
 
     Boolean getAvailableForSale();
 
-    List<String> getCategories();
+    List<String> getEventCategory();
 
     EventOrganiserDetails getEventOrganiser();
 
+    List<SellerProfileSummary> getSellerProfiles();
+
+    Integer getBoothCapacity();
+
+    Float getBoothPrice();
+
+    String getBoothLayout();
+
     interface EventOrganiserDetails {
         String getName();
+    }
+
+    interface SellerProfileSummary {
+        Long getId();
+
+        String getDescription();
+
+        List<BoothSummary> getBooths();
+
+        List<String> getBrochureImages();
+    }
+
+    interface BoothSummary {
+        Long getId();
+
+        List<ProductSummary> getProducts();
+
+        Integer getBoothNumber();
+
+        String getDescription();
+
+        BoothSellerProfileSummary getSellerProfile();
+    }
+
+    interface BoothSellerProfileSummary {
+        BusinessPartnerSummary getBusinessPartner();
+    }
+
+    interface BusinessPartnerSummary {
+        String getName();
+    }
+
+    interface ProductSummary {
+        Long getPid();
+
+        String getName();
+
+        String getDescription();
+
+        String getImage();
     }
 }

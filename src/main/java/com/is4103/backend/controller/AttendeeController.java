@@ -56,6 +56,12 @@ public class AttendeeController {
     @Autowired
     private ModelMapper modelmapper;
 
+    @Autowired
+    private FileStorageService fileStorageService;
+
+    @Autowired
+    private FileStorageProperties fileStorageProperties;
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
     public List<Attendee> getAllAttendees() {
@@ -68,11 +74,7 @@ public class AttendeeController {
         return atnService.getAttendeeById(id);
     }
 
-    @Autowired
-    private FileStorageService fileStorageService;
-
-    @Autowired
-    private FileStorageProperties fileStorageProperties;
+ 
 
     @GetMapping(path = "listFollowingBP/{id}")
     public List<BusinessPartner> getFollowingBP(@PathVariable Long id) {
@@ -227,5 +229,29 @@ public class AttendeeController {
         List<FavouriteEventDto> resp = favourites.stream().map(event -> modelmapper.map(event, FavouriteEventDto.class))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(resp);
+    }
+
+    @PreAuthorize("hasRole('ATND')")
+    @GetMapping(path = "/getEventsByAtnFollowers/{id}")
+    public List<Event> getEventsByAtnFollowers(@PathVariable Long id) {
+        return atnService.getEventsByAtnFollowers(id);
+    }
+
+    @PreAuthorize("hasRole('ATND')")
+    @GetMapping(path = "/getEventsByAtnFollowers/{id}/{pageParam}")
+    public List<Event> getEventsByAtnFollowers(@PathVariable Long id, @PathVariable Long pageParam) {
+        return atnService.getEventsByAtnFollowers(id, pageParam);
+    }
+
+    @PreAuthorize("hasRole('ATND')")
+    @GetMapping(path = "/getEventsByAtnCategoryPreferences/{id}")
+    public List<Event> getEventsByAtnCategoryPreferences(@PathVariable Long id) {
+        return atnService.getEventsByAtnCategoryPreferences(id);
+    }
+
+    @PreAuthorize("hasRole('ATND')")
+    @GetMapping(path = "/getEventsByAtnCategoryPreferences/{id}/{pageParam}")
+    public List<Event> getEventsByAtnCategoryPreferences(@PathVariable Long id, @PathVariable Long pageParam) {
+        return atnService.getEventsByAtnCategoryPreferences(id, pageParam);
     }
 }

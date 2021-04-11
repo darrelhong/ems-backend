@@ -41,6 +41,9 @@ public class FileStorageService {
     @Autowired
     private static String PRODUCT_IMAGE= "productImage";
 
+    @Autowired
+    private static String BOOTH_LAYOUT= "boothlayout";
+
     // upload profile pic
     @Autowired
     public FileStorageService() {
@@ -85,6 +88,9 @@ public class FileStorageService {
             this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() + "/productImages")
                     .toAbsolutePath().normalize();
             System.out.println(this.fileStorageLocation);
+        } else if (filetype.equals(BOOTH_LAYOUT)) {
+            this.fileStorageLocation = Paths.get(this.fileStorageProperties.getUploadDir() + "/boothLayouts")
+                    .toAbsolutePath().normalize();
         }
         try {
             // create the upload directory
@@ -125,6 +131,10 @@ public class FileStorageService {
                 UUID uuid = UUID.randomUUID();
                 String fileExtension = fileName.split("\\.")[1];
                 fileName = "productImage-" + uuid + "." + fileExtension;
+            } else if (filetype.equals(BOOTH_LAYOUT)) {
+                UUID uuid = UUID.randomUUID();
+                String fileExtension = fileName.split("\\.")[1];
+                fileName = "boothlayout-" + uuid + "." + fileExtension;
             }
             System.out.println(fileName);
             // Copy file to the target location (Replacing existing file with the same name)
