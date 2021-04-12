@@ -65,7 +65,7 @@ public class Event {
     // @JsonIgnoreProperties("event")
     // private List<Booth> booths;
 
-    @Transient
+    // @Transient
     @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @JsonIgnoreProperties("event")
