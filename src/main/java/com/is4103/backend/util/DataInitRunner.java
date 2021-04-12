@@ -89,7 +89,7 @@ public class DataInitRunner implements ApplicationRunner {
 
     private EventOrganiser eoTest;
 
-    //lili eo
+    // lili eo
     private EventOrganiser eoLili;
 
     private String[] eventCategories = { "Automotive", "Business Support & Supplies", "Computers & Electronics",
@@ -131,8 +131,8 @@ public class DataInitRunner implements ApplicationRunner {
 
         }
         if (eventRepository.findByName("Event 0").isEmpty()) {
-            //lili
-           // createDemoEvents();
+            // lili
+            // createDemoEvents();
         }
 
         if (boothRepository.findAll().isEmpty()) {
@@ -169,8 +169,8 @@ public class DataInitRunner implements ApplicationRunner {
 
         this.eoTest = eo;
 
-        //Lili EO
-         EventOrganiser eo2 = new EventOrganiser();
+        // Lili EO
+        EventOrganiser eo2 = new EventOrganiser();
         eo2.setEmail("linlili7842@gmail.com");
         eo2.setName("Lili Organiser");
         eo2.setPassword(passwordEncoder.encode("password"));
@@ -180,7 +180,6 @@ public class DataInitRunner implements ApplicationRunner {
         userRepository.save(eo2);
         this.eoLili = eo2;
 
-    
         for (int i = 2; i <= 11; i++) {
             eo = new EventOrganiser();
             eo.setEmail("organiser" + i + "@abc.com");
@@ -215,28 +214,26 @@ public class DataInitRunner implements ApplicationRunner {
         // set follow eo list for bp
         List<EventOrganiser> following = new ArrayList<>();
         following.add(this.eoTest);
-        //lili
+        // lili
         following.add(this.eoLili);
         bp.setFollowEventOrganisers(following);
-        //lili
+        // lili
         bp2.setFollowEventOrganisers(following);
         userRepository.save(bp);
-        //lili
+        // lili
         userRepository.save(bp2);
-
 
         // set followers bp list for eo
         List<BusinessPartner> followersBP = new ArrayList<>();
         followersBP.add(bp);
         followersBP.add(bp2);
         this.eoTest.setBusinessPartnerFollowers(followersBP);
-        //lili
+        // lili
         this.eoLili.setBusinessPartnerFollowers(followersBP);
         userRepository.save(this.eoTest);
         userRepository.save(this.eoLili);
 
-
-        //create attendee
+        // create attendee
         Attendee atn = new Attendee();
         atn.setEmail("attendee@abc.com");
         atn.setName("first attendee");
@@ -268,8 +265,8 @@ public class DataInitRunner implements ApplicationRunner {
         atnTwo.setFollowedBusinessPartners(bpFollowing);
         userRepository.save(atnTwo);
 
-        //lili att
-            // create second attendee
+        // lili att
+        // create second attendee
         Attendee atnLili = new Attendee();
         atnLili.setEmail("linlili53012@gmail.com");
         atnLili.setName("Lili attendee");
@@ -281,7 +278,6 @@ public class DataInitRunner implements ApplicationRunner {
         // atnTwo.addfollowBP(businesspartner);
         atnLili.setFollowedBusinessPartners(bpFollowing);
         userRepository.save(atnLili);
-
 
         // set atn and atn2 follow bp list
 
@@ -296,15 +292,13 @@ public class DataInitRunner implements ApplicationRunner {
         List<Attendee> followers = new ArrayList<>();
         followers.add(atn);
         followers.add(atnTwo);
-        //lili
+        // lili
         followers.add(atnLili);
         bp.setAttendeeFollowers(followers);
         bp2.setAttendeeFollowers(followers);
-        userRepository.save(bp);   
-        userRepository.save(bp2);    
+        userRepository.save(bp);
+        userRepository.save(bp2);
 
-           
-        
         for (int i = 2; i <= 11; i++) {
             bp = new BusinessPartner();
             bp.setEmail("partner" + i + "@abc.com");
@@ -329,13 +323,16 @@ public class DataInitRunner implements ApplicationRunner {
         event.setAddress("Woodlands Avenue 6 #87-10");
         event.setDescriptions(
                 "The 14th Annual Academic Success Lecture featuring Dr. Kevin Gumienny is . This year's presentation will be held physically, and will focus on the topics of accessibility and universal design.");
-       // event.setCategories(Arrays.asList(eventCategories));
+        // event.setCategories(Arrays.asList(eventCategories));
         event.setCategory(eventCategories[0]);
         event.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event.setPhysical(false);
         LocalDateTime eventStart1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd1 = LocalDateTime.of(2021, Month.JUNE, 2, 9, 0).plusDays(15).plusHours(2 % 3);
 
+        event.setSellingTicket(true);
+        event.setTicketPrice(24);
+        event.setTicketCapacity(99);
         event.setEventStartDate(eventStart1);
         event.setEventEndDate(eventEnd1);
 
@@ -362,7 +359,6 @@ public class DataInitRunner implements ApplicationRunner {
         // transaction.setEvent(event);
         // eventBoothTransactionRepository.save(transaction);
 
-
         // EventBoothTransaction transaction = new EventBoothTransaction();
         // transaction.setEvent(event);
         // eventBoothTransactionRepository.save(transaction);
@@ -382,6 +378,9 @@ public class DataInitRunner implements ApplicationRunner {
         LocalDateTime salesStart = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime salesEnd = LocalDateTime.of(2021, Month.APRIL, 10, 9, 0).plusDays(15).plusHours(2 % 3);
 
+        event2.setSellingTicket(true);
+        event2.setTicketPrice(24);
+        event2.setTicketCapacity(99);
         event2.setSaleStartDate(salesStart);
         event2.setSalesEndDate(salesEnd);
         event2.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-1.jpg",
@@ -652,8 +651,9 @@ public class DataInitRunner implements ApplicationRunner {
         event9.setHidden(false);
         event9.setPublished(true);
 
-       // EventOrganiser eventOrg = eventOrganiserRepository.findByEmail("organiser@abc.com");
-        //lili
+        // EventOrganiser eventOrg =
+        // eventOrganiserRepository.findByEmail("organiser@abc.com");
+        // lili
         EventOrganiser eventOrg = eventOrganiserRepository.findByEmail("linlili7842@gmail.com");
         event.setEventOrganiser(eventOrg);
         event2.setEventOrganiser(eventOrg);
@@ -746,8 +746,7 @@ public class DataInitRunner implements ApplicationRunner {
         eoEvents.add(event);
         eoEvents.add(event2);
         eventOrg.setEvents(eoEvents);
-        event.setImages(Arrays.asList(
-                "https://storage.googleapis.com/ems-images/events/event-1/image-1.jpg",
+        event.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-1/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-2/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-3/image-3.jpg"));
 
@@ -784,8 +783,7 @@ public class DataInitRunner implements ApplicationRunner {
             e.setSaleStartDate(LocalDateTime.now());
             e.setSalesEndDate(eventStart.minusDays(2));
 
-            e.setImages(Arrays.asList(
-                    "https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg",
+            e.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg",
                     "https://storage.googleapis.com/ems-images/events/event-" + i + "/image-2.jpg",
                     "https://storage.googleapis.com/ems-images/events/event-" + i + "/image-3.jpg"));
             e.setBoothPrice(17);
@@ -1030,14 +1028,13 @@ public class DataInitRunner implements ApplicationRunner {
                         for (int j = 0; j < numberOfProducts; j++) {
                             sellerProfileProducts.add(allProducts.get(j));
                         }
-                        
+
                         b.setProducts(sellerProfileProducts);
                         b.setBoothNumber(rand.nextInt(70) + 1);
                         b.setDescription(lorem.getWords(5, 20));
                         b.setSellerProfile(savedProfile);
                         boothRepository.save(b);
                     }
-                    
 
                 }
                 sellerApplicationRepository.save(application);
@@ -1046,60 +1043,66 @@ public class DataInitRunner implements ApplicationRunner {
             // List<Event> allEvents = eventRepository.findAll();
             // allEvents.remove(allEvents.get(0));
             // for (Event e : allEvents) {
-            //     for (int i = 0; i < 2; i++) {
-            //         // MAKE 2 APPLICATIONS FOR EACH EVENT
-            //         BusinessPartner randomBp = businessPartnerRepository.findAll()
-            //                 .get(rand.nextInt(businessPartners.size()));
-            //         SellerApplication application = new SellerApplication();
-            //         application.setBusinessPartner(randomBp);
-            //         application.setEvent(e);
-            //         application.setDescription(lorem.getWords(5, 20));
-            //         application.setComments(lorem.getWords(5, 20));
-            //         application.setBoothQuantity(rand.nextInt(300));
-            //         int statusTypeIndex = rand.nextInt(3);
-            //         application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
-            //         application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
-            //         LocalDateTime applicaionDate = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(i)
-            //                 .plusHours(i % 3);
-            //         application.setApplicationDate(applicaionDate);
-            //         LocalDateTime paymentDate = LocalDateTime.of(2021, Month.APRIL, 2, 9, 0).plusDays(bpCount)
-            //                 .plusHours(bpCount % 3);
-            //         application.setPaymentDate(paymentDate);
+            // for (int i = 0; i < 2; i++) {
+            // // MAKE 2 APPLICATIONS FOR EACH EVENT
+            // BusinessPartner randomBp = businessPartnerRepository.findAll()
+            // .get(rand.nextInt(businessPartners.size()));
+            // SellerApplication application = new SellerApplication();
+            // application.setBusinessPartner(randomBp);
+            // application.setEvent(e);
+            // application.setDescription(lorem.getWords(5, 20));
+            // application.setComments(lorem.getWords(5, 20));
+            // application.setBoothQuantity(rand.nextInt(300));
+            // int statusTypeIndex = rand.nextInt(3);
+            // application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
+            // application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
+            // LocalDateTime applicaionDate = LocalDateTime.of(2021, Month.MARCH, 1, 9,
+            // 0).plusDays(i)
+            // .plusHours(i % 3);
+            // application.setApplicationDate(applicaionDate);
+            // LocalDateTime paymentDate = LocalDateTime.of(2021, Month.APRIL, 2, 9,
+            // 0).plusDays(bpCount)
+            // .plusHours(bpCount % 3);
+            // application.setPaymentDate(paymentDate);
 
-            //         if (statusTypeIndex == 1) {
-            //             // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
-            //             // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
-            //             SellerProfile profile = new SellerProfile();
-            //             profile.setEvent(e);
-            //             profile.setBusinessPartner(randomBp);
-            //             profile.setDescription(lorem.getWords(5, 20));
-            //             profile.setBrochureImages(Arrays.asList(
-            //                     "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
-            //                     "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
-            //                     "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
-            //             SellerProfile savedProfile = sellerProfileRepository.save(profile);
+            // if (statusTypeIndex == 1) {
+            // // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH
+            // PAYMENT
+            // // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
+            // SellerProfile profile = new SellerProfile();
+            // profile.setEvent(e);
+            // profile.setBusinessPartner(randomBp);
+            // profile.setDescription(lorem.getWords(5, 20));
+            // profile.setBrochureImages(Arrays.asList(
+            // "https://storage.googleapis.com/ems-images/events/event-" + 1 +
+            // "/image-1.jpg",
+            // "https://storage.googleapis.com/ems-images/events/event-" + 2 +
+            // "/image-2.jpg",
+            // "https://storage.googleapis.com/ems-images/events/event-" + 3 +
+            // "/image-3.jpg"));
+            // SellerProfile savedProfile = sellerProfileRepository.save(profile);
 
-            //             // BOOTH SETUP FOR EACH PROFILE
-            //             for (int k = 1; k < 4; k++) {
-            //                 Booth b = new Booth();
+            // // BOOTH SETUP FOR EACH PROFILE
+            // for (int k = 1; k < 4; k++) {
+            // Booth b = new Booth();
 
-            //                 // setting random set of products
-            //                 List<Product> allProducts = productRepository
-            //                         .findProductsByBusinessPartner(randomBp.getId());
-            //                 // List<Product> allProducts = randomBp.getProducts();
-            //                 List<Product> sellerProfileProducts = new ArrayList<>();
-            //                 int numberOfProducts = rand.nextInt(allProducts.size());
-            //                 for (int j = 0; j < numberOfProducts; j++) {
-            //                     sellerProfileProducts.add(allProducts.get(j));
-            //                 }
-            //                 ;
-            //                 b.setProducts(sellerProfileProducts);
-            //                 b.setBoothNumber(k);
-            //                 b.setDescription(lorem.getWords(5, 20));
-            //                 b.setSellerProfile(savedProfile);
-            //                 boothRepository.save(b);
-            //             }
-            //             ;
+            // // setting random set of products
+            // List<Product> allProducts = productRepository
+            // .findProductsByBusinessPartner(randomBp.getId());
+            // // List<Product> allProducts = randomBp.getProducts();
+            // List<Product> sellerProfileProducts = new ArrayList<>();
+            // int numberOfProducts = rand.nextInt(allProducts.size());
+            // for (int j = 0; j < numberOfProducts; j++) {
+            // sellerProfileProducts.add(allProducts.get(j));
+            // }
+            // ;
+            // b.setProducts(sellerProfileProducts);
+            // b.setBoothNumber(k);
+            // b.setDescription(lorem.getWords(5, 20));
+            // b.setSellerProfile(savedProfile);
+            // boothRepository.save(b);
+            // }
+            // ;
 
             // SECOND COPY OF SAME CODE
             // List<Event> allEvents = eventRepository.findAll();

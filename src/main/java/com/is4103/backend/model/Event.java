@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonView;
 
-
 import lombok.Data;
 
 @Entity
@@ -65,19 +64,17 @@ public class Event {
     // @JsonIgnoreProperties("event")
     // private List<Booth> booths;
 
-    // @Transient
     @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     @JsonIgnoreProperties("event")
     private List<SellerProfile> sellerProfiles;
 
-    
     @JsonIgnoreProperties("event")
     @JsonView(EventViews.Private.class)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     private List<TicketTransaction> ticketTransactions;
 
-     @JsonIgnore
+    @JsonIgnore
     // @Transient
     // @JsonIgnoreProperties("event")
     // @JsonView(EventViews.Private.class)
@@ -85,8 +82,6 @@ public class Event {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "event")
     // @ElementCollection(targetClass = Review.class)
     private List<Review> reviews;
-
-
 
     // @Column(nullable = false)
     // @JsonView(EventViews.Basic.class)
@@ -98,7 +93,6 @@ public class Event {
     // @Column(nullable = false)
     private String descriptions;
 
-
     // private String eventCategory;
 
     // @ElementCollection(targetClass = String.class)
@@ -108,7 +102,7 @@ public class Event {
 
     private String category;
 
-    private boolean isSellingTicket;
+    private boolean isSellingTicket = true;
 
     // @Column(nullable = true)
     private float ticketPrice;
@@ -164,7 +158,7 @@ public class Event {
     private List<Rsvp> rsvps;
 
     private String boothLayout;
-    
+
     public boolean getAvailableForSale() {
         if (this.isSellingTicket && this.saleStartDate != null && this.salesEndDate != null) {
             // if (this.saleStartDate != null && this.salesEndDate != null) {
@@ -172,7 +166,7 @@ public class Event {
         }
         return false;
     }
-    
+
     // non-entity field use for analytics
     @Transient
     private BigInteger applicationCount;
