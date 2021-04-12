@@ -331,6 +331,7 @@ public class DataInitRunner implements ApplicationRunner {
                 "The 14th Annual Academic Success Lecture featuring Dr. Kevin Gumienny is . This year's presentation will be held physically, and will focus on the topics of accessibility and universal design.");
        // event.setCategories(Arrays.asList(eventCategories));
         event.setCategory(eventCategories[0]);
+        event.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event.setPhysical(false);
         LocalDateTime eventStart1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd1 = LocalDateTime.of(2021, Month.JUNE, 2, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -371,6 +372,7 @@ public class DataInitRunner implements ApplicationRunner {
         event2.setAddress("Sembwang2");
         event2.setDescriptions("Description 2");
         event2.setCategory(eventCategories[0]);
+        event2.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event2.setPhysical(false);
         LocalDateTime eventStart = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         event2.setEventStartDate(eventStart);
@@ -398,6 +400,7 @@ public class DataInitRunner implements ApplicationRunner {
         event3.setAddress("Sembwang3");
         event3.setDescriptions("Some description two3");
         event3.setCategory(eventCategories[1]);
+        event3.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event3.setPhysical(false);
         LocalDateTime eventStart3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd3 = LocalDateTime.of(2021, Month.JUNE, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -425,6 +428,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4.setAddress("Sembwang4");
         event4.setDescriptions("Some description 4");
         event4.setCategory(eventCategories[1]);
+        event4.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event4.setPhysical(false);
         LocalDateTime eventStart4 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -453,6 +457,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4_1.setAddress("Sembwang4");
         event4_1.setDescriptions("Some description 4");
         event4_1.setCategory(eventCategories[1]);
+        event4_1.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event4_1.setPhysical(false);
         LocalDateTime eventStart4_1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4_1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -481,6 +486,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4_2.setAddress("Sembwang4");
         event4_2.setDescriptions("Some description 4");
         event4_2.setCategory(eventCategories[2]);
+        event4_2.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event4_2.setPhysical(false);
         LocalDateTime eventStart4_2 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4_2 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -509,6 +515,7 @@ public class DataInitRunner implements ApplicationRunner {
         event4_3.setAddress("Sembwang4");
         event4_3.setDescriptions("Some description 4");
         event4_3.setCategory(eventCategories[2]);
+        event4_3.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event4_3.setPhysical(false);
         LocalDateTime eventStart4_3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4_3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -537,6 +544,7 @@ public class DataInitRunner implements ApplicationRunner {
         event5.setAddress("Sembwang 5");
         event5.setDescriptions("Some description 5");
         event5.setCategory(eventCategories[2]);
+        event5.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event5.setPhysical(false);
         LocalDateTime eventStart5 = LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd5 = LocalDateTime.of(2021, Month.JANUARY, 2, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -562,6 +570,7 @@ public class DataInitRunner implements ApplicationRunner {
         event6.setAddress("Sembwang 6");
         event6.setDescriptions("Some description 6");
         event6.setCategory(eventCategories[2]);
+        event6.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event6.setPhysical(false);
         event6.setEventStartDate(LocalDateTime.now());
         event6.setEventEndDate(LocalDateTime.now());
@@ -583,6 +592,7 @@ public class DataInitRunner implements ApplicationRunner {
         event7.setAddress("Sembwang 6");
         event7.setDescriptions("Some description 6");
         event7.setCategory(eventCategories[2]);
+        event7.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event7.setPhysical(false);
         event7.setEventStartDate(LocalDateTime.now());
         event7.setEventEndDate(LocalDateTime.now());
@@ -604,6 +614,7 @@ public class DataInitRunner implements ApplicationRunner {
         event8.setAddress("Sembwang 6");
         event8.setDescriptions("Some description 6");
         event8.setCategory(eventCategories[3]);
+        event8.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event8.setPhysical(false);
         event8.setEventStartDate(LocalDateTime.now());
         event8.setEventEndDate(LocalDateTime.now());
@@ -625,6 +636,7 @@ public class DataInitRunner implements ApplicationRunner {
         event9.setAddress("Sembwang 6");
         event9.setDescriptions("Some description 6");
         event9.setCategory(eventCategories[4]);
+        event9.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event9.setPhysical(false);
         event9.setEventStartDate(LocalDateTime.now());
         event9.setEventEndDate(LocalDateTime.now());
@@ -675,6 +687,7 @@ public class DataInitRunner implements ApplicationRunner {
         previous.setName("Previous event");
         previous.setAddress("some location string");
         previous.setDescriptions("lorem ipsum dolor sit amet");
+        previous.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         previous.setPhysical(true);
         previous.setCategory(eventCategories[7]);
         previous.setEventStartDate(LocalDateTime.now().minusMonths(1));
@@ -762,6 +775,7 @@ public class DataInitRunner implements ApplicationRunner {
             e.setTicketPrice(Math.round(rand.nextFloat() * 20));
             e.setTicketCapacity(rand.nextInt(100));
             e.setCategory(eventCategories[6]);
+            e.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
             e.setPhysical(true);
             LocalDateTime eventStart = LocalDateTime.of(2021, Month.MARCH, 1, 9, 0).plusDays(i).plusHours(i % 3);
             e.setEventStartDate(eventStart);
