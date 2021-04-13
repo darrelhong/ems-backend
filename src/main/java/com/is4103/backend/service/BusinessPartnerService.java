@@ -434,7 +434,7 @@ public class BusinessPartnerService {
         thirdDay = thirdDay.withHour(0).withMinute(0).withSecond(0).withNano(0);
         
         for (Event event : eventList) {
-            if (event.getEventCategory() == bizCat
+            if (event.getCategory() == bizCat
                     && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                     && !(event.getEventStartDate().isBefore(thirdDay))
                     && !(event.getSalesEndDate().isBefore(now))) {
@@ -456,7 +456,7 @@ public class BusinessPartnerService {
         thirdDay = thirdDay.withHour(0).withMinute(0).withSecond(0).withNano(0);
         
         for (Event event : eventList) {
-            if (event.getEventCategory() == bizCat
+            if (event.getCategory() == bizCat
                     && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                     && !(event.getEventStartDate().isBefore(thirdDay))
                     && !(event.getSalesEndDate().isBefore(now))) {
