@@ -11,6 +11,7 @@ import javax.validation.Valid;
 
 import com.is4103.backend.dto.CreateEventRequest;
 import com.is4103.backend.dto.CreateSellerApplicationRequest;
+import com.is4103.backend.dto.EmailRequest;
 import com.is4103.backend.dto.bpEventRegistration.ApplicationDto;
 import com.is4103.backend.dto.bpEventRegistration.ApplicationResponse;
 import com.is4103.backend.model.BusinessPartner;
@@ -23,6 +24,7 @@ import com.is4103.backend.repository.EventRepository;
 import com.is4103.backend.service.BusinessPartnerService;
 import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.service.EventService;
+import com.is4103.backend.service.MailService;
 import com.is4103.backend.service.SellerApplicationService;
 import com.is4103.backend.service.SellerProfileService;
 import com.is4103.backend.util.errors.BoothCapacityExceededException;
@@ -61,6 +63,9 @@ public class SellerApplicationController {
 
     @Autowired
     private SellerProfileService sellerProfileService;
+
+    @Autowired
+    private MailService mailService;
 
     @GetMapping(path = "/{id}")
     public SellerApplication getSellerApplicationById(@PathVariable String id)
@@ -107,6 +112,15 @@ public class SellerApplicationController {
         try {
             SellerApplication app = sellerApplicationService.getSellerApplicationById(id);
             app.setSellerApplicationStatus(SellerApplicationStatus.APPROVED);
+            EmailRequest request = new EmailRequest();
+            EventOrganiser organiser = app.getEvent().getEventOrganiser();
+            BusinessPartner partner = app.getBusinessPartner();
+            Event event = app.getEvent();
+            request.setSenderId(organiser.getId());
+            request.setRecipientId(partner.getId());
+            request.setSubject("Approved application for " + event.getName());
+            request.setTextBody("Congratulations, your application for " + event.getName() + " was successful. You will hear about your booth allocation soon!\r\n\r\nDo contact " +organiser.getName() +" at " +organiser.getEmail() +" if you have any queries.\r\n\r\n" + "<b>" + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>");
+            mailService.sendEmailNotif(request);
             return sellerApplicationService.updateSellerApplication(app);
         } catch (Exception e) {
             throw new SellerApplicationNotFoundException("No such application found");
@@ -116,16 +130,24 @@ public class SellerApplicationController {
     @PostMapping(value = "/reject/{id}")
     public SellerApplication rejectApplication(@PathVariable String id) throws SellerApplicationNotFoundException {
         try {
-            System.out.println(sellerApplicationService.getAllSellerApplications().get(0).getId());
             SellerApplication app = sellerApplicationService.getSellerApplicationById(id);
             app.setSellerApplicationStatus(SellerApplicationStatus.REJECTED);
+            EmailRequest request = new EmailRequest();
+            EventOrganiser organiser = app.getEvent().getEventOrganiser();
+            BusinessPartner partner = app.getBusinessPartner();
+            Event event = app.getEvent();
+            request.setSenderId(organiser.getId());
+            request.setRecipientId(partner.getId());
+            request.setSubject("Rejected application for " +event.getName());
+            request.setTextBody("Sorry, your application for " + event.getName() + " was unsuccessful. Thank you for applying!\r\n\r\nDo contact " +organiser.getName() +" at " +organiser.getEmail() +" if you have any queries.\r\n\r\n" + "<b>" + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>");
+            mailService.sendEmailNotif(request);
             return sellerApplicationService.updateSellerApplication(app);
         } catch (Exception e) {
             throw new SellerApplicationNotFoundException("No such application found");
         }
     }
 
-    @PostMapping(value = "/cancel/{id}")
+    @PostMapping(value = "/cancel/{id}") //WITHDRAWING
     public SellerApplication cancelSellerApplication(@PathVariable String id)
             throws SellerApplicationNotFoundException {
         SellerApplication app = sellerApplicationService.getSellerApplicationById(id);
