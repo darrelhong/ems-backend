@@ -338,6 +338,11 @@ public class EventController {
         return eventService.getEventsThisWeekend(pageParam);
     }
 
+    @GetMapping("/public/getEventsThisWeekend/{pageParam}")
+    public List<Event> getEventsThisWeekendPublic(@PathVariable Long pageParam) {
+        return eventService.getEventsThisWeekendPublic(pageParam);
+    }
+
     @GetMapping("/getEventsNextWeek")
     public List<Event> getEventsNextWeek() {
         return eventService.getEventsNextWeek();
@@ -346,6 +351,11 @@ public class EventController {
     @GetMapping("/getEventsNextWeek/{pageParam}")
     public List<Event> getEventsNextWeek(@PathVariable Long pageParam) {
         return eventService.getEventsNextWeek(pageParam);
+    }
+
+    @GetMapping("/public/getEventsNextWeek/{pageParam}")
+    public List<Event> getEventsNextWeekPublic(@PathVariable Long pageParam) {
+        return eventService.getEventsNextWeekPublic(pageParam);
     }
 
     @GetMapping("/getEventsInNext30Days")
@@ -361,6 +371,11 @@ public class EventController {
     @GetMapping("/getTopTenEvents")
     public List<Event> getTopTenEvents() {
         return eventService.getTopTenEvents();
+    }
+
+    @GetMapping("/public/getTopTenEvents")
+    public List<Event> getTopTenEventsPublic() {
+        return eventService.getTopTenEventsPublic();
     }
 
     @GetMapping("/getVipEvents")
