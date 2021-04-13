@@ -206,7 +206,7 @@ public class EventService {
         try {
             Files.deleteIfExists(oldFilepath);
             // at this point we remove it from the arraylist
-            e.getImages().remove(0);
+            e.getImages().remove(imageIndex);
             eventRepository.save(e);
             return ResponseEntity.ok("Success");
         } catch (IOException ex) {
