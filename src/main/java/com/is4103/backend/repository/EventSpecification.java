@@ -42,7 +42,7 @@ public class EventSpecification implements Specification<Event> {
         }
 
         if (criteria.getCategory() != null) {
-            predicates.add(builder.equal(root.get("eventCategory"), criteria.getCategory()));
+            predicates.add(builder.equal(root.get("category"), criteria.getCategory()));
         }
 
         if (predicates.size() > 0) {

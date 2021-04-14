@@ -206,7 +206,7 @@ public class EventService {
         try {
             Files.deleteIfExists(oldFilepath);
             // at this point we remove it from the arraylist
-            e.getImages().remove(0);
+            e.getImages().remove(imageIndex);
             eventRepository.save(e);
             return ResponseEntity.ok("Success");
         } catch (IOException ex) {
@@ -289,6 +289,36 @@ public class EventService {
         return filterEventList;
     }
 
+    public List<Event> getEventsThisWeekendPublic(Long page) {
+        List<Event> eventList = getAllEvents();
+        List<Event> filterEventList = new ArrayList<>();
+        int currentEventNo = 0;
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime comingSunday = now.plusDays(7 - now.getDayOfWeek().getValue());
+        comingSunday = comingSunday.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+        LocalDateTime comingSaturday = now.plusDays(6 - now.getDayOfWeek().getValue());
+        comingSaturday = comingSaturday.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        
+        for (Event event : eventList) {
+            if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                    && !(event.getEventStartDate().isAfter(comingSunday))
+                    && !(event.getEventEndDate().isBefore(comingSaturday))
+                    && !(event.getSalesEndDate().isBefore(now))) {
+                currentEventNo += 1;
+
+                if (!(currentEventNo < (10 * (page - 1) + 1))) {
+                    filterEventList.add(event);
+                    if (filterEventList.size() == 10) {
+                        return filterEventList;
+                    }
+                }
+            }
+        }
+
+        return filterEventList;
+    }
+
     public List<Event> getEventsNextWeek() {
         User user = userService.getUserById(userService.getCurrentUserId());
         List<Event> eventList = getAllEvents();
@@ -347,6 +377,36 @@ public class EventService {
                             continue;
                         }
                     }
+                    filterEventList.add(event);
+                    if (filterEventList.size() == 10) {
+                        return filterEventList;
+                    }
+                }
+            }
+        }
+
+        return filterEventList;
+    }
+
+    public List<Event> getEventsNextWeekPublic(Long page) {
+        List<Event> eventList = getAllEvents();
+        List<Event> filterEventList = new ArrayList<>();
+        int currentEventNo = 0;
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextSunday = now.plusDays(14 - now.getDayOfWeek().getValue());
+        nextSunday = nextSunday.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+        LocalDateTime comingMonday = now.plusDays(8 - now.getDayOfWeek().getValue());
+        comingMonday = comingMonday.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        
+        for (Event event : eventList) {
+            if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                    && !(event.getEventStartDate().isAfter(nextSunday))
+                    && !(event.getEventEndDate().isBefore(comingMonday))
+                    && !(event.getSalesEndDate().isBefore(now))) {
+                currentEventNo += 1;
+                
+                if (!(currentEventNo < (10 * (page - 1) + 1))) {
                     filterEventList.add(event);
                     if (filterEventList.size() == 10) {
                         return filterEventList;
@@ -487,6 +547,87 @@ public class EventService {
                                 continue;
                             }
                         }
+                        filterEventList.remove(9);
+                        filterEventList.add(event);
+                        filterEventList.sort(new Comparator<Event>() {
+                            @Override
+                            public int compare(Event e1, Event e2) {
+                                List<TicketTransaction> transList = tktService.getAllTransactions();
+    
+                                Integer e1NoOfTicketsSold = 0;
+                                for (TicketTransaction trans : transList) {
+                                    if (trans.getEvent().getEid() == e1.getEid()) {
+                                        e1NoOfTicketsSold++;
+                                    }
+                                }
+                                Integer e2NoOfTicketsSold = 0;
+                                for (TicketTransaction trans : transList) {
+                                    if (trans.getEvent().getEid() == e2.getEid()) {
+                                        e2NoOfTicketsSold++;
+                                    }
+                                }
+
+                                return e2NoOfTicketsSold.compareTo(e1NoOfTicketsSold);
+                            }
+                        });
+                    }
+                }
+            }
+        }
+
+        return filterEventList;
+    }
+
+    public List<Event> getTopTenEventsPublic() {
+        List<Event> eventList = getAllEvents();
+        List<Event> filterEventList = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        
+        for (Event event : eventList) {
+            if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                    && !(event.getSaleStartDate().isAfter(now))
+                    && !(event.getSalesEndDate().isBefore(now))) {
+                if (filterEventList.size() < 10) {
+                    filterEventList.add(event);
+                    filterEventList.sort(new Comparator<Event>() {
+                        @Override
+                        public int compare(Event e1, Event e2) {
+                            List<TicketTransaction> transList = tktService.getAllTransactions();
+
+                            Integer e1NoOfTicketsSold = 0;
+                            for (TicketTransaction trans : transList) {
+                                if (trans.getEvent().getEid() == e1.getEid()) {
+                                    e1NoOfTicketsSold++;
+                                }
+                            }
+                            Integer e2NoOfTicketsSold = 0;
+                            for (TicketTransaction trans : transList) {
+                                if (trans.getEvent().getEid() == e2.getEid()) {
+                                    e2NoOfTicketsSold++;
+                                }
+                            }
+
+                            return e2NoOfTicketsSold.compareTo(e1NoOfTicketsSold);
+                        }
+                    });
+                }
+                else {
+                    List<TicketTransaction> transList = tktService.getAllTransactions();
+
+                    Integer noOfTicketsSold = 0;
+                    for (TicketTransaction trans : transList) {
+                        if (trans.getEvent().getEid() == event.getEid()) {
+                            noOfTicketsSold++;
+                        }
+                    }
+                    Integer tenthNoOfTicketsSold = 0;
+                    for (TicketTransaction trans : transList) {
+                        if (trans.getEvent().getEid() == filterEventList.get(9).getEid()) {
+                            tenthNoOfTicketsSold++;
+                        }
+                    }
+
+                    if (noOfTicketsSold > tenthNoOfTicketsSold) {
                         filterEventList.remove(9);
                         filterEventList.add(event);
                         filterEventList.sort(new Comparator<Event>() {

@@ -28,6 +28,7 @@ import com.is4103.backend.service.BusinessPartnerService;
 import com.is4103.backend.service.EventOrganiserService;
 import com.is4103.backend.service.EventService;
 import com.is4103.backend.service.SellerApplicationService;
+import com.is4103.backend.util.errors.EventImageNotFoundException;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -302,11 +303,24 @@ public class EventController {
         return allBps;
     }
 
+    // @PostMapping("/remove-pic")
+    // public ResponseEntity<String> removeEventPic(@RequestParam(name =
+    // "eid", defaultValue = "1") Long eid,
+    // @RequestParam(name = "imageIndex", defaultValue = "0") int imageIndex) {
+    // Event e = getEventById(eid);
+    // return eventService.removePicture(e, imageIndex);
+    // }
+
     @PostMapping("/remove-pic")
-    public ResponseEntity<String> getNewAppliationsFromEvent(@RequestParam(name = "eid", defaultValue = "1") Long eid,
-            @RequestParam(name = "imageIndex", defaultValue = "0") int imageIndex) {
+    public ResponseEntity<String> removeEventPic(@RequestParam(name = "eid", defaultValue = "1") Long eid,
+            @RequestParam(name = "imageUrl", defaultValue = "") String imageUrl) throws EventImageNotFoundException {
         Event e = getEventById(eid);
-        return eventService.removePicture(e, imageIndex);
+        int imageIndex = e.getImages().indexOf(imageUrl);
+        if (imageIndex < 0) {
+            throw new EventImageNotFoundException();
+        } else {
+            return eventService.removePicture(e, imageIndex);
+        }
     }
 
     @GetMapping("/categories")
@@ -324,6 +338,11 @@ public class EventController {
         return eventService.getEventsThisWeekend(pageParam);
     }
 
+    @GetMapping("/public/getEventsThisWeekend/{pageParam}")
+    public List<Event> getEventsThisWeekendPublic(@PathVariable Long pageParam) {
+        return eventService.getEventsThisWeekendPublic(pageParam);
+    }
+
     @GetMapping("/getEventsNextWeek")
     public List<Event> getEventsNextWeek() {
         return eventService.getEventsNextWeek();
@@ -332,6 +351,11 @@ public class EventController {
     @GetMapping("/getEventsNextWeek/{pageParam}")
     public List<Event> getEventsNextWeek(@PathVariable Long pageParam) {
         return eventService.getEventsNextWeek(pageParam);
+    }
+
+    @GetMapping("/public/getEventsNextWeek/{pageParam}")
+    public List<Event> getEventsNextWeekPublic(@PathVariable Long pageParam) {
+        return eventService.getEventsNextWeekPublic(pageParam);
     }
 
     @GetMapping("/getEventsInNext30Days")
@@ -347,6 +371,11 @@ public class EventController {
     @GetMapping("/getTopTenEvents")
     public List<Event> getTopTenEvents() {
         return eventService.getTopTenEvents();
+    }
+
+    @GetMapping("/public/getTopTenEvents")
+    public List<Event> getTopTenEventsPublic() {
+        return eventService.getTopTenEventsPublic();
     }
 
     @GetMapping("/getVipEvents")

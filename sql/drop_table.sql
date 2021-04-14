@@ -34,4 +34,5 @@ DROP TABLE IF EXISTS `user_account`;
 DROP TABLE IF EXISTS `user_notifications`;
 DROP TABLE IF EXISTS `user_roles`;
 DROP TABLE IF EXISTS `verification_token`;
+DROP TABLE IF EXISTS `rsvp`;
 SET FOREIGN_KEY_CHECKS = 1;
