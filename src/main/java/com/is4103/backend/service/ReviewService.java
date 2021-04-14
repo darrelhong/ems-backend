@@ -48,12 +48,35 @@ public class ReviewService {
     private AttendeeController atnController;
 
     @Autowired
+    private BusinessPartnerService bpservice;
+
+    @Autowired
     private BusinessPartnerController bpController;
 
     public List<Review> getReviewsByEventId(Long id) {
         Event event = eventController.getEventById(id);
         return reviewRepository.findByEvent(event);
+    }
 
+    public Review getLatestReviewForEventByBP(Long eid, Long bpId) {
+        BusinessPartner bp = bpservice.getBusinessPartnerById(bpId);
+        List<Review> reviews = bp.getReviews();
+        Review latestReview = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        for (Review r : reviews) {
+            if (r.getEvent().getEid() == eid) {
+                if (latestReview == null) {
+                    latestReview = r;
+                } else {
+                    LocalDateTime latestReviewDate = LocalDateTime.parse(latestReview.getReviewDateTime(), formatter);
+                    LocalDateTime currReviewDate = LocalDateTime.parse(r.getReviewDateTime(), formatter);
+                    if (currReviewDate.isAfter(latestReviewDate)) {
+                        latestReview = r;
+                    }
+                }
+            }
+        }
+        return latestReview;
     }
 
     public List<Review> getReviewsByEO(Long id) {
@@ -62,7 +85,8 @@ public class ReviewService {
         List<Event> events = eventController.getAllEventsByOrganiser(id);
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < events.size(); i++) {
-            // System.out.println(events.get(i).getReviews() + "events " + events.get(i).getEid());
+            // System.out.println(events.get(i).getReviews() + "events " +
+            // events.get(i).getEid());
             if (events.get(i).getReviews() != null) {
                 // System.out.println("in reviews" + events.get(i).getReviews());
                 List<Review> eventReviews = events.get(i).getReviews();
@@ -75,11 +99,11 @@ public class ReviewService {
         // List<Review> filteredReviews = new ArrayList<>();
         // List<Review> reviews = reviewRepository.findAll();
         // for(int i =0; i<reviews.size(); i++){
-        //     for(int h=0; h<events.size();h++){
-        //         if(reviews.get(i).getEvent().getEid() == events.get(h).getEid()){
-        //             filteredReviews.add(reviews.get(i));
-        //         }
-        //     }
+        // for(int h=0; h<events.size();h++){
+        // if(reviews.get(i).getEvent().getEid() == events.get(h).getEid()){
+        // filteredReviews.add(reviews.get(i));
+        // }
+        // }
         // }
 
         // return filteredReviews;
@@ -109,16 +133,16 @@ public class ReviewService {
         String formatDateTime = now.format(formatter);
         review.setReviewDateTime(formatDateTime);
         review = reviewRepository.save(review);
-      
+
         if (event.getReviews() == null || event.getReviews().isEmpty()) {
             List<Review> eventReviews = new ArrayList<>();
             eventReviews.add(review);
             event.setReviews(eventReviews);
             eoRepository.save(event);
         } else {
-         
+
             List<Review> eventReviews = new ArrayList<>();
-            eventReviews= event.getReviews();
+            eventReviews = event.getReviews();
             eventReviews.add(review);
             event.setReviews(eventReviews);
             eoRepository.save(event);
@@ -154,7 +178,7 @@ public class ReviewService {
             }
 
         }
-      
+
         return review;
     }
 
