@@ -34,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.is4103.backend.util.errors.BoothCapacityExceededException;
+import com.is4103.backend.util.errors.BrochureNotFoundException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.errors.ticketing.CheckoutException;
 import com.stripe.exception.StripeException;
@@ -99,6 +100,18 @@ public class SellerProfileController {
         sp = sellerProfileService.addBrochureImage(sp, fileDownloadUri);
 
         return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
+    }
+
+    @PostMapping("/remove-brochure")
+    public SellerProfile removeBrochure(@RequestParam(name = "id", defaultValue = "1") Long id,
+            @RequestParam(name = "imageUrl", defaultValue = "") String imageUrl) throws BrochureNotFoundException {
+        SellerProfile s = getSellerProfileById(id);
+        int imageIndex = s.getBrochureImages().indexOf(imageUrl);
+        if (imageIndex < 0) {
+            throw new BrochureNotFoundException();
+        } else {
+            return sellerProfileService.removeBrochure(s, imageIndex);
+        }
     }
 
     @PostMapping(path = "/create-application")
