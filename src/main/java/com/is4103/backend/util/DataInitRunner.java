@@ -165,6 +165,7 @@ public class DataInitRunner implements ApplicationRunner {
         eo.setEnabled(true);
         eo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
         eo.setSupportDocsUrl("https://storage.googleapis.com/ems-docs/organiser-document.zip");
+        // eo.setApproved(true);
         userRepository.save(eo);
 
         this.eoTest = eo;
@@ -326,13 +327,13 @@ public class DataInitRunner implements ApplicationRunner {
         // event.setCategories(Arrays.asList(eventCategories));
         event.setCategory(eventCategories[0]);
         event.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
-        event.setPhysical(false);
+        event.setPhysical(true);
         LocalDateTime eventStart1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd1 = LocalDateTime.of(2021, Month.JUNE, 2, 9, 0).plusDays(15).plusHours(2 % 3);
 
         event.setSellingTicket(true);
         event.setTicketPrice(24);
-        event.setTicketCapacity(99);
+        event.setTicketCapacity(100);
         event.setEventStartDate(eventStart1);
         event.setEventEndDate(eventEnd1);
 
@@ -369,7 +370,7 @@ public class DataInitRunner implements ApplicationRunner {
         event2.setDescriptions("Description 2");
         event2.setCategory(eventCategories[0]);
         event2.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
-        event2.setPhysical(false);
+        event2.setPhysical(true);
         LocalDateTime eventStart = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         event2.setEventStartDate(eventStart);
         LocalDateTime eventEnd = LocalDateTime.of(2021, Month.JUNE, 1, 9, 0).plusDays(15).plusHours(2 % 3);
@@ -380,7 +381,7 @@ public class DataInitRunner implements ApplicationRunner {
 
         event2.setSellingTicket(true);
         event2.setTicketPrice(24);
-        event2.setTicketCapacity(99);
+        event2.setTicketCapacity(100);
         event2.setSaleStartDate(salesStart);
         event2.setSalesEndDate(salesEnd);
         event2.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-1.jpg",
@@ -400,7 +401,7 @@ public class DataInitRunner implements ApplicationRunner {
         event3.setDescriptions("Some description two3");
         event3.setCategory(eventCategories[1]);
         event3.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
-        event3.setPhysical(false);
+        event3.setPhysical(true);
         LocalDateTime eventStart3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd3 = LocalDateTime.of(2021, Month.JUNE, 1, 9, 0).plusDays(15).plusHours(2 % 3);
 
@@ -409,6 +410,8 @@ public class DataInitRunner implements ApplicationRunner {
 
         LocalDateTime salesStart3 = LocalDateTime.of(2021, Month.FEBRUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime salesEnd3 = LocalDateTime.of(2021, Month.APRIL, 1, 9, 0).plusDays(15).plusHours(2 % 3);
+        event3.setTicketPrice(24);
+        event3.setTicketCapacity(100);
         event3.setSaleStartDate(salesStart3);
         event3.setSalesEndDate(salesEnd3);
         event3.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-1.jpg",
@@ -428,10 +431,12 @@ public class DataInitRunner implements ApplicationRunner {
         event4.setDescriptions("Some description 4");
         event4.setCategory(eventCategories[1]);
         event4.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
-        event4.setPhysical(false);
+        event4.setPhysical(true);
         LocalDateTime eventStart4 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
 
+        event4.setTicketPrice(24);
+        event4.setTicketCapacity(100);
         event4.setEventStartDate(eventStart4);
         event4.setEventEndDate(eventEnd4);
 
@@ -457,10 +462,12 @@ public class DataInitRunner implements ApplicationRunner {
         event4_1.setDescriptions("Some description 4");
         event4_1.setCategory(eventCategories[1]);
         event4_1.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
-        event4_1.setPhysical(false);
+        event4_1.setPhysical(true);
         LocalDateTime eventStart4_1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4_1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
 
+        event4_1.setTicketPrice(24);
+        event4_1.setTicketCapacity(100);
         event4_1.setEventStartDate(eventStart4_1);
         event4_1.setEventEndDate(eventEnd4_1);
 
@@ -486,10 +493,12 @@ public class DataInitRunner implements ApplicationRunner {
         event4_2.setDescriptions("Some description 4");
         event4_2.setCategory(eventCategories[2]);
         event4_2.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
-        event4_2.setPhysical(false);
+        event4_2.setPhysical(true);
         LocalDateTime eventStart4_2 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4_2 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
 
+        event4_2.setTicketPrice(24);
+        event4_2.setTicketCapacity(100);
         event4_2.setEventStartDate(eventStart4_2);
         event4_2.setEventEndDate(eventEnd4_2);
 
@@ -515,10 +524,12 @@ public class DataInitRunner implements ApplicationRunner {
         event4_3.setDescriptions("Some description 4");
         event4_3.setCategory(eventCategories[2]);
         event4_3.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
-        event4_3.setPhysical(false);
+        event4_3.setPhysical(true);
         LocalDateTime eventStart4_3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd4_3 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(15).plusHours(2 % 3);
 
+        event4_3.setTicketPrice(24);
+        event4_3.setTicketCapacity(100);
         event4_3.setEventStartDate(eventStart4_3);
         event4_3.setEventEndDate(eventEnd4_3);
 
@@ -544,13 +555,16 @@ public class DataInitRunner implements ApplicationRunner {
         event5.setDescriptions("Some description 5");
         event5.setCategory(eventCategories[2]);
         event5.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
-        event5.setPhysical(false);
+        event5.setPhysical(true);
         LocalDateTime eventStart5 = LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime eventEnd5 = LocalDateTime.of(2021, Month.JANUARY, 2, 9, 0).plusDays(15).plusHours(2 % 3);
         event5.setEventStartDate(eventStart5);
         event5.setEventEndDate(eventEnd5);
         LocalDateTime salesStart5 = LocalDateTime.of(2020, Month.DECEMBER, 1, 9, 0).plusDays(2).plusHours(2 % 3);
         LocalDateTime salesEnd5 = LocalDateTime.of(2020, Month.DECEMBER, 2, 9, 0).plusDays(15).plusHours(2 % 3);
+
+        event5.setTicketPrice(24);
+        event5.setTicketCapacity(100);
         event5.setSaleStartDate(salesStart5);
         event5.setSalesEndDate(salesEnd5);
         event5.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 8 + "/image-1.jpg",
@@ -570,9 +584,11 @@ public class DataInitRunner implements ApplicationRunner {
         event6.setDescriptions("Some description 6");
         event6.setCategory(eventCategories[2]);
         event6.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
-        event6.setPhysical(false);
+        event6.setPhysical(true);
         event6.setEventStartDate(LocalDateTime.now());
         event6.setEventEndDate(LocalDateTime.now());
+        event6.setTicketPrice(24);
+        event6.setTicketCapacity(100);
         event6.setSaleStartDate(LocalDateTime.now());
         event6.setSalesEndDate(LocalDateTime.now());
         event6.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 9 + "/image-1.jpg",
@@ -592,9 +608,11 @@ public class DataInitRunner implements ApplicationRunner {
         event7.setDescriptions("Some description 6");
         event7.setCategory(eventCategories[2]);
         event7.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
-        event7.setPhysical(false);
+        event7.setPhysical(true);
         event7.setEventStartDate(LocalDateTime.now());
         event7.setEventEndDate(LocalDateTime.now());
+        event7.setTicketPrice(24);
+        event7.setTicketCapacity(100);
         event7.setSaleStartDate(LocalDateTime.now());
         event7.setSalesEndDate(LocalDateTime.now());
         event7.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 10 + "/image-1.jpg",
@@ -614,9 +632,11 @@ public class DataInitRunner implements ApplicationRunner {
         event8.setDescriptions("Some description 6");
         event8.setCategory(eventCategories[3]);
         event8.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
-        event8.setPhysical(false);
+        event8.setPhysical(true);
         event8.setEventStartDate(LocalDateTime.now());
         event8.setEventEndDate(LocalDateTime.now());
+        event8.setTicketPrice(24);
+        event8.setTicketCapacity(100);
         event8.setSaleStartDate(LocalDateTime.now());
         event8.setSalesEndDate(LocalDateTime.now());
         event8.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 11 + "/image-1.jpg",
@@ -636,9 +656,11 @@ public class DataInitRunner implements ApplicationRunner {
         event9.setDescriptions("Some description 6");
         event9.setCategory(eventCategories[4]);
         event9.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
-        event9.setPhysical(false);
+        event9.setPhysical(true);
         event9.setEventStartDate(LocalDateTime.now());
         event9.setEventEndDate(LocalDateTime.now());
+        event9.setTicketPrice(24);
+        event9.setTicketCapacity(100);
         event9.setSaleStartDate(LocalDateTime.now());
         event9.setSalesEndDate(LocalDateTime.now());
         event9.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 12 + "/image-1.jpg",
@@ -694,12 +716,13 @@ public class DataInitRunner implements ApplicationRunner {
         previous.setEventEndDate(LocalDateTime.now().minusWeeks(3));
         previous.setSellingTicket(true);
         previous.setTicketPrice(24);
-        previous.setTicketCapacity(99);
+        previous.setTicketCapacity(100);
         previous.setSaleStartDate(LocalDateTime.now().minusMonths(1).minusWeeks(2));
         previous.setSalesEndDate(LocalDateTime.now().minusMonths(1).minusWeeks(1));
         previous.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/previous-event/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/previous-event/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/previous-event/image-3.jpg"));
+        previous.setBoothPrice(39);
         previous.setBoothCapacity(305);
         previous.setRating(5);
         previous.setEventStatus(EventStatus.CREATED);
@@ -813,16 +836,27 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Transactional
     private void createProducts() {
+        String[] productImageArray = {
+            "https://i.imgur.com/F90zsSB.jpg",
+            "https://i.imgur.com/Wez0pks.jpg",
+            "https://i.imgur.com/xUOtoql.jpg",
+            "https://i.imgur.com/jyNXtfV.jpg",
+            "https://i.imgur.com/HryBpzZ.jpg",
+            "https://i.imgur.com/5pt4rUF.jpg",
+            "https://i.imgur.com/hkiA4LQ.jpg",
+            "https://i.imgur.com/72QT6op.jpg",
+            "https://i.imgur.com/50nw6rT.jpg",
+            "https://i.imgur.com/OrBbkQE.jpg"
+        };
         Lorem lorem = LoremIpsum.getInstance();
-        // BusinessPartner bp =
-        // businessPartnerRepository.findByEmail("partner@abc.com");
         List<BusinessPartner> businessPartners = businessPartnerRepository.findAll();
         for (BusinessPartner bp : businessPartners) {
-            for (int i = 0; i < 10; i++) {
+            for (int i = 1; i < 11; i++) {
                 Product p = new Product();
                 p.setName("Product " + i);
                 p.setDescription(lorem.getWords(5, 20));
-                p.setImage("https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg");
+                p.setImage(productImageArray[i-1]);
+                // p.setImage("https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg");
                 p.setBusinessPartner(bp);
                 productRepository.save(p);
             }
