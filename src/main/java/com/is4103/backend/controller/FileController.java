@@ -85,7 +85,8 @@ public class FileController {
     @PostMapping("/uploadEventImage")
     public UploadFileResponse uploadEventImage(@RequestParam("file") MultipartFile file,
             @RequestParam(name = "eid", defaultValue = "1") Long eventId) {
-        String fileName = fileStorageService.storeFile(file, "eventimage", "");
+        String fileName = fileStorageService.storeFile(file, "profilepic", "");
+        // String fileName = fileStorageService.storeFile(file, "eventimage", "");
 
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         long userId = user.getId();
@@ -121,7 +122,8 @@ public class FileController {
     @PostMapping("/uploadBoothlayout")
     public UploadFileResponse uploadBoothlayout(@RequestParam("file") MultipartFile file,
             @RequestParam(name = "eid", defaultValue = "1") Long eventId) {
-        String fileName = fileStorageService.storeFile(file, "boothlayout", "");
+        String fileName = fileStorageService.storeFile(file, "profilepic", "");
+        // String fileName = fileStorageService.storeFile(file, "boothlayout", "");
 
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         long userId = user.getId();

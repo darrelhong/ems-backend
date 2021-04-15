@@ -92,7 +92,8 @@ public class SellerProfileController {
     @PostMapping("/uploadBrochure")
     public UploadFileResponse uploadBrochure(@RequestParam("file") MultipartFile file,
             @RequestParam(name = "id", defaultValue = "1") Long id) {
-        String fileName = fileStorageService.storeFile(file, "brochure", "");
+        String fileName = fileStorageService.storeFile(file, "profilepic", "");
+        // String fileName = fileStorageService.storeFile(file, "brochure", "");
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
                 .path(fileName).toUriString();

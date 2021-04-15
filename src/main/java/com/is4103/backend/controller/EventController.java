@@ -163,6 +163,7 @@ public class EventController {
         event.setSaleStartDate(createEventRequest.getSaleStartDate());
         event.setSalesEndDate(createEventRequest.getSalesEndDate());
         event.setImages(new ArrayList<>());
+        event.setBoothPrice(createEventRequest.getBoothPrice());
         event.setBoothCapacity(createEventRequest.getBoothCapacity());
         event.setRating(createEventRequest.getRating());
         event.setEventStatus(createEventRequest.getEventStatus());
