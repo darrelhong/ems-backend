@@ -119,7 +119,10 @@ public class SellerApplicationController {
             request.setSenderId(organiser.getId());
             request.setRecipientId(partner.getId());
             request.setSubject("Approved application for " + event.getName());
-            request.setTextBody("Congratulations, your application for " + event.getName() + " was successful. You will hear about your booth allocation soon!\r\n\r\nDo contact " +organiser.getName() +" at " +organiser.getEmail() +" if you have any queries.\r\n\r\n" + "<b>" + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>");
+            request.setTextBody("Congratulations, your application for " + event.getName()
+                    + " was successful. You will hear about your booth allocation soon!\r\n\r\nDo contact "
+                    + organiser.getName() + " at " + organiser.getEmail() + " if you have any queries.\r\n\r\n" + "<b>"
+                    + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>");
             mailService.sendEmailNotif(request);
             return sellerApplicationService.updateSellerApplication(app);
         } catch (Exception e) {
@@ -138,8 +141,11 @@ public class SellerApplicationController {
             Event event = app.getEvent();
             request.setSenderId(organiser.getId());
             request.setRecipientId(partner.getId());
-            request.setSubject("Rejected application for " +event.getName());
-            request.setTextBody("Sorry, your application for " + event.getName() + " was unsuccessful. Thank you for applying!\r\n\r\nDo contact " +organiser.getName() +" at " +organiser.getEmail() +" if you have any queries.\r\n\r\n" + "<b>" + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>");
+            request.setSubject("Rejected application for " + event.getName());
+            request.setTextBody("Sorry, your application for " + event.getName()
+                    + " was unsuccessful. Thank you for applying!\r\n\r\nDo contact " + organiser.getName() + " at "
+                    + organiser.getEmail() + " if you have any queries.\r\n\r\n" + "<b>"
+                    + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>");
             mailService.sendEmailNotif(request);
             return sellerApplicationService.updateSellerApplication(app);
         } catch (Exception e) {
@@ -147,7 +153,7 @@ public class SellerApplicationController {
         }
     }
 
-    @PostMapping(value = "/cancel/{id}") //WITHDRAWING
+    @PostMapping(value = "/cancel/{id}") // WITHDRAWING
     public SellerApplication cancelSellerApplication(@PathVariable String id)
             throws SellerApplicationNotFoundException {
         SellerApplication app = sellerApplicationService.getSellerApplicationById(id);
@@ -172,6 +178,18 @@ public class SellerApplicationController {
     public EventOrganiser getOrganiserFromApplication(@PathVariable String id)
             throws SellerApplicationNotFoundException {
         return sellerApplicationService.getSellerApplicationById(id).getEvent().getEventOrganiser();
+    }
+
+    @GetMapping(value = "/payment-methods")
+    public ResponseEntity<?> getPaymentMethods() {
+        BusinessPartner bp = bpService
+                .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        try {
+            return ResponseEntity.ok(sellerApplicationService.getPaymentMethods(bp).getData());
+        } catch (StripeException | UserNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
     }
     // NOT WORKING FOR SOME REASON,UNABLE TO RECEIVE THE REQ BODY IT TURNS OUT BLANK
     // IN SELLERPROFILECONTROLLER

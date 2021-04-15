@@ -20,7 +20,11 @@ import com.is4103.backend.util.errors.SellerApplicationNotFoundException;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
+import com.stripe.model.PaymentMethod;
+import com.stripe.model.PaymentMethodCollection;
 import com.stripe.param.PaymentIntentCreateParams;
+import com.stripe.param.PaymentMethodListParams;
+
 import org.springframework.beans.factory.annotation.Value;
 
 @Service
@@ -54,11 +58,11 @@ public class SellerApplicationService {
                 .orElseThrow(() -> new SellerApplicationNotFoundException("Application Not Found!"));
     }
 
-    public Long getSellerApplicationEventId(String id)  throws SellerApplicationNotFoundException {
+    public Long getSellerApplicationEventId(String id) throws SellerApplicationNotFoundException {
         try {
             SellerApplication sa = getSellerApplicationById(id);
             return sa.getEvent().getEid();
-        } catch (Exception e ) {
+        } catch (Exception e) {
             throw new SellerApplicationNotFoundException();
         }
     }
@@ -138,5 +142,15 @@ public class SellerApplicationService {
         applications.removeIf(
                 application -> application.getSellerApplicationStatus().equals(SellerApplicationStatus.CANCELLED));
         return applications;
+    }
+
+    public PaymentMethodCollection getPaymentMethods(BusinessPartner partner) throws StripeException {
+        Stripe.apiKey = stripeApiKey;
+        PaymentMethodListParams params = PaymentMethodListParams.builder().setCustomer(partner.getStripeCustomerId())
+                .setType(PaymentMethodListParams.Type.CARD).build();
+        System.out.print("Printing params.....");
+        System.out.println(params);
+        PaymentMethodCollection pms = PaymentMethod.list(params);
+        return pms;
     }
 }

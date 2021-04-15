@@ -21,4 +21,6 @@ public class ApplicationDto {
     private String description;
 
     private String comments;
+
+    private String paymentMethodId;
 }

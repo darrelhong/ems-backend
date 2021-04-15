@@ -1,5 +1,6 @@
 package com.is4103.backend.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -128,6 +129,7 @@ public class SellerProfileController {
         application.setBoothQuantity(request.getBoothQuantity());
         application.setSellerApplicationStatus(SellerApplicationStatus.PENDING);
         application.setPaymentStatus(PaymentStatus.PENDING);
+        application.setApplicationDate(LocalDateTime.now());
         return sellerApplicationService.createSellerApplication(application);
     }
 
@@ -141,8 +143,9 @@ public class SellerProfileController {
             BusinessPartner bp = bpService
                     .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
-            // ApplicationResponse result = sellerApplicationService.createTransaction(applicationDto.getEventId(),
-            //         applicationDto.getBoothQty(), bp);
+            // ApplicationResponse result =
+            // sellerApplicationService.createTransaction(applicationDto.getEventId(),
+            // applicationDto.getBoothQty(), bp);
             ApplicationResponse result = sellerApplicationService.createTransaction(applicationDto, bp);
 
             if (result != null) {
