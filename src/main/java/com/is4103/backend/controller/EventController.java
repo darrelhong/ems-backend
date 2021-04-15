@@ -243,7 +243,7 @@ public class EventController {
                 return events;
             }
         }
-        return eventService.getPublishedEvents(page, size, sort, sortDir, keyword);
+        return eventService.getUnHiddenEvents(page, size, sort, sortDir, keyword);
     }
 
     @GetMapping(path = "/get-events")

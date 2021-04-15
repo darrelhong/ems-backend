@@ -132,7 +132,7 @@ public class DataInitRunner implements ApplicationRunner {
         }
         if (eventRepository.findByName("Event 0").isEmpty()) {
             // lili
-            // createDemoEvents();
+            createDemoEvents();
         }
 
         if (boothRepository.findAll().isEmpty()) {

@@ -63,7 +63,7 @@ public class EventService {
         return eventRepository.findByIsPublished(true, PageRequest.of(page, size));
     }
 
-    public Page<Event> getPublishedEvents(int page, int size, String sortBy, String sortDir, String keyword) {
+    public Page<Event> getUnHiddenEvents(int page, int size, String sortBy, String sortDir, String keyword) {
         Sort sort = null;
         LocalDateTime now = LocalDateTime.now();
 
@@ -76,18 +76,18 @@ public class EventService {
         }
         if (keyword != null) {
             if (sort == null) {
-                return eventRepository.findByNameContainingAndIsPublishedAndEventStartDateGreaterThan(keyword, true,
-                        now, PageRequest.of(page, size));
+                return eventRepository.findByNameContainingAndIsHiddenAndEventStartDateGreaterThan(keyword, false, now,
+                        PageRequest.of(page, size));
             } else {
-                return eventRepository.findByNameContainingAndIsPublishedAndEventStartDateGreaterThan(keyword, true,
-                        now, PageRequest.of(page, size, sort));
+                return eventRepository.findByNameContainingAndIsHiddenAndEventStartDateGreaterThan(keyword, false, now,
+                        PageRequest.of(page, size, sort));
             }
         }
 
         if (sort == null) {
-            return eventRepository.findByIsPublishedAndEventStartDateGreaterThan(true, now, PageRequest.of(page, size));
+            return eventRepository.findByIsHiddenAndEventStartDateGreaterThan(false, now, PageRequest.of(page, size));
         } else {
-            return eventRepository.findByIsPublishedAndEventStartDateGreaterThan(true, now,
+            return eventRepository.findByIsHiddenAndEventStartDateGreaterThan(false, now,
                     PageRequest.of(page, size, sort));
         }
 
@@ -229,13 +229,13 @@ public class EventService {
         comingSunday = comingSunday.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
         LocalDateTime comingSaturday = now.plusDays(6 - now.getDayOfWeek().getValue());
         comingSaturday = comingSaturday.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        
+
         for (Event event : eventList) {
             if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                     && !(event.getEventStartDate().isAfter(comingSunday))
                     && !(event.getEventEndDate().isBefore(comingSaturday))
                     && !(event.getSalesEndDate().isBefore(now))) {
-                
+
                 if (user instanceof BusinessPartner) {
                     LocalDateTime thirdDayFromNow = now.plusDays(3);
                     thirdDayFromNow = thirdDayFromNow.withHour(0).withMinute(0).withSecond(0).withNano(0);
@@ -261,7 +261,7 @@ public class EventService {
         comingSunday = comingSunday.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
         LocalDateTime comingSaturday = now.plusDays(6 - now.getDayOfWeek().getValue());
         comingSaturday = comingSaturday.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        
+
         for (Event event : eventList) {
             if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                     && !(event.getEventStartDate().isAfter(comingSunday))
@@ -299,7 +299,7 @@ public class EventService {
         comingSunday = comingSunday.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
         LocalDateTime comingSaturday = now.plusDays(6 - now.getDayOfWeek().getValue());
         comingSaturday = comingSaturday.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        
+
         for (Event event : eventList) {
             if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                     && !(event.getEventStartDate().isAfter(comingSunday))
@@ -329,13 +329,12 @@ public class EventService {
         nextSunday = nextSunday.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
         LocalDateTime comingMonday = now.plusDays(8 - now.getDayOfWeek().getValue());
         comingMonday = comingMonday.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        
+
         for (Event event : eventList) {
             if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                     && !(event.getEventStartDate().isAfter(nextSunday))
-                    && !(event.getEventEndDate().isBefore(comingMonday))
-                    && !(event.getSalesEndDate().isBefore(now))) {
-                
+                    && !(event.getEventEndDate().isBefore(comingMonday)) && !(event.getSalesEndDate().isBefore(now))) {
+
                 if (user instanceof BusinessPartner) {
                     LocalDateTime thirdDayFromNow = now.plusDays(3);
                     thirdDayFromNow = thirdDayFromNow.withHour(0).withMinute(0).withSecond(0).withNano(0);
@@ -361,14 +360,13 @@ public class EventService {
         nextSunday = nextSunday.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
         LocalDateTime comingMonday = now.plusDays(8 - now.getDayOfWeek().getValue());
         comingMonday = comingMonday.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        
+
         for (Event event : eventList) {
             if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                     && !(event.getEventStartDate().isAfter(nextSunday))
-                    && !(event.getEventEndDate().isBefore(comingMonday))
-                    && !(event.getSalesEndDate().isBefore(now))) {
+                    && !(event.getEventEndDate().isBefore(comingMonday)) && !(event.getSalesEndDate().isBefore(now))) {
                 currentEventNo += 1;
-                
+
                 if (!(currentEventNo < (10 * (page - 1) + 1))) {
                     if (user instanceof BusinessPartner) {
                         LocalDateTime thirdDayFromNow = now.plusDays(3);
@@ -398,14 +396,13 @@ public class EventService {
         nextSunday = nextSunday.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
         LocalDateTime comingMonday = now.plusDays(8 - now.getDayOfWeek().getValue());
         comingMonday = comingMonday.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        
+
         for (Event event : eventList) {
             if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                     && !(event.getEventStartDate().isAfter(nextSunday))
-                    && !(event.getEventEndDate().isBefore(comingMonday))
-                    && !(event.getSalesEndDate().isBefore(now))) {
+                    && !(event.getEventEndDate().isBefore(comingMonday)) && !(event.getSalesEndDate().isBefore(now))) {
                 currentEventNo += 1;
-                
+
                 if (!(currentEventNo < (10 * (page - 1) + 1))) {
                     filterEventList.add(event);
                     if (filterEventList.size() == 10) {
@@ -427,11 +424,10 @@ public class EventService {
         lastDay = lastDay.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
         LocalDateTime thirdDay = now.plusDays(3);
         thirdDay = thirdDay.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        
+
         for (Event event : eventList) {
             if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
-                    && !(event.getEventStartDate().isBefore(thirdDay))
-                    && !(event.getEventStartDate().isAfter(lastDay))
+                    && !(event.getEventStartDate().isBefore(thirdDay)) && !(event.getEventStartDate().isAfter(lastDay))
                     && !(event.getSalesEndDate().isBefore(now))) {
                 filterEventList.add(event);
             }
@@ -450,20 +446,19 @@ public class EventService {
         lastDay = lastDay.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
         LocalDateTime thirdDay = now.plusDays(3);
         thirdDay = thirdDay.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        
+
         for (Event event : eventList) {
             System.out.println(currentEventNo + ": " + event.getName());
             System.out.println();
             if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
-                    && !(event.getEventStartDate().isBefore(thirdDay))
-                    && !(event.getEventStartDate().isAfter(lastDay))
+                    && !(event.getEventStartDate().isBefore(thirdDay)) && !(event.getEventStartDate().isAfter(lastDay))
                     && !(event.getSalesEndDate().isBefore(now))) {
                 System.out.println(currentEventNo + ": " + event.getName());
                 System.out.println();
                 System.out.println(!(currentEventNo < (10 * (page - 1) + 1)));
                 System.out.println();
                 currentEventNo += 1;
-                
+
                 if (!(currentEventNo < (10 * (page - 1) + 1))) {
                     System.out.println(currentEventNo + ": " + event.getName());
                     System.out.println();
@@ -485,13 +480,12 @@ public class EventService {
         List<Event> eventList = getAllEvents();
         List<Event> filterEventList = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
-        
+
         for (Event event : eventList) {
             if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
-                    && !(event.getSaleStartDate().isAfter(now))
-                    && !(event.getSalesEndDate().isBefore(now))) {
+                    && !(event.getSaleStartDate().isAfter(now)) && !(event.getSalesEndDate().isBefore(now))) {
                 if (filterEventList.size() < 10) {
-                
+
                     if (user instanceof BusinessPartner) {
                         LocalDateTime thirdDayFromNow = now.plusDays(3);
                         thirdDayFromNow = thirdDayFromNow.withHour(0).withMinute(0).withSecond(0).withNano(0);
@@ -521,8 +515,7 @@ public class EventService {
                             return e2NoOfTicketsSold.compareTo(e1NoOfTicketsSold);
                         }
                     });
-                }
-                else {
+                } else {
                     List<TicketTransaction> transList = tktService.getAllTransactions();
 
                     Integer noOfTicketsSold = 0;
@@ -539,7 +532,7 @@ public class EventService {
                     }
 
                     if (noOfTicketsSold > tenthNoOfTicketsSold) {
-                
+
                         if (user instanceof BusinessPartner) {
                             LocalDateTime thirdDayFromNow = now.plusDays(3);
                             thirdDayFromNow = thirdDayFromNow.withHour(0).withMinute(0).withSecond(0).withNano(0);
@@ -553,7 +546,7 @@ public class EventService {
                             @Override
                             public int compare(Event e1, Event e2) {
                                 List<TicketTransaction> transList = tktService.getAllTransactions();
-    
+
                                 Integer e1NoOfTicketsSold = 0;
                                 for (TicketTransaction trans : transList) {
                                     if (trans.getEvent().getEid() == e1.getEid()) {
@@ -582,11 +575,10 @@ public class EventService {
         List<Event> eventList = getAllEvents();
         List<Event> filterEventList = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
-        
+
         for (Event event : eventList) {
             if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
-                    && !(event.getSaleStartDate().isAfter(now))
-                    && !(event.getSalesEndDate().isBefore(now))) {
+                    && !(event.getSaleStartDate().isAfter(now)) && !(event.getSalesEndDate().isBefore(now))) {
                 if (filterEventList.size() < 10) {
                     filterEventList.add(event);
                     filterEventList.sort(new Comparator<Event>() {
@@ -610,8 +602,7 @@ public class EventService {
                             return e2NoOfTicketsSold.compareTo(e1NoOfTicketsSold);
                         }
                     });
-                }
-                else {
+                } else {
                     List<TicketTransaction> transList = tktService.getAllTransactions();
 
                     Integer noOfTicketsSold = 0;
@@ -634,7 +625,7 @@ public class EventService {
                             @Override
                             public int compare(Event e1, Event e2) {
                                 List<TicketTransaction> transList = tktService.getAllTransactions();
-    
+
                                 Integer e1NoOfTicketsSold = 0;
                                 for (TicketTransaction trans : transList) {
                                     if (trans.getEvent().getEid() == e1.getEid()) {
@@ -662,7 +653,7 @@ public class EventService {
     public List<Event> getVipEvents() {
         List<Event> eventList = getAllEvents();
         List<Event> vipEvents = new ArrayList<>();
-        
+
         for (Event event : eventList) {
             if (event.isVip()) {
                 vipEvents.add(event);
@@ -676,11 +667,11 @@ public class EventService {
         List<Event> eventList = getAllEvents();
         List<Event> vipEvents = new ArrayList<>();
         int currentEventNo = 0;
-        
+
         for (Event event : eventList) {
             if (event.isVip()) {
                 currentEventNo += 1;
-                
+
                 if (!(currentEventNo < (10 * (page - 1) + 1))) {
                     vipEvents.add(event);
                     if (vipEvents.size() == 10) {
