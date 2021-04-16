@@ -27,10 +27,13 @@ public class MailService {
             User sender = userService.getUserById(request.getSenderId());
             User recipient = userService.getUserById(request.getRecipientId());
             SimpleMailMessage email = new SimpleMailMessage();
+            // email.setFrom("ong.marcus@u.nus.edu"); //TESTING
             email.setFrom(fromEmail);
+            // email.setTo("ongmarcus204@gmail.com"); //TESTING
             email.setTo(recipient.getEmail());
             email.setSubject(request.getSubject());
-            email.setText(request.getTextBody());
+            String textWithDisclaimer = request.getTextBody() +  "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>";
+            email.setText(textWithDisclaimer);
             email.setCc(sender.getEmail()); // cc the person who submitted this.
             javaMailSender.send(email);
             return ResponseEntity.ok("Success");

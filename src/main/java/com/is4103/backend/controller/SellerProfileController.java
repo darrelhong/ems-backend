@@ -6,12 +6,14 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.is4103.backend.dto.CreateSellerApplicationRequest;
+import com.is4103.backend.dto.EmailRequest;
 import com.is4103.backend.dto.FileStorageProperties;
 import com.is4103.backend.dto.UploadFileResponse;
 import com.is4103.backend.dto.bpEventRegistration.ApplicationDto;
 import com.is4103.backend.dto.bpEventRegistration.ApplicationResponse;
 import com.is4103.backend.model.BusinessPartner;
 import com.is4103.backend.model.Event;
+import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.PaymentStatus;
 import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.model.SellerApplicationStatus;
@@ -20,6 +22,7 @@ import com.is4103.backend.repository.SellerProfileRepository;
 import com.is4103.backend.service.BusinessPartnerService;
 import com.is4103.backend.service.EventService;
 import com.is4103.backend.service.FileStorageService;
+import com.is4103.backend.service.MailService;
 import com.is4103.backend.service.SellerApplicationService;
 import com.is4103.backend.service.SellerProfileService;
 
@@ -63,6 +66,9 @@ public class SellerProfileController {
 
     @Autowired
     private FileStorageService fileStorageService;
+
+    @Autowired
+    private MailService mailService;
 
     @GetMapping(path = "/all")
     public List<SellerProfile> getAllSellerProfiles() {
@@ -131,6 +137,16 @@ public class SellerProfileController {
         application.setSellerApplicationStatus(SellerApplicationStatus.PENDING);
         application.setPaymentStatus(PaymentStatus.PENDING);
         application.setApplicationDate(LocalDateTime.now());
+
+        //SENDING THE NOTIF EMAIL
+        EmailRequest emailRequest = new EmailRequest();
+        EventOrganiser organiser = event.getEventOrganiser();
+        emailRequest.setSenderId(organiser.getId());
+        emailRequest.setRecipientId(bp.getId());
+        emailRequest.setSubject("Application from " +bp.getName());
+        emailRequest.setTextBody("Congrats, " +bp.getName() +" has applied for " +event.getName() +"!\r\n\r\n" +"<br>" +"Manage your applications at http://localhost:3000/organiser/events/applications.\r\n\r\n" + "<b>");
+        mailService.sendEmailNotif(emailRequest);
+
         return sellerApplicationService.createSellerApplication(application);
     }
 
