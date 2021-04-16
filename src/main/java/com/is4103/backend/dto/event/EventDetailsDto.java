@@ -50,6 +50,8 @@ public interface EventDetailsDto {
 
     interface EventOrganiserDetails {
         String getName();
+
+        String getId();
     }
 
     interface SellerProfileSummary {
