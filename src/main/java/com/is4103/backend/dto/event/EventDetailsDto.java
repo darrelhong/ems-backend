@@ -76,10 +76,12 @@ public interface EventDetailsDto {
         String getDescription();
 
         BoothSellerProfileSummary getSellerProfile();
+
     }
 
     interface BoothSellerProfileSummary {
         BusinessPartnerSummary getBusinessPartner();
+        Long getId();
     }
 
     interface BusinessPartnerSummary {

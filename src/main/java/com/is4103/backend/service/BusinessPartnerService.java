@@ -330,9 +330,9 @@ public class BusinessPartnerService {
                 if (role.equals("guest") || role.equals("ATND") || role.equals("EVNTORG")) {
                     if (status.equals("current")) {
                         if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
-                                && (event.getEventStartDate().isAfter(now) || event.getEventStartDate().isEqual(now)) && (event.getSaleStartDate().isAfter(now) || event.getSaleStartDate().isEqual(now))) {
-                            // System.out.println("test event" );
+                                && (event.getEventStartDate().isAfter(now) || event.getEventStartDate().isEqual(now))) {
                             eventList.add(event);
+
                         }
                     } else if (status.equals("past")) {
                         if (event.getEventStatus().toString().equals("CREATED")
@@ -342,21 +342,18 @@ public class BusinessPartnerService {
                         }
                     }
                 } else if (role.equals("BIZPTNR")) {
-                    // System.out.println("in bp");
 
                     if (status.equals("current")) {
                         // System.out.println("id" + event.getEid());
                         // System.out.println("start" + event.getEventStartDate());
                         // System.out.println("startsales" + event.getSaleStartDate());
                         if (event.getEventStatus().toString().equals("CREATED") && !event.isHidden()
-                                && (event.getEventStartDate().isAfter(now) || event.getEventStartDate().isEqual(now)) && (event.getSaleStartDate().isAfter(now) || event.getSaleStartDate().isEqual(now))) {
+                                && (event.getEventStartDate().isAfter(now) || event.getEventStartDate().isEqual(now)) ) {
                             eventList.add(event);
-                            // System.out.println("in bp current");
-
+                            
                         }
 
                     } else if (status.equals("past")) {
-
                         if (event.getEventStatus().toString().equals("CREATED")
                                 && (event.getEventEndDate().isBefore(now) || event.getEventEndDate().isEqual(now))) {
                             // System.out.println("in past");
@@ -366,9 +363,10 @@ public class BusinessPartnerService {
 
                     }
                 }
+
             }
         }
-        // System.out.println("events" + eventList);
+
         return eventList;
     }
 
