@@ -31,9 +31,13 @@ import com.is4103.backend.repository.PartnerSpecification;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.registration.OnRegistrationCompleteEvent;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentMethod;
+import com.stripe.Stripe;
 import com.is4103.backend.service.EventService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -73,6 +77,10 @@ public class BusinessPartnerService {
 
     @Autowired
     private SellerApplicationService sellerApplicationService;
+
+
+    @Value("${stripe.apikey}")
+    private String stripeApiKey;
 
     public List<BusinessPartner> getAllBusinessPartners() {
         return bpRepository.findAll();
@@ -474,5 +482,12 @@ public class BusinessPartnerService {
 
     public List<Product> getProductsByBp(Long id) {
         return bpRepository.findById(id).get().getProducts();
+    }
+
+       public void removePaymentMethod(String paymentMethodId) throws StripeException {
+    
+        Stripe.apiKey = stripeApiKey;
+        PaymentMethod pm = PaymentMethod.retrieve(paymentMethodId);
+        pm.detach();
     }
 }

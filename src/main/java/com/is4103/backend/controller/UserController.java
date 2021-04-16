@@ -340,15 +340,15 @@ public class UserController {
         System.out.println("call addCardPayment ");
         String resMsg = "";
         String cardholderName = addCardRequest.getCardholdername();
-          // System.out.println(cardholderName);
+    
          String cardnumber = addCardRequest.getCardnumber();
-        System.out.println(cardnumber);
+ 
          String cvc = addCardRequest.getCvc();
-          System.out.println(cvc);
+      
          String expMth = addCardRequest.getExpMth();
-          System.out.println(expMth);
+
          String expYear = addCardRequest.getExpYear();
-          System.out.println(expYear);
+ 
 
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
@@ -370,6 +370,7 @@ public class UserController {
             params.put("type", "card");
             params.put("card", card);
             params.put("billing_details",billing_details);
+          
            
             PaymentMethod paymentMethod;
             try {
@@ -379,6 +380,10 @@ public class UserController {
                 if (paymentMethod.getId() != null) {
                     User userRes = userService.savePaymentMethod(user,paymentMethod.getId());
                     if(userRes != null){
+                // assigned the payment method to the customer
+                Map<String, Object> params2 = new HashMap<>();
+                params2.put("customer", user.getStripeCustomerId());
+                paymentMethod.attach(params2);
                     resMsg = "success_added";
                     }else{
                         resMsg = "dbError";
