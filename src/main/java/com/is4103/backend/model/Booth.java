@@ -29,12 +29,17 @@ public class Booth {
     @JsonIgnoreProperties("booths")
     private List<Product> products;
 
-    // @ManyToOne
-    // private Event event;
+    @ManyToOne
+    @JsonIgnoreProperties("booths")
+    private Event event;
 
     @ManyToOne
     @JsonIgnoreProperties("booths")
     private SellerProfile sellerProfile;
+
+    @ManyToOne
+    @JsonIgnoreProperties({"booths","event"})
+    private SellerApplication sellerApplication;
 
     private int boothNumber;
 

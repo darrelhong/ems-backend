@@ -141,9 +141,13 @@ public class DataInitRunner implements ApplicationRunner {
         }
 
         if (sellerApplicationRepository.findAll().isEmpty()) {
+            createBooths();
             createSellerApplications();
             createSellerApplicationsForDashboard();
+            //setProducts(); //not working atm, get the lazy load issue
+
         }
+        System.out.println("Data init done");
     }
 
     @Transactional
@@ -837,18 +841,10 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Transactional
     private void createProducts() {
-        String[] productImageArray = {
-            "https://i.imgur.com/F90zsSB.jpg",
-            "https://i.imgur.com/Wez0pks.jpg",
-            "https://i.imgur.com/xUOtoql.jpg",
-            "https://i.imgur.com/jyNXtfV.jpg",
-            "https://i.imgur.com/HryBpzZ.jpg",
-            "https://i.imgur.com/5pt4rUF.jpg",
-            "https://i.imgur.com/hkiA4LQ.jpg",
-            "https://i.imgur.com/72QT6op.jpg",
-            "https://i.imgur.com/50nw6rT.jpg",
-            "https://i.imgur.com/OrBbkQE.jpg"
-        };
+        String[] productImageArray = { "https://i.imgur.com/F90zsSB.jpg", "https://i.imgur.com/Wez0pks.jpg",
+                "https://i.imgur.com/xUOtoql.jpg", "https://i.imgur.com/jyNXtfV.jpg", "https://i.imgur.com/HryBpzZ.jpg",
+                "https://i.imgur.com/5pt4rUF.jpg", "https://i.imgur.com/hkiA4LQ.jpg", "https://i.imgur.com/72QT6op.jpg",
+                "https://i.imgur.com/50nw6rT.jpg", "https://i.imgur.com/OrBbkQE.jpg" };
         Lorem lorem = LoremIpsum.getInstance();
         List<BusinessPartner> businessPartners = businessPartnerRepository.findAll();
         for (BusinessPartner bp : businessPartners) {
@@ -856,8 +852,9 @@ public class DataInitRunner implements ApplicationRunner {
                 Product p = new Product();
                 p.setName("Product " + i);
                 p.setDescription(lorem.getWords(5, 20));
-                p.setImage(productImageArray[i-1]);
-                // p.setImage("https://storage.googleapis.com/ems-images/events/event-" + i + "/image-1.jpg");
+                p.setImage(productImageArray[i - 1]);
+                // p.setImage("https://storage.googleapis.com/ems-images/events/event-" + i +
+                // "/image-1.jpg");
                 p.setBusinessPartner(bp);
                 productRepository.save(p);
             }
@@ -1087,6 +1084,7 @@ public class DataInitRunner implements ApplicationRunner {
         // APPLICATIONSTATUS
         // LATER WHEN I CREATE APPLICATIONS I'LL USE THE DIFFERENT COMBINATIONS
         // COMBI 0 : APPROVED PENDING PAYMENT
+        // COMBI 0-1: APPROVED PENDING PAYMENT PLUS ALLOCATED
         // COMBI 1 : FINISHED PROCESS - SELLER PROFILE CREATED
         // COMBI 2 : REJECTED
         // COMBI 3 : NEW APPLICAION
@@ -1107,13 +1105,39 @@ public class DataInitRunner implements ApplicationRunner {
             application.setEvent(firstEvent);
             application.setDescription(lorem.getWords(5, 20));
             application.setComments(lorem.getWords(5, 20));
-            application.setBoothQuantity(rand.nextInt(300));
+            application.setBoothQuantity(3);
             application.setSellerApplicationStatus(sellerApplicationStatusArray[count]);
             application.setPaymentStatus(paymentStatusArray[count]);
             application.setApplicationDate(firstEvent.getEventStartDate().minusDays(rand.nextInt(20)));
-            if (count == 1) {
-                // FOR NUMBER 1, THAT IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH PAYMENT
-                // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
+            SellerApplication savedApplication = sellerApplicationRepository.save(application);
+
+            if (count == 0) {
+                // WE NEEDA ACCOUNT FOR BOTH TYPES OF THIS SCENARIO, ONE IS WITH BOOTH ONE IS
+                // WITHOUT
+                int ifAllocateBooth = rand.nextInt(2);
+                if (ifAllocateBooth == 1) {
+                    // 1 FOR ALLOCATING BOOTHS TO THAT APPLICATION
+                    List<Booth> eventBooths = firstEvent.getBooths();
+                    List<Booth> allocatedBooths = new ArrayList<>();
+                    int allocatedBoothCount = 0;
+                    for (Booth b : eventBooths) {
+                        if (allocatedBoothCount >= application.getBoothQuantity())
+                            break;
+                        if (b.getSellerApplication() == null && b.getSellerProfile() == null) {
+                            // then allocate this booth to the application
+                            // allocatedBooths.add(b);
+                            b.setSellerApplication(savedApplication);
+                            Booth updatedBooth = boothRepository.save(b);
+                            // allocatedBooths.add(updatedBooth);
+                            allocatedBoothCount++;
+                        }
+                    }
+                    // application.setBooths(allocatedBooths);
+                }
+                // else no need do anything, just dont allocate any booths to the guy
+            }
+             else if (count == 1) {
+                // NEW VERSION WITH BOOTHS ALREADY CREATED PER EVENT
                 SellerProfile profile = new SellerProfile();
                 profile.setEvent(firstEvent);
                 profile.setBusinessPartner(bp);
@@ -1123,30 +1147,25 @@ public class DataInitRunner implements ApplicationRunner {
                                 "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
                                 "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
                 SellerProfile savedProfile = sellerProfileRepository.save(profile);
-
-                // BOOTH SETUP FOR EACH PROFILE
-                for (int k = 1; k < 4; k++) {
-                    Booth b = new Booth();
-
-                    // setting random set of products
-                    List<Product> allProducts = productRepository.findProductsByBusinessPartner(bp.getId());
-                    // List<Product> allProducts = randomBp.getProducts();
-                    List<Product> sellerProfileProducts = new ArrayList<>();
-                    int numberOfProducts = rand.nextInt(allProducts.size());
-                    for (int j = 0; j < numberOfProducts; j++) {
-                        sellerProfileProducts.add(allProducts.get(j));
+                List<Booth> eventBooths = firstEvent.getBooths();
+                List<Booth> allocatedBooths = new ArrayList<>();
+                int allocatedBoothCount = 0;
+                for (Booth b : eventBooths) {
+                    if (allocatedBoothCount >= application.getBoothQuantity())
+                        break;
+                    if (b.getSellerApplication() == null && b.getSellerProfile() == null) {
+                        // then allocate this booth to the application
+                        b.setSellerApplication(savedApplication);
+                        b.setSellerProfile(savedProfile);
+                        Booth updatedBooth = boothRepository.save(b);
+                        // allocatedBooths.add(updatedBooth);
+                        allocatedBoothCount++;
                     }
-                    ;
-                    b.setProducts(sellerProfileProducts);
-                    b.setBoothNumber(rand.nextInt(70) + 1);
-                    b.setDescription(lorem.getWords(5, 20));
-                    b.setSellerProfile(savedProfile);
-                    boothRepository.save(b);
                 }
-                ;
-
+                // profile.setBooths(allocatedBooths);
+                // application.setBooths(allocatedBooths);
+                // SellerProfile savedProfile = sellerProfileRepository.save(profile);
             }
-            sellerApplicationRepository.save(application);
         }
 
         // CREATE RANDOM NUMBERS FOR THE REST
@@ -1167,10 +1186,37 @@ public class DataInitRunner implements ApplicationRunner {
                 application.setSellerApplicationStatus(sellerApplicationStatusArray[statusTypeIndex]);
                 application.setPaymentStatus(paymentStatusArray[statusTypeIndex]);
                 application.setApplicationDate(e.getEventStartDate().minusDays(rand.nextInt(20)));
-                if (statusTypeIndex == 1) {
-                    // SAME AS JUST NOW, NUMBER 1 IS THE CASE WHERE APPLICATION CONFIRM LIAO WITH
-                    // PAYMENT
-                    // IN THAT CASE WE BUILD THE SELLER PROFILE FOR THE BP AND EVENT
+                SellerApplication savedApplication = sellerApplicationRepository.save(application);
+
+                // NEW
+                if (statusTypeIndex == 0) {
+                    // WE NEEDA ACCOUNT FOR BOTH TYPES OF THIS SCENARIO, ONE IS WITH BOOTH ONE IS WITHOUT
+                    int ifAllocateBooth = rand.nextInt(2);
+                    if (ifAllocateBooth == 1) {
+                        // 1 FOR ALLOCATING BOOTHS TO THAT APPLICATION
+                        List<Booth> eventBooths = e.getBooths();
+                        List<Booth> allocatedBooths = new ArrayList<>();
+                        int allocatedBoothCount = 0;
+                        for (Booth b : eventBooths) {
+                            if (allocatedBoothCount >= application.getBoothQuantity())
+                                break;
+                            if (b.getSellerApplication() == null && b.getSellerProfile() == null) {
+                                // then allocate this booth to the application
+                                // allocatedBooths.add(b);
+                                b.setSellerApplication(savedApplication);
+                                Booth updatedBooth = boothRepository.save(b);
+                                // allocatedBooths.add(updatedBooth);
+                                allocatedBoothCount++;
+                            }
+                        }
+                        application.setBooths(allocatedBooths);
+                    }
+                    // else no need do anything, just dont allocate any booths to the guy
+                }
+
+                // NEW
+                else if (statusTypeIndex == 1) {
+                    // NEW VERSION WITH BOOTHS ALREADY CREATED PER EVENT
                     SellerProfile profile = new SellerProfile();
                     profile.setEvent(e);
                     profile.setBusinessPartner(randomBp);
@@ -1180,30 +1226,26 @@ public class DataInitRunner implements ApplicationRunner {
                             "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
                             "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
                     SellerProfile savedProfile = sellerProfileRepository.save(profile);
-
-                    // BOOTH SETUP FOR EACH PROFILE
-                    for (int k = 1; k < 4; k++) {
-                        Booth b = new Booth();
-
-                        // setting random set of products
-                        List<Product> allProducts = productRepository.findProductsByBusinessPartner(randomBp.getId());
-                        // List<Product> allProducts = randomBp.getProducts();
-                        List<Product> sellerProfileProducts = new ArrayList<>();
-                        int numberOfProducts = rand.nextInt(allProducts.size());
-                        for (int j = 0; j < numberOfProducts; j++) {
-                            sellerProfileProducts.add(allProducts.get(j));
+                    List<Booth> eventBooths = e.getBooths();
+                    List<Booth> allocatedBooths = new ArrayList<>();
+                    int allocatedBoothCount = 0;
+                    for (Booth b : eventBooths) {
+                        if (allocatedBoothCount >= application.getBoothQuantity())
+                            break;
+                        if (b.getSellerApplication() == null && b.getSellerProfile() == null) {
+                            // then allocate this booth to the application
+                            b.setSellerApplication(savedApplication);
+                            b.setSellerProfile(savedProfile);
+                            Booth updatedBooth = boothRepository.save(b);
+                            // allocatedBooths.add(updatedBooth);
+                            allocatedBoothCount++;
                         }
-
-                        b.setProducts(sellerProfileProducts);
-                        b.setBoothNumber(rand.nextInt(70) + 1);
-                        b.setDescription(lorem.getWords(5, 20));
-                        b.setSellerProfile(savedProfile);
-                        boothRepository.save(b);
                     }
-
+                    // profile.setBooths(allocatedBooths);
+                    // application.setBooths(allocatedBooths);
                 }
-                sellerApplicationRepository.save(application);
             }
+
             // CREATE RANDOM NUMBERS FOR THE REST
             // List<Event> allEvents = eventRepository.findAll();
             // allEvents.remove(allEvents.get(0));
@@ -1333,4 +1375,40 @@ public class DataInitRunner implements ApplicationRunner {
         }
     }
 
+    @Transactional
+    private void createBooths() {
+        Lorem lorem = LoremIpsum.getInstance();
+        List<Event> allEvents = eventRepository.findAll();
+        for (Event e : allEvents) {
+            e.getBooths().size();
+            int numberOfBoothsToCreate = e.getBoothCapacity() - e.getBooths().size();
+            for (int i = 1; i <= numberOfBoothsToCreate; i++) {
+                Booth b = new Booth();
+                b.setBoothNumber(i);
+                b.setDescription(lorem.getWords(5, 20));
+                b.setEvent(e);
+                boothRepository.save(b);
+            }
+        }
+    }
+
+    @Transactional
+    private void setProducts() {
+        List<Booth> allBooths= boothRepository.findAll();
+        for (Booth b : allBooths) {
+            if (b.getSellerProfile() != null) {
+                BusinessPartner bp = b.getSellerProfile().getBusinessPartner();
+                int numberOfBpProducts = bp.getProducts().size();
+                List<Product> bpProducts = bp.getProducts();
+                List<Product> productsToAllocate = new ArrayList<>();
+                for (int i=0;i<3;i++) { //set 3 products for each booth
+                    Random rand = new Random();
+                    int productNumber = rand.nextInt(numberOfBpProducts);
+                    productsToAllocate.add(bpProducts.get(productNumber));
+                }
+                b.setProducts(productsToAllocate);
+                boothRepository.save(b);
+            }
+        }
+    }
 }

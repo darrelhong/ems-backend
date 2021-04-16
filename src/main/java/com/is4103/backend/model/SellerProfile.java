@@ -28,7 +28,7 @@ public class SellerProfile {
     @ManyToOne
     @ElementCollection(targetClass = Event.class)
     @JsonIgnoreProperties({ "sellerProfiles", "eventOrganiser", "favouriteBusinessPartners", "sellerApplications",
-            "ticketTransactions", "products" })
+            "ticketTransactions", "products","booths" })
     // @JsonIgnore
     private Event event;
 
@@ -42,7 +42,7 @@ public class SellerProfile {
     private String description;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "sellerProfile")
-    @JsonIgnoreProperties({"sellerProfile","products"})
+    @JsonIgnoreProperties({"sellerProfile","products","event"})
     // @JsonIgnore
     private List<Booth> booths;
 
