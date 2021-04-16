@@ -62,6 +62,8 @@ public interface EventDetailsDto {
         List<BoothSummary> getBooths();
 
         List<String> getBrochureImages();
+
+        BusinessPartnerSummary getBusinessPartner();
     }
 
     interface BoothSummary {
