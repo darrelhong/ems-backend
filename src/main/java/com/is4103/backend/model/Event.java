@@ -159,6 +159,11 @@ public class Event {
 
     private String boothLayout;
 
+    @JsonIgnoreProperties({"event","sellerProfile","sellerApplication"})
+    @JsonView(EventViews.Private.class)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE, mappedBy = "event")
+    private List<Booth> booths;
+    
     public boolean getAvailableForSale() {
         if (this.isSellingTicket && this.saleStartDate != null && this.salesEndDate != null) {
             // if (this.saleStartDate != null && this.salesEndDate != null) {
