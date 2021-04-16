@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -31,6 +32,7 @@ import com.is4103.backend.service.FileStorageService;
 import com.is4103.backend.service.SellerApplicationService;
 import com.is4103.backend.service.UserService;
 import com.is4103.backend.util.errors.UserAlreadyExistsException;
+import com.stripe.exception.StripeException;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping(path = "/partner")
 
 public class BusinessPartnerController {
+
 
     @Autowired
     private BusinessPartnerService bpService;
@@ -314,6 +317,18 @@ public class BusinessPartnerController {
         BusinessPartner bp = getBusinessPartnerById(id);
         return sellerApplicationService.removeCancelledApplications(bp.getSellerApplications());
     }
+
+    @PostMapping(value = "/payment-methods/remove")
+    public ResponseEntity<String> removePaymentMethod(@RequestBody Map<String, String> body) {
+        try {
+            bpService.removePaymentMethod(body.get("paymentMethodId"));
+            return ResponseEntity.ok("Success");
+        } catch (StripeException ex) {
+            System.out.println(ex.getMessage());
+            return ResponseEntity.badRequest().body("An error occured");
+        }
+    }
+
 
 
 }
