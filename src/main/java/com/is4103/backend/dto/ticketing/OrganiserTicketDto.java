@@ -18,5 +18,4 @@ public class OrganiserTicketDto {
     Long eventEid;
     String eventName;
     String attendeeName;
-    String attendeeId;
 }

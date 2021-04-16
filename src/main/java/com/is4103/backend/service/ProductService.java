@@ -28,7 +28,8 @@ public class ProductService {
     private FileStorageService fileStorageService;
 
     public Product createProduct(Product product, MultipartFile file) {
-        String fileName = fileStorageService.storeFile(file, "productImage", "");
+        String fileName = fileStorageService.storeFile(file, "profilepic", "");
+        // String fileName = fileStorageService.storeFile(file, "productImage", "");
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
                 .path(fileName).toUriString();

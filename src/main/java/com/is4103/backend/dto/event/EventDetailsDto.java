@@ -50,6 +50,8 @@ public interface EventDetailsDto {
 
     interface EventOrganiserDetails {
         String getName();
+
+        String getId();
     }
 
     interface SellerProfileSummary {
@@ -60,6 +62,8 @@ public interface EventDetailsDto {
         List<BoothSummary> getBooths();
 
         List<String> getBrochureImages();
+
+        BusinessPartnerSummary getBusinessPartner();
     }
 
     interface BoothSummary {

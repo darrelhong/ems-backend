@@ -1,5 +1,6 @@
 package com.is4103.backend.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -34,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.is4103.backend.util.errors.BoothCapacityExceededException;
+import com.is4103.backend.util.errors.BrochureNotFoundException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.errors.ticketing.CheckoutException;
 import com.stripe.exception.StripeException;
@@ -90,7 +92,8 @@ public class SellerProfileController {
     @PostMapping("/uploadBrochure")
     public UploadFileResponse uploadBrochure(@RequestParam("file") MultipartFile file,
             @RequestParam(name = "id", defaultValue = "1") Long id) {
-        String fileName = fileStorageService.storeFile(file, "brochure", "");
+        String fileName = fileStorageService.storeFile(file, "profilepic", "");
+        // String fileName = fileStorageService.storeFile(file, "brochure", "");
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
                 .path(fileName).toUriString();
@@ -99,6 +102,18 @@ public class SellerProfileController {
         sp = sellerProfileService.addBrochureImage(sp, fileDownloadUri);
 
         return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
+    }
+
+    @PostMapping("/remove-brochure")
+    public SellerProfile removeBrochure(@RequestParam(name = "id", defaultValue = "1") Long id,
+            @RequestParam(name = "imageUrl", defaultValue = "") String imageUrl) throws BrochureNotFoundException {
+        SellerProfile s = getSellerProfileById(id);
+        int imageIndex = s.getBrochureImages().indexOf(imageUrl);
+        if (imageIndex < 0) {
+            throw new BrochureNotFoundException();
+        } else {
+            return sellerProfileService.removeBrochure(s, imageIndex);
+        }
     }
 
     @PostMapping(path = "/create-application")
@@ -115,6 +130,7 @@ public class SellerProfileController {
         application.setBoothQuantity(request.getBoothQuantity());
         application.setSellerApplicationStatus(SellerApplicationStatus.PENDING);
         application.setPaymentStatus(PaymentStatus.PENDING);
+        application.setApplicationDate(LocalDateTime.now());
         return sellerApplicationService.createSellerApplication(application);
     }
 
@@ -128,8 +144,9 @@ public class SellerProfileController {
             BusinessPartner bp = bpService
                     .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
-            // ApplicationResponse result = sellerApplicationService.createTransaction(applicationDto.getEventId(),
-            //         applicationDto.getBoothQty(), bp);
+            // ApplicationResponse result =
+            // sellerApplicationService.createTransaction(applicationDto.getEventId(),
+            // applicationDto.getBoothQty(), bp);
             ApplicationResponse result = sellerApplicationService.createTransaction(applicationDto, bp);
 
             if (result != null) {

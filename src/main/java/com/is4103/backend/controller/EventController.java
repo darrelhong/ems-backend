@@ -163,6 +163,7 @@ public class EventController {
         event.setSaleStartDate(createEventRequest.getSaleStartDate());
         event.setSalesEndDate(createEventRequest.getSalesEndDate());
         event.setImages(new ArrayList<>());
+        event.setBoothPrice(createEventRequest.getBoothPrice());
         event.setBoothCapacity(createEventRequest.getBoothCapacity());
         event.setRating(createEventRequest.getRating());
         event.setEventStatus(createEventRequest.getEventStatus());
@@ -243,7 +244,7 @@ public class EventController {
                 return events;
             }
         }
-        return eventService.getPublishedEvents(page, size, sort, sortDir, keyword);
+        return eventService.getUnHiddenEvents(page, size, sort, sortDir, keyword);
     }
 
     @GetMapping(path = "/get-events")

@@ -23,7 +23,6 @@ public class ReviewController {
     @Autowired
     private ReviewService reviewService;
 
-   
     @GetMapping(path = "/{id}")
     public List<Review> getReviewsByEventId(@PathVariable Long id) {
         return reviewService.getReviewsByEventId(id);
@@ -39,4 +38,8 @@ public class ReviewController {
         return reviewService.createNewReview(reviewRequest);
     }
 
+    @GetMapping(path = "/{eid}/{id}")
+    public Review getLatestReviewForEventByBP(@PathVariable Long eid, @PathVariable Long id) {
+        return reviewService.getLatestReviewForEventByBP(eid, id);
+    }
 }
