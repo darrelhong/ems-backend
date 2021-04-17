@@ -164,7 +164,7 @@ public class DataInitRunner implements ApplicationRunner {
     @Transactional
     private void createEventOrganisers() {
         EventOrganiser eo = new EventOrganiser();
-        eo.setEmail("organiser@abc.com");
+        eo.setEmail("linlili7842@gmail.com");
         eo.setName("First Organiser");
         eo.setPassword(passwordEncoder.encode("password"));
         eo.setEnabled(true);
@@ -177,7 +177,7 @@ public class DataInitRunner implements ApplicationRunner {
 
         // Lili EO
         EventOrganiser eo2 = new EventOrganiser();
-        eo2.setEmail("linlili7842@gmail.com");
+        eo2.setEmail("organiser@abc.com ");
         eo2.setName("Lili Organiser");
         eo2.setPassword(passwordEncoder.encode("password"));
         eo2.setEnabled(true);
@@ -201,7 +201,7 @@ public class DataInitRunner implements ApplicationRunner {
 
         // create first Bp
         BusinessPartner bp = new BusinessPartner();
-        bp.setEmail("partner@abc.com");
+        bp.setEmail("linlili2319@gmail.com");
         bp.setName("First Business Partner");
         bp.setPassword(passwordEncoder.encode("password"));
         bp.setEnabled(true);
@@ -211,7 +211,7 @@ public class DataInitRunner implements ApplicationRunner {
 
         // lili bp
         BusinessPartner bp2 = new BusinessPartner();
-        bp2.setEmail("linlili2319@gmail.com");
+        bp2.setEmail("partner@abc.com");
         bp2.setName("Lili Business Partner");
         bp2.setPassword(passwordEncoder.encode("password"));
         bp2.setEnabled(true);
@@ -242,7 +242,7 @@ public class DataInitRunner implements ApplicationRunner {
 
         // create attendee
         Attendee atn = new Attendee();
-        atn.setEmail("attendee@abc.com");
+        atn.setEmail("linlili53012@gmail.com");
         atn.setName("first attendee");
         atn.setPassword(passwordEncoder.encode("password"));
         atn.setDescription("description for frst attendeeeeeeee :)");
@@ -275,7 +275,7 @@ public class DataInitRunner implements ApplicationRunner {
         // lili att
         // create second attendee
         Attendee atnLili = new Attendee();
-        atnLili.setEmail("linlili53012@gmail.com");
+        atnLili.setEmail("attendee@abc.com");
         atnLili.setName("Lili attendee");
         atnLili.setPassword(passwordEncoder.encode("password"));
         atnLili.setDescription("description for Second attendeeeeeeee :)");
