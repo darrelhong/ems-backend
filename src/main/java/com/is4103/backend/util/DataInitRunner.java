@@ -1003,14 +1003,14 @@ public class DataInitRunner implements ApplicationRunner {
             for (int j = 0; j < numberOfProducts; j++) {
                 sellerProfileProducts.add(allProducts.get(j));
             }
-            
+
             b.setProducts(sellerProfileProducts);
             b.setBoothNumber(rand.nextInt(70) + 1);
             b.setDescription(lorem.getWords(5, 20));
             b.setSellerProfile(sellerProfileRepository.findById(1L).get());
             boothRepository.save(b);
         }
-    
+
     }
 
     @Transactional
@@ -1111,13 +1111,12 @@ public class DataInitRunner implements ApplicationRunner {
                         // allocatedBooths.add(updatedBooth);
                         allocatedBoothCount++;
                     }
-            
+
                 }
                    LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.MARCH, 18, 8, 0);
                         savedApplication.setPaymentDate(paymentDate4);
                         savedApplication.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
                         sellerApplicationRepository.save(savedApplication);
-            
 
                 // profile.setBooths(allocatedBooths);
                 // application.setBooths(allocatedBooths);
@@ -1129,10 +1128,15 @@ public class DataInitRunner implements ApplicationRunner {
         List<Event> allEvents = eventRepository.findAll();
         allEvents.remove(allEvents.get(0));
         for (Event e : allEvents) {
-            for (int i = 0; i < 5; i++) {
-                // MAKE 2 APPLICATIONS FOR EACH EVENT
+            List<Long> partnersAppliedId = new ArrayList<>();
+            while (partnersAppliedId.size() < 5) {
+                // MAKE 5 APPLICATIONS FOR EACH EVENT
                 BusinessPartner randomBp = businessPartnerRepository.findAll()
                         .get(rand.nextInt(businessPartners.size()));
+                if (partnersAppliedId.contains(randomBp.getId())) {
+                    continue;
+                }
+                partnersAppliedId.add(randomBp.getId());
                 SellerApplication application = new SellerApplication();
                 application.setBusinessPartner(randomBp);
                 application.setEvent(e);
@@ -1199,7 +1203,7 @@ public class DataInitRunner implements ApplicationRunner {
                             // allocatedBooths.add(updatedBooth);
                             allocatedBoothCount++;
                         }
-                       
+
                     }
                      LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 17, 8, 0);
                         savedApplication.setPaymentDate(paymentDate4);
@@ -1362,7 +1366,8 @@ public class DataInitRunner implements ApplicationRunner {
         for (Booth b : allBooths) {
             if (b.getSellerProfile() != null) {
                 BusinessPartner bp = b.getSellerProfile().getBusinessPartner();
-                List<Product> firstThreeBpProducts = productRepository.findProductsByBusinessPartner(bp.getId()).subList(0,3);
+                List<Product> firstThreeBpProducts = productRepository.findProductsByBusinessPartner(bp.getId())
+                        .subList(0, 3);
                 b.setProducts(firstThreeBpProducts);
                 boothRepository.save(b);
             }
