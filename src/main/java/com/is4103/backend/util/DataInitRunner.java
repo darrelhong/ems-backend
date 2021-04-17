@@ -739,33 +739,60 @@ public class DataInitRunner implements ApplicationRunner {
         ttransaction.setEvent(previous);
         ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
         ttransaction.setAttendee(atnd);
-        ttransaction.setStripePaymentId("test_id");
+        ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
         ticketTransactionRepository.save(ttransaction);
         ttransaction = new TicketTransaction();
         ttransaction.setEvent(previous);
         ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
         ttransaction.setAttendee(atnd);
-        ttransaction.setStripePaymentId("test_id");
+        ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
         ticketTransactionRepository.save(ttransaction);
         ttransaction = new TicketTransaction();
         ttransaction.setEvent(previous);
         ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
         ttransaction.setAttendee(atnd);
-        ttransaction.setStripePaymentId("test_id");
+        ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
         ticketTransactionRepository.save(ttransaction);
 
         ttransaction = new TicketTransaction();
         ttransaction.setEvent(event);
         ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
         ttransaction.setAttendee(atnd);
-        ttransaction.setStripePaymentId("test_id");
+        ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
         ticketTransactionRepository.save(ttransaction);
 
         ttransaction = new TicketTransaction();
         ttransaction.setEvent(event);
         ttransaction.setAttendee(atnd);
-        ttransaction.setStripePaymentId("test_id");
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
         ticketTransactionRepository.save(ttransaction);
+
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event5);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
+        ticketTransactionRepository.save(ttransaction);
+        ttransaction.setDateTimeOrdered(LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(4).plusHours(2 % 3));
+
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event5);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
+        ticketTransactionRepository.save(ttransaction);
+        ttransaction.setDateTimeOrdered(LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(4).plusHours(2 % 3));
+
+
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event5);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
+        ticketTransactionRepository.save(ttransaction);
+        ttransaction.setDateTimeOrdered(LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(4).plusHours(2 % 3));
+
 
         List<Event> eoEvents = new ArrayList<>();
         // eoEvents = eventOrg.getEvents();
