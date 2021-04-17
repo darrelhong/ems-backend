@@ -3,9 +3,12 @@ package com.is4103.backend.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -77,7 +80,6 @@ public class BusinessPartnerService {
 
     @Autowired
     private SellerApplicationService sellerApplicationService;
-
 
     @Value("${stripe.apikey}")
     private String stripeApiKey;
@@ -356,9 +358,9 @@ public class BusinessPartnerService {
                         // System.out.println("start" + event.getEventStartDate());
                         // System.out.println("startsales" + event.getSaleStartDate());
                         if (event.getEventStatus().toString().equals("CREATED") && !event.isHidden()
-                                && (event.getEventStartDate().isAfter(now) || event.getEventStartDate().isEqual(now)) ) {
+                                && (event.getEventStartDate().isAfter(now) || event.getEventStartDate().isEqual(now))) {
                             eventList.add(event);
-                            
+
                         }
 
                     } else if (status.equals("past")) {
@@ -438,11 +440,10 @@ public class BusinessPartnerService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime thirdDay = now.plusDays(3);
         thirdDay = thirdDay.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        
+
         for (Event event : eventList) {
-            if (event.getCategory() == bizCat
-                    && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
-                    && !(event.getEventStartDate().isBefore(thirdDay))
+            if (event.getCategory() == bizCat && event.getEventStatus().toString().equals("CREATED")
+                    && event.isPublished() == true && !(event.getEventStartDate().isBefore(thirdDay))
                     && !(event.getSalesEndDate().isBefore(now))) {
                 filterEventList.add(event);
             }
@@ -460,11 +461,10 @@ public class BusinessPartnerService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime thirdDay = now.plusDays(3);
         thirdDay = thirdDay.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        
+
         for (Event event : eventList) {
-            if (event.getCategory() == bizCat
-                    && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
-                    && !(event.getEventStartDate().isBefore(thirdDay))
+            if (event.getCategory() == bizCat && event.getEventStatus().toString().equals("CREATED")
+                    && event.isPublished() == true && !(event.getEventStartDate().isBefore(thirdDay))
                     && !(event.getSalesEndDate().isBefore(now))) {
                 currentEventNo += 1;
 
@@ -477,15 +477,23 @@ public class BusinessPartnerService {
             }
         }
         return filterEventList;
+    }
 
+    public List<SellerApplication> getLatestSellerApplicationsbyBp(long id) {
+        BusinessPartner partner = getBusinessPartnerById(id);
+        List<SellerApplication> apps = partner.getSellerApplications();
+        Collection<SellerApplication> nonDuplicate = apps.stream()
+                .collect(Collectors.toMap(SellerApplication::generateUniqueKey, Function.identity(), (a, b) -> a))
+                .values();
+        return new ArrayList<>(nonDuplicate);
     }
 
     public List<Product> getProductsByBp(Long id) {
         return bpRepository.findById(id).get().getProducts();
     }
 
-       public void removePaymentMethod(String paymentMethodId) throws StripeException {
-    
+    public void removePaymentMethod(String paymentMethodId) throws StripeException {
+
         Stripe.apiKey = stripeApiKey;
         PaymentMethod pm = PaymentMethod.retrieve(paymentMethodId);
         pm.detach();

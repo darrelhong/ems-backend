@@ -1,4 +1,5 @@
 package com.is4103.backend.model;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -28,9 +29,9 @@ import lombok.Data;
 @JsonView(EventViews.Public.class)
 public class SellerApplication {
 
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//     private long id;
+    // @Id
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // private long id;
 
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -74,12 +75,14 @@ public class SellerApplication {
     private LocalDateTime applicationDate;
 
     private LocalDateTime paymentDate;
-    
+
+    public String generateUniqueKey() {
+        return "" + businessPartner.getId() + "_" + event.getEid();
+    }
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "sellerApplication")
-        @JsonIgnoreProperties({ "sellerApplication", "products", "event" })
-        private List<Booth> booths;
-
-
+    @JsonIgnoreProperties({ "sellerApplication", "products", "event" })
+    private List<Booth> booths;
 
     // @OneToOne(targetEntity = EventBoothTransaction.class, fetch =
     // FetchType.EAGER)

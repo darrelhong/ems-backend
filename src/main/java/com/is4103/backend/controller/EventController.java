@@ -191,28 +191,29 @@ public class EventController {
             // System.out.println(filter);
             List<Event> data = null;
             BusinessPartner partner = bpService.getBusinessPartnerById(Long.parseLong(user));
+            List<SellerApplication> temp = bpService.getLatestSellerApplicationsbyBp(Long.parseLong(user));
             if (filter.equals("favourite")) {
-                System.out.println(data);
+                // System.out.println(data);
                 // Pageable firstPageWithTwoELements = PageRequest.of(0, 2);
                 data = partner.getFavouriteEventList();
                 Page<Event> events = new PageImpl<>(data);
                 return events;
             } else if (filter.equals("applied")) {
-                List<SellerApplication> temp = partner.getSellerApplications();
+                // List<SellerApplication> temp = partner.getSellerApplications();
                 // removing all cancelled applications
                 temp = saService.removeCancelledApplications(temp);
                 data = temp.stream().map(sa -> sa.getEvent()).collect(Collectors.toList());
                 Page<Event> events = new PageImpl<>(data);
                 return events;
             } else if (filter.equals("pending approval")) {
-                List<SellerApplication> temp = partner.getSellerApplications();
+                // List<SellerApplication> temp = partner.getSellerApplications();
                 temp = saService.removeCancelledApplications(temp);
                 data = temp.stream().filter(sa -> sa.getSellerApplicationStatus() == SellerApplicationStatus.PENDING)
                         .map(sa -> sa.getEvent()).collect(Collectors.toList());
                 Page<Event> events = new PageImpl<>(data);
                 return events;
             } else if (filter.equals("pending payment")) {
-                List<SellerApplication> temp = partner.getSellerApplications();
+                // List<SellerApplication> temp = partner.getSellerApplications();
                 temp = saService.removeCancelledApplications(temp);
                 data = temp.stream().filter(sa -> sa.getPaymentStatus() == PaymentStatus.PENDING)
                         .filter(sa -> sa.getSellerApplicationStatus() == SellerApplicationStatus.APPROVED)
@@ -220,7 +221,7 @@ public class EventController {
                 Page<Event> events = new PageImpl<>(data);
                 return events;
             } else if (filter.equals("confirmed")) {
-                List<SellerApplication> temp = partner.getSellerApplications();
+                // List<SellerApplication> temp = partner.getSellerApplications();
                 temp = saService.removeCancelledApplications(temp);
                 data = temp.stream().filter(sa -> sa.getSellerApplicationStatus() == SellerApplicationStatus.CONFIRMED)
                         .map(sa -> sa.getEvent()).collect(Collectors.toList());
@@ -228,7 +229,7 @@ public class EventController {
                 Page<Event> events = new PageImpl<>(data);
                 return events;
             } else if (filter.equals("rejected")) {
-                List<SellerApplication> temp = partner.getSellerApplications();
+                // List<SellerApplication> temp = partner.getSellerApplications();
                 temp = saService.removeCancelledApplications(temp);
                 data = temp.stream().filter(sa -> sa.getSellerApplicationStatus() == SellerApplicationStatus.REJECTED)
                         .map(sa -> sa.getEvent()).collect(Collectors.toList());
@@ -263,7 +264,7 @@ public class EventController {
 
     @GetMapping(path = "/search")
     public Page<EventCardClassDto> search(EventSearchCriteria eventSearchCriteria) {
-        eventSearchCriteria.setEventStartAfter(LocalDateTime.now());
+        // eventSearchCriteria.setEventStartAfter(LocalDateTime.now());
         eventSearchCriteria.setIsPublished(true);
         Page<Event> result = eventService.search(eventSearchCriteria);
         return result.map(event -> modelMapper.map(event, EventCardClassDto.class));
@@ -271,7 +272,7 @@ public class EventController {
 
     @GetMapping(path = "public/search")
     public Page<EventCardClassDto> searchPublic(EventSearchCriteria eventSearchCriteria) {
-        eventSearchCriteria.setEventStartAfter(LocalDateTime.now());
+        // eventSearchCriteria.setEventStartAfter(LocalDateTime.now());
         eventSearchCriteria.setIsPublished(true);
         Page<Event> result = eventService.search(eventSearchCriteria);
         return result.map(event -> modelMapper.map(event, EventCardClassDto.class));

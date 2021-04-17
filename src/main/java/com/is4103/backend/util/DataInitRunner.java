@@ -143,7 +143,7 @@ public class DataInitRunner implements ApplicationRunner {
         if (sellerApplicationRepository.findAll().isEmpty()) {
             createBooths();
             createSellerApplications();
-            createSellerApplicationsForDashboard();
+
             //setProducts(); //not working atm, get the lazy load issue
 
         }
@@ -164,7 +164,7 @@ public class DataInitRunner implements ApplicationRunner {
     @Transactional
     private void createEventOrganisers() {
         EventOrganiser eo = new EventOrganiser();
-        eo.setEmail("organiser@abc.com");
+        eo.setEmail("linlili7842@gmail.com");
         eo.setName("First Organiser");
         eo.setPassword(passwordEncoder.encode("password"));
         eo.setEnabled(true);
@@ -177,7 +177,7 @@ public class DataInitRunner implements ApplicationRunner {
 
         // Lili EO
         EventOrganiser eo2 = new EventOrganiser();
-        eo2.setEmail("linlili7842@gmail.com");
+        eo2.setEmail("organiser@abc.com ");
         eo2.setName("Lili Organiser");
         eo2.setPassword(passwordEncoder.encode("password"));
         eo2.setEnabled(true);
@@ -201,16 +201,17 @@ public class DataInitRunner implements ApplicationRunner {
 
         // create first Bp
         BusinessPartner bp = new BusinessPartner();
-        bp.setEmail("partner@abc.com");
+        bp.setEmail("linlili2319@gmail.com");
         bp.setName("First Business Partner");
         bp.setPassword(passwordEncoder.encode("password"));
         bp.setEnabled(true);
         bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
         bp.setBusinessCategory("Home & Garden");
+        bp.setStripeCustomerId("cus_JJsGCNKJ7EGRNo");
 
         // lili bp
         BusinessPartner bp2 = new BusinessPartner();
-        bp2.setEmail("linlili2319@gmail.com");
+        bp2.setEmail("partner@abc.com");
         bp2.setName("Lili Business Partner");
         bp2.setPassword(passwordEncoder.encode("password"));
         bp2.setEnabled(true);
@@ -241,7 +242,7 @@ public class DataInitRunner implements ApplicationRunner {
 
         // create attendee
         Attendee atn = new Attendee();
-        atn.setEmail("attendee@abc.com");
+        atn.setEmail("linlili53012@gmail.com");
         atn.setName("first attendee");
         atn.setPassword(passwordEncoder.encode("password"));
         atn.setDescription("description for frst attendeeeeeeee :)");
@@ -274,7 +275,7 @@ public class DataInitRunner implements ApplicationRunner {
         // lili att
         // create second attendee
         Attendee atnLili = new Attendee();
-        atnLili.setEmail("linlili53012@gmail.com");
+        atnLili.setEmail("attendee@abc.com");
         atnLili.setName("Lili attendee");
         atnLili.setPassword(passwordEncoder.encode("password"));
         atnLili.setDescription("description for Second attendeeeeeeee :)");
@@ -807,7 +808,6 @@ public class DataInitRunner implements ApplicationRunner {
         ticketTransactionRepository.save(ttransaction);
         ttransaction.setDateTimeOrdered(LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(4).plusHours(2 % 3));
 
-
         ttransaction = new TicketTransaction();
         ttransaction.setEvent(event7);
         ttransaction.setAttendee(atnd);
@@ -839,8 +839,6 @@ public class DataInitRunner implements ApplicationRunner {
         ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
         ticketTransactionRepository.save(ttransaction);
         ttransaction.setDateTimeOrdered(LocalDateTime.of(2020, Month.DECEMBER, 1, 9, 0).plusDays(2).plusHours(2 % 3));
-
-
 
         List<Event> eoEvents = new ArrayList<>();
         // eoEvents = eventOrg.getEvents();
@@ -1006,148 +1004,20 @@ public class DataInitRunner implements ApplicationRunner {
             for (int j = 0; j < numberOfProducts; j++) {
                 sellerProfileProducts.add(allProducts.get(j));
             }
-            ;
+            
             b.setProducts(sellerProfileProducts);
             b.setBoothNumber(rand.nextInt(70) + 1);
             b.setDescription(lorem.getWords(5, 20));
             b.setSellerProfile(sellerProfileRepository.findById(1L).get());
             boothRepository.save(b);
         }
-        ;
-    }
-
     
-    @Transactional
-    private void createSellerApplicationsForDashboard() {
-        Random rand = new Random();
-        Lorem lorem = LoremIpsum.getInstance();
-        Event secondEvent = eventRepository.findAll().get(1);
-       
-        BusinessPartner bp = businessPartnerRepository.findByEmail("partner@abc.com");
-        BusinessPartner bp2 = businessPartnerRepository.findByEmail("linlili2319@gmail.com");
-        SellerApplication application = new SellerApplication();
-
-            // pending seller application
-            application.setBusinessPartner(bp);
-            application.setEvent(secondEvent);
-            application.setDescription(lorem.getWords(5, 20));
-            application.setComments(lorem.getWords(5, 20));
-            application.setBoothQuantity(rand.nextInt(300));
-            application.setSellerApplicationStatus(SellerApplicationStatus.PENDING);
-            application.setPaymentStatus(PaymentStatus.PENDING);
-            LocalDateTime applicationStart = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
-            application.setApplicationDate(applicationStart);
-            application.setPaymentStatus(PaymentStatus.PENDING);
-            application.setStripePaymentId(null);
-            sellerApplicationRepository.save(application);
-
-            SellerApplication application2 = new SellerApplication();
-            application2.setBusinessPartner(bp2);
-            application2.setEvent(secondEvent);
-            application2.setDescription(lorem.getWords(5, 20));
-            application2.setComments(lorem.getWords(5, 20));
-            application2.setBoothQuantity(rand.nextInt(300));
-            application2.setSellerApplicationStatus(SellerApplicationStatus.PENDING);
-            application2.setPaymentStatus(PaymentStatus.PENDING);
-            LocalDateTime applicationStart2 = LocalDateTime.of(2021, Month.APRIL, 15, 8, 0);
-            application2.setApplicationDate(applicationStart2);
-            application2.setPaymentStatus(PaymentStatus.PENDING);
-            application2.setStripePaymentId(null);
-            sellerApplicationRepository.save(application2);
-
-
-     
-            //Paid and Complete Application for the day
-            SellerApplication application4 = new SellerApplication();
-            application4.setBusinessPartner(bp);
-            application4.setEvent(secondEvent);
-            application4.setDescription(lorem.getWords(5, 20));
-            application4.setComments(lorem.getWords(5, 20));
-            application4.setBoothQuantity(rand.nextInt(300));
-            application4.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
-            application4.setPaymentStatus(PaymentStatus.COMPLETED);
-            LocalDateTime applicationStart4 = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
-            application4.setApplicationDate(applicationStart4);
-            LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
-            application4.setPaymentDate(paymentDate4);
-            application4.setPaymentStatus(PaymentStatus.COMPLETED);
-            application4.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
-            sellerApplicationRepository.save(application4);
-
-                //Paid and Complete Application for the day
-            SellerApplication application5 = new SellerApplication();
-            application5.setBusinessPartner(bp);
-            application5.setEvent(secondEvent);
-            application5.setDescription(lorem.getWords(5, 20));
-            application5.setComments(lorem.getWords(5, 20));
-            application5.setBoothQuantity(rand.nextInt(300));
-            application5.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
-            application5.setPaymentStatus(PaymentStatus.COMPLETED);
-            LocalDateTime applicationStart5 = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
-            application5.setApplicationDate(applicationStart5);
-            LocalDateTime paymentDate5 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
-            application5.setPaymentDate(paymentDate5);
-            application5.setPaymentStatus(PaymentStatus.COMPLETED);
-            application5.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
-            sellerApplicationRepository.save(application5);
-
-            //Paid and Complete Application for the month
-            SellerApplication application6 = new SellerApplication();
-            application6.setBusinessPartner(bp);
-            application6.setEvent(secondEvent);
-            application6.setDescription(lorem.getWords(5, 20));
-            application6.setComments(lorem.getWords(5, 20));
-            application6.setBoothQuantity(rand.nextInt(300));
-            application6.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
-            application6.setPaymentStatus(PaymentStatus.COMPLETED);
-            LocalDateTime applicationStart6 = LocalDateTime.of(2021, Month.APRIL, 2, 8, 0);
-            application6.setApplicationDate(applicationStart6);
-            LocalDateTime paymentDate6 = LocalDateTime.of(2021, Month.APRIL, 4, 8, 0);
-            application6.setPaymentDate(paymentDate6);
-            application6.setPaymentStatus(PaymentStatus.COMPLETED);
-            application6.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
-            sellerApplicationRepository.save(application6);
-
-            SellerApplication application7 = new SellerApplication();
-            application7.setBusinessPartner(bp);
-            application7.setEvent(secondEvent);
-            application7.setDescription(lorem.getWords(5, 20));
-            application7.setComments(lorem.getWords(5, 20));
-            application7.setBoothQuantity(rand.nextInt(300));
-            application7.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
-            application7.setPaymentStatus(PaymentStatus.COMPLETED);
-            LocalDateTime applicationStart7 = LocalDateTime.of(2021, Month.APRIL, 1, 8, 0);
-            application7.setApplicationDate(applicationStart7);
-            LocalDateTime paymentDate7 = LocalDateTime.of(2021, Month.APRIL, 3, 8, 0);
-            application7.setPaymentDate(paymentDate7);
-            application7.setPaymentStatus(PaymentStatus.COMPLETED);
-            application7.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
-            sellerApplicationRepository.save(application7);
-
-
-            // Paid and Complete Application for the year
-            SellerApplication application8 = new SellerApplication();
-            application8.setBusinessPartner(bp);
-            application8.setEvent(secondEvent);
-            application8.setDescription(lorem.getWords(5, 20));
-            application8.setComments(lorem.getWords(5, 20));
-            application8.setBoothQuantity(rand.nextInt(300));
-            application8.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
-            application8.setPaymentStatus(PaymentStatus.COMPLETED);
-            LocalDateTime applicationStart8 = LocalDateTime.of(2021, Month.MARCH,1, 8, 0);
-            application8.setApplicationDate(applicationStart8);
-            LocalDateTime paymentDate8 = LocalDateTime.of(2021, Month.MARCH, 3, 8, 0);
-            application8.setPaymentDate(paymentDate8);
-            application8.setPaymentStatus(PaymentStatus.COMPLETED);
-            application8.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
-            sellerApplicationRepository.save(application8);
-
-
     }
 
     @Transactional
     private void createSellerApplications() {
         // List<Event> allEvents = eventRepository.findAll();
+        System.out.println("hello");
         Lorem lorem = LoremIpsum.getInstance();
         Random rand = new Random();
 
@@ -1162,18 +1032,20 @@ public class DataInitRunner implements ApplicationRunner {
         // COMBI 2 : REJECTED TAKE OUT THIS FIRST
         // COMBI 3 : NEW APPLICAION
 
-        // SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
-        //         SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.REJECTED, SellerApplicationStatus.PENDING };
+        // SellerApplicationStatus[] sellerApplicationStatusArray = {
+        // SellerApplicationStatus.APPROVED,
+        // SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.REJECTED,
+        // SellerApplicationStatus.PENDING };
 
-        // PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED, PaymentStatus.PENDING,
-        //         PaymentStatus.PENDING };
+        // PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING,
+        // PaymentStatus.COMPLETED, PaymentStatus.PENDING,
+        // PaymentStatus.PENDING };
 
-                SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
-                    SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.PENDING };
-    
-            PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED, PaymentStatus.PENDING };
+        SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
+                SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.PENDING };
 
-                    
+        PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED, PaymentStatus.PENDING };
+
         // CREATE MORE FOR EVENT 1
         Event firstEvent = eventRepository.findAll().get(0);
         List<BusinessPartner> businessPartners = businessPartnerRepository.findAll();
@@ -1193,8 +1065,9 @@ public class DataInitRunner implements ApplicationRunner {
             if (count == 0) {
                 // WE NEEDA ACCOUNT FOR BOTH TYPES OF THIS SCENARIO, ONE IS WITH BOOTH ONE IS
                 // WITHOUT
-                int ifAllocateBooth = rand.nextInt(2); 
-                if (ifAllocateBooth > -1 ) { //used to do random but now we just do all already allocated to facilitate some payment
+                int ifAllocateBooth = rand.nextInt(2);
+                if (ifAllocateBooth > -1) { // used to do random but now we just do all already allocated to facilitate
+                                            // some payment
                     // if (ifAllocateBooth == 1) {
                     // 1 FOR ALLOCATING BOOTHS TO THAT APPLICATION
                     List<Booth> eventBooths = firstEvent.getBooths();
@@ -1214,8 +1087,7 @@ public class DataInitRunner implements ApplicationRunner {
                     // application.setBooths(allocatedBooths);
                 }
                 // else no need do anything, just dont allocate any booths to the guy
-            }
-             else if (count == 1) {
+            } else if (count == 1) {
                 // NEW VERSION WITH BOOTHS ALREADY CREATED PER EVENT
                 SellerProfile profile = new SellerProfile();
                 profile.setEvent(firstEvent);
@@ -1240,7 +1112,14 @@ public class DataInitRunner implements ApplicationRunner {
                         // allocatedBooths.add(updatedBooth);
                         allocatedBoothCount++;
                     }
+            
                 }
+                   LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+                        savedApplication.setPaymentDate(paymentDate4);
+                        savedApplication.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+                        sellerApplicationRepository.save(savedApplication);
+            
+
                 // profile.setBooths(allocatedBooths);
                 // application.setBooths(allocatedBooths);
                 // SellerProfile savedProfile = sellerProfileRepository.save(profile);
@@ -1269,10 +1148,11 @@ public class DataInitRunner implements ApplicationRunner {
 
                 // NEW
                 if (statusTypeIndex == 0) {
-                    // WE NEEDA ACCOUNT FOR BOTH TYPES OF THIS SCENARIO, ONE IS WITH BOOTH ONE IS WITHOUT
+                    // WE NEEDA ACCOUNT FOR BOTH TYPES OF THIS SCENARIO, ONE IS WITH BOOTH ONE IS
+                    // WITHOUT
                     int ifAllocateBooth = rand.nextInt(2);
                     // if (ifAllocateBooth == 1) {
-                        if (ifAllocateBooth > -1) { //just allocate to all such applications to make payment easier
+                    if (ifAllocateBooth > -1) { // just allocate to all such applications to make payment easier
                         // 1 FOR ALLOCATING BOOTHS TO THAT APPLICATION
                         List<Booth> eventBooths = e.getBooths();
                         List<Booth> allocatedBooths = new ArrayList<>();
@@ -1320,7 +1200,12 @@ public class DataInitRunner implements ApplicationRunner {
                             // allocatedBooths.add(updatedBooth);
                             allocatedBoothCount++;
                         }
+                       
                     }
+                     LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+                        savedApplication.setPaymentDate(paymentDate4);
+                        savedApplication.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+                        sellerApplicationRepository.save(savedApplication);
                     // profile.setBooths(allocatedBooths);
                     // application.setBooths(allocatedBooths);
                 }
@@ -1474,14 +1359,14 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Transactional
     private void setProducts() {
-        List<Booth> allBooths= boothRepository.findAll();
+        List<Booth> allBooths = boothRepository.findAll();
         for (Booth b : allBooths) {
             if (b.getSellerProfile() != null) {
                 BusinessPartner bp = b.getSellerProfile().getBusinessPartner();
                 int numberOfBpProducts = bp.getProducts().size();
                 List<Product> bpProducts = bp.getProducts();
                 List<Product> productsToAllocate = new ArrayList<>();
-                for (int i=0;i<3;i++) { //set 3 products for each booth
+                for (int i = 0; i < 3; i++) { // set 3 products for each booth
                     Random rand = new Random();
                     int productNumber = rand.nextInt(numberOfBpProducts);
                     productsToAllocate.add(bpProducts.get(productNumber));

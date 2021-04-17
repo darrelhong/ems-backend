@@ -52,7 +52,7 @@ public class RsvpController {
         request.setSenderId(organiser.getId());
         request.setRecipientId(bp.getId());
         request.setSubject("Invitation to apply for " +event.getName());
-        request.setTextBody("Hi there!  We at " +organiser.getName() +" are interested in collaborating and we hope you would apply for our event at the link at " + "http://localhost:3000/partner/event/" +event.getEid() + ".\r\n\r\n" +"<br>"
+        request.setTextBody("Hi there!  We at " +organiser.getName() +" are interested in collaborating and we hope you would apply for our event at the link at " + "http://localhost:3000/partner/events/" +event.getEid() + ".\r\n\r\n" +"<br>"
         +"Feel free to email us at " +organiser.getEmail() +" if you have any queries!\r\n\r\n" + "<b>");
         mailService.sendEmailNotif(request);
         return rsvpService.createRsvp(rsvp);
