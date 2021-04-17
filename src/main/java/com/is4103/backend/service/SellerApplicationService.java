@@ -2,6 +2,7 @@ package com.is4103.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,11 +15,14 @@ import com.is4103.backend.model.Event;
 import com.is4103.backend.model.PaymentStatus;
 import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.model.SellerApplicationStatus;
+import com.is4103.backend.model.SellerProfile;
+import com.is4103.backend.repository.BoothRepository;
 import com.is4103.backend.repository.SellerApplicationRepository;
 import com.is4103.backend.repository.SellerProfileRepository;
 import com.is4103.backend.util.errors.SellerApplicationNotFoundException;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.is4103.backend.model.Booth;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.PaymentMethod;
 import com.stripe.model.PaymentMethodCollection;
@@ -38,6 +42,12 @@ public class SellerApplicationService {
 
     @Autowired
     private BusinessPartnerService bpService;
+
+    @Autowired
+    private SellerProfileService sellerProfileService;
+
+    @Autowired
+    private BoothRepository boothRepository;
 
     @Autowired
     private SellerProfileRepository sellerProfileRepository;
@@ -79,12 +89,14 @@ public class SellerApplicationService {
     // BusinessPartner bp)
     // throws StripeException {
     public ApplicationResponse createTransaction(ApplicationDto applicationDto, BusinessPartner bp)
-            throws StripeException {
+            throws StripeException, SellerApplicationNotFoundException {
 
         Event event = eventService.getEventById(applicationDto.getEventId());
         Integer boothQty = applicationDto.getBoothQty();
         String description = applicationDto.getDescription();
         String comments = applicationDto.getComments();
+        SellerApplication sa = getSellerApplicationById(applicationDto.getId().toString());
+        List<Booth> booths = sa.getBooths();
 
         // check if enough booths available
         if (true) {
@@ -96,24 +108,59 @@ public class SellerApplicationService {
 
             Stripe.apiKey = stripeApiKey;
 
-            PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder().setCurrency("sgd")
-                    .setAmount(stripePaymentAmount).build();
-            PaymentIntent intent = PaymentIntent.create(createParams);
+            PaymentIntentCreateParams.Builder createParamsBuilder = new PaymentIntentCreateParams.Builder()
+                    .setCurrency("sgd").setAmount(stripePaymentAmount).setCustomer(bp.getStripeCustomerId());
 
-            SellerApplication app = new SellerApplication();
-            app.setEvent(event);
-            app.setBusinessPartner(bp);
-            app.setStripePaymentId(intent.getId());
-            app.setBoothQuantity(boothQty);
-            app.setComments(comments);
-            app.setDescription(description);
-            createSellerApplication(app);
+            if (bp.getStripeCustomerId() != null) {
+
+                createParamsBuilder.setPaymentMethod(applicationDto.getPaymentMethodId()).setConfirm(true)
+                        .setOffSession(true);
+
+            }
+            PaymentIntent intent = PaymentIntent.create(createParamsBuilder.build());
+
+            // Update seller application
+            sa.setStripePaymentId(intent.getId());
+            LocalDateTime now = LocalDateTime.now();
+            sa.setPaymentDate(now);
+            sa.setPaymentStatus(PaymentStatus.COMPLETED);
+            sa.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+            sellerApplicationRepository.save(sa);
+            System.out.println("Updated application");
+
+            // Create new Seller profile
+            SellerProfile newSP = new SellerProfile();
+            // newSP.setBooths(booths);
+            newSP.setBusinessPartner(bp);
+            newSP.setDescription(description);
+            newSP.setEvent(event);
+            sellerProfileRepository.save(newSP);
+            for (Booth b : booths) {
+                b.setSellerProfile(newSP);
+                boothRepository.save(b); // ok doned
+            }
+            System.out.println("Created new seller profile");
 
             ApplicationResponse applicationResponse = new ApplicationResponse(paymentAmount, intent.getClientSecret(),
-                    app);
+                    sa);
             return applicationResponse;
+
         }
+        // PaymentIntentCreateParams createParams = new
+        // PaymentIntentCreateParams.Builder().setCurrency("sgd")
+        // .setAmount(stripePaymentAmount).build();
+        // PaymentIntent intent = PaymentIntent.create(createParams);
+
+        // SellerApplication app = new SellerApplication();
+        // app.setEvent(event);
+        // app.setBusinessPartner(bp);
+        // app.setStripePaymentId(intent.getId());
+        // app.setBoothQuantity(boothQty);
+        // app.setComments(comments);
+        // app.setDescription(description);
+        // createSellerApplication(app);
         return null;
+
     }
 
     public SellerApplication paymentComplete(String id) throws SellerApplicationNotFoundException {

@@ -90,18 +90,18 @@ public class SellerApplicationController {
     @PostMapping(value = "/checkout")
     public ResponseEntity<ApplicationResponse> createTransaction(@RequestBody @Valid ApplicationDto applicationDto) {
         try {
+            // System.out.println(applicationDto.getId());
             System.out.println("boothqty " + applicationDto.getBoothQty());
             System.out.println("eventid " + applicationDto.getEventId());
             BusinessPartner bp = bpService
                     .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
             ApplicationResponse result = sellerApplicationService.createTransaction(applicationDto, bp);
-
             if (result != null) {
                 return ResponseEntity.ok(result);
             }
             throw new BoothCapacityExceededException();
-        } catch (StripeException | UserNotFoundException e) {
+        } catch (StripeException | UserNotFoundException | SellerApplicationNotFoundException e) {
             System.out.println(e.getMessage());
             throw new CheckoutException();
         }
@@ -121,7 +121,8 @@ public class SellerApplicationController {
             request.setSubject("Approved application for " + event.getName());
             request.setTextBody("Congratulations, your application for " + event.getName()
                     + " was successful. You will hear about your booth allocation soon!\r\n\r\nDo contact "
-                    + organiser.getName() + " at " + organiser.getEmail() + " if you have any queries.\r\n\r\n" + "<b>");
+                    + organiser.getName() + " at " + organiser.getEmail() + " if you have any queries.\r\n\r\n"
+                    + "<b>");
             mailService.sendEmailNotif(request);
             return sellerApplicationService.updateSellerApplication(app);
         } catch (Exception e) {
@@ -132,22 +133,25 @@ public class SellerApplicationController {
     @PostMapping(value = "/test")
     public void testMail() {
         EmailRequest request = new EmailRequest();
-            EventOrganiser organiser = eventOrganiserService.getEventOrganiserById(2L);
-            Event event = eventService.getEventById(1L);
-            request.setSenderId(organiser.getId());
-            request.setRecipientId(organiser.getId());
-            // request.setSubject("Approved application for " + event.getName());
-            // request.setTextBody("Congratulations, your application for " + event.getName()
-            //         + " was successful. You will hear about your booth allocation soon!\r\n\r\nDo contact "
-            //         + organiser.getName() + " at " + organiser.getEmail() + " if you have any queries.\r\n\r\n" + "<b>");
-                    request.setSubject("Rejected application for " + event.getName());
-                    request.setTextBody("Sorry, your application for " + event.getName()
-                            + " was unsuccessful. Thank you for applying!\r\n\r\nDo contact " + organiser.getName() + " at "
-                            + organiser.getEmail() + " if you have any queries.\r\n\r\n" + "<b>");
+        EventOrganiser organiser = eventOrganiserService.getEventOrganiserById(2L);
+        Event event = eventService.getEventById(1L);
+        request.setSenderId(organiser.getId());
+        request.setRecipientId(organiser.getId());
+        // request.setSubject("Approved application for " + event.getName());
+        // request.setTextBody("Congratulations, your application for " +
+        // event.getName()
+        // + " was successful. You will hear about your booth allocation soon!\r\n\r\nDo
+        // contact "
+        // + organiser.getName() + " at " + organiser.getEmail() + " if you have any
+        // queries.\r\n\r\n" + "<b>");
+        request.setSubject("Rejected application for " + event.getName());
+        request.setTextBody("Sorry, your application for " + event.getName()
+                + " was unsuccessful. Thank you for applying!\r\n\r\nDo contact " + organiser.getName() + " at "
+                + organiser.getEmail() + " if you have any queries.\r\n\r\n" + "<b>");
 
-            mailService.sendEmailNotif(request);
+        mailService.sendEmailNotif(request);
     }
-    
+
     @PostMapping(value = "/reject/{id}")
     public SellerApplication rejectApplication(@PathVariable String id) throws SellerApplicationNotFoundException {
         try {
@@ -189,9 +193,10 @@ public class SellerApplicationController {
         Event event = app.getEvent();
         request.setSenderId(organiser.getId());
         request.setRecipientId(partner.getId());
-        request.setSubject(app.getBusinessPartner().getName() +"'s withdrawal");
-        request.setTextBody("We regret to inform you that " + app.getBusinessPartner().getName() +  "has withdrawn from " + event.getName() +".\r\n\r\n" + "<b>" 
-        +"Manage the event at http://localhost:3000/organiser/events/" +event.getEid() +"\r\n\r\n" +"<br>");
+        request.setSubject(app.getBusinessPartner().getName() + "'s withdrawal");
+        request.setTextBody("We regret to inform you that " + app.getBusinessPartner().getName() + "has withdrawn from "
+                + event.getName() + ".\r\n\r\n" + "<b>" + "Manage the event at http://localhost:3000/organiser/events/"
+                + event.getEid() + "\r\n\r\n" + "<br>");
         mailService.sendEmailNotif(request);
         return sellerApplicationService.updateSellerApplication(app);
     };

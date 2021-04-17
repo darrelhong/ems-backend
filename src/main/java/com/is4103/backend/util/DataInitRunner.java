@@ -143,7 +143,7 @@ public class DataInitRunner implements ApplicationRunner {
         if (sellerApplicationRepository.findAll().isEmpty()) {
             createBooths();
             createSellerApplications();
-           
+
             //setProducts(); //not working atm, get the lazy load issue
 
         }
@@ -207,6 +207,7 @@ public class DataInitRunner implements ApplicationRunner {
         bp.setEnabled(true);
         bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
         bp.setBusinessCategory("Home & Garden");
+        bp.setStripeCustomerId("cus_JJsGCNKJ7EGRNo");
 
         // lili bp
         BusinessPartner bp2 = new BusinessPartner();
@@ -807,7 +808,6 @@ public class DataInitRunner implements ApplicationRunner {
         ticketTransactionRepository.save(ttransaction);
         ttransaction.setDateTimeOrdered(LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(4).plusHours(2 % 3));
 
-
         ttransaction = new TicketTransaction();
         ttransaction.setEvent(event7);
         ttransaction.setAttendee(atnd);
@@ -839,8 +839,6 @@ public class DataInitRunner implements ApplicationRunner {
         ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
         ticketTransactionRepository.save(ttransaction);
         ttransaction.setDateTimeOrdered(LocalDateTime.of(2020, Month.DECEMBER, 1, 9, 0).plusDays(2).plusHours(2 % 3));
-
-
 
         List<Event> eoEvents = new ArrayList<>();
         // eoEvents = eventOrg.getEvents();
@@ -1016,9 +1014,6 @@ public class DataInitRunner implements ApplicationRunner {
     
     }
 
-    
-  
-
     @Transactional
     private void createSellerApplications() {
         // List<Event> allEvents = eventRepository.findAll();
@@ -1037,18 +1032,20 @@ public class DataInitRunner implements ApplicationRunner {
         // COMBI 2 : REJECTED TAKE OUT THIS FIRST
         // COMBI 3 : NEW APPLICAION
 
-        // SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
-        //         SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.REJECTED, SellerApplicationStatus.PENDING };
+        // SellerApplicationStatus[] sellerApplicationStatusArray = {
+        // SellerApplicationStatus.APPROVED,
+        // SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.REJECTED,
+        // SellerApplicationStatus.PENDING };
 
-        // PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED, PaymentStatus.PENDING,
-        //         PaymentStatus.PENDING };
+        // PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING,
+        // PaymentStatus.COMPLETED, PaymentStatus.PENDING,
+        // PaymentStatus.PENDING };
 
-                SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
-                    SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.PENDING };
-    
-            PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED, PaymentStatus.PENDING };
+        SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
+                SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.PENDING };
 
-                    
+        PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED, PaymentStatus.PENDING };
+
         // CREATE MORE FOR EVENT 1
         Event firstEvent = eventRepository.findAll().get(0);
         List<BusinessPartner> businessPartners = businessPartnerRepository.findAll();
@@ -1068,8 +1065,9 @@ public class DataInitRunner implements ApplicationRunner {
             if (count == 0) {
                 // WE NEEDA ACCOUNT FOR BOTH TYPES OF THIS SCENARIO, ONE IS WITH BOOTH ONE IS
                 // WITHOUT
-                int ifAllocateBooth = rand.nextInt(2); 
-                if (ifAllocateBooth > -1 ) { //used to do random but now we just do all already allocated to facilitate some payment
+                int ifAllocateBooth = rand.nextInt(2);
+                if (ifAllocateBooth > -1) { // used to do random but now we just do all already allocated to facilitate
+                                            // some payment
                     // if (ifAllocateBooth == 1) {
                     // 1 FOR ALLOCATING BOOTHS TO THAT APPLICATION
                     List<Booth> eventBooths = firstEvent.getBooths();
@@ -1089,8 +1087,7 @@ public class DataInitRunner implements ApplicationRunner {
                     // application.setBooths(allocatedBooths);
                 }
                 // else no need do anything, just dont allocate any booths to the guy
-            }
-             else if (count == 1) {
+            } else if (count == 1) {
                 // NEW VERSION WITH BOOTHS ALREADY CREATED PER EVENT
                 SellerProfile profile = new SellerProfile();
                 profile.setEvent(firstEvent);
@@ -1151,10 +1148,11 @@ public class DataInitRunner implements ApplicationRunner {
 
                 // NEW
                 if (statusTypeIndex == 0) {
-                    // WE NEEDA ACCOUNT FOR BOTH TYPES OF THIS SCENARIO, ONE IS WITH BOOTH ONE IS WITHOUT
+                    // WE NEEDA ACCOUNT FOR BOTH TYPES OF THIS SCENARIO, ONE IS WITH BOOTH ONE IS
+                    // WITHOUT
                     int ifAllocateBooth = rand.nextInt(2);
                     // if (ifAllocateBooth == 1) {
-                        if (ifAllocateBooth > -1) { //just allocate to all such applications to make payment easier
+                    if (ifAllocateBooth > -1) { // just allocate to all such applications to make payment easier
                         // 1 FOR ALLOCATING BOOTHS TO THAT APPLICATION
                         List<Booth> eventBooths = e.getBooths();
                         List<Booth> allocatedBooths = new ArrayList<>();
@@ -1361,14 +1359,14 @@ public class DataInitRunner implements ApplicationRunner {
 
     @Transactional
     private void setProducts() {
-        List<Booth> allBooths= boothRepository.findAll();
+        List<Booth> allBooths = boothRepository.findAll();
         for (Booth b : allBooths) {
             if (b.getSellerProfile() != null) {
                 BusinessPartner bp = b.getSellerProfile().getBusinessPartner();
                 int numberOfBpProducts = bp.getProducts().size();
                 List<Product> bpProducts = bp.getProducts();
                 List<Product> productsToAllocate = new ArrayList<>();
-                for (int i=0;i<3;i++) { //set 3 products for each booth
+                for (int i = 0; i < 3; i++) { // set 3 products for each booth
                     Random rand = new Random();
                     int productNumber = rand.nextInt(numberOfBpProducts);
                     productsToAllocate.add(bpProducts.get(productNumber));

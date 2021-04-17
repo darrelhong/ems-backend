@@ -85,4 +85,8 @@ public class SellerProfileService {
         SellerProfile sp = sellerProfileRepository.findById(id).get();
         sellerProfileRepository.delete(sp);
     }
+
+    public SellerProfile createSellerProfile(SellerProfile sellerProfile) {
+        return sellerProfileRepository.save(sellerProfile);
+    }
 }

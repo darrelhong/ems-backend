@@ -39,6 +39,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.is4103.backend.util.errors.BoothCapacityExceededException;
 import com.is4103.backend.util.errors.BrochureNotFoundException;
+import com.is4103.backend.util.errors.SellerApplicationNotFoundException;
 import com.is4103.backend.util.errors.UserNotFoundException;
 import com.is4103.backend.util.errors.ticketing.CheckoutException;
 import com.stripe.exception.StripeException;
@@ -138,38 +139,61 @@ public class SellerProfileController {
         application.setPaymentStatus(PaymentStatus.PENDING);
         application.setApplicationDate(LocalDateTime.now());
 
-        //SENDING THE NOTIF EMAIL
+        // SENDING THE NOTIF EMAIL
         EmailRequest emailRequest = new EmailRequest();
         EventOrganiser organiser = event.getEventOrganiser();
         emailRequest.setSenderId(organiser.getId());
         emailRequest.setRecipientId(bp.getId());
-        emailRequest.setSubject("Application from " +bp.getName());
-        emailRequest.setTextBody("Congrats, " +bp.getName() +" has applied for " +event.getName() +"!\r\n\r\n" +"<br>" +"Manage your applications at http://localhost:3000/organiser/events/applications.\r\n\r\n" + "<b>");
+        emailRequest.setSubject("Application from " + bp.getName());
+        emailRequest.setTextBody("Congrats, " + bp.getName() + " has applied for " + event.getName() + "!\r\n\r\n"
+                + "<br>" + "Manage your applications at http://localhost:3000/organiser/events/applications.\r\n\r\n"
+                + "<b>");
         mailService.sendEmailNotif(emailRequest);
 
         return sellerApplicationService.createSellerApplication(application);
     }
 
+    // @PostMapping(value = "/checkout")
+    // public ResponseEntity<ApplicationResponse> createTransaction(@RequestBody
+    // @Valid ApplicationDto applicationDto) {
+    // try {
+    // // System.out.println("boothqty " + applicationDto.getBoothQty());
+    // // System.out.println("eventid " + applicationDto.getEventId());
+    // // System.out.println("comments " + applicationDto.getComments());
+    // // System.out.println("description " + applicationDto.getDescription());
+    // BusinessPartner bp = bpService
+    // .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+    // // ApplicationResponse result =
+    // // sellerApplicationService.createTransaction(applicationDto.getEventId(),
+    // // applicationDto.getBoothQty(), bp);
+    // ApplicationResponse result =
+    // sellerApplicationService.createTransaction(applicationDto, bp);
+
+    // if (result != null) {
+    // return ResponseEntity.ok(result);
+    // }
+    // throw new BoothCapacityExceededException();
+    // } catch (StripeException | UserNotFoundException e) {
+    // System.out.println(e.getMessage());
+    // throw new CheckoutException();
+    // }
+    // }
     @PostMapping(value = "/checkout")
     public ResponseEntity<ApplicationResponse> createTransaction(@RequestBody @Valid ApplicationDto applicationDto) {
         try {
-            // System.out.println("boothqty " + applicationDto.getBoothQty());
-            // System.out.println("eventid " + applicationDto.getEventId());
-            // System.out.println("comments " + applicationDto.getComments());
-            // System.out.println("description " + applicationDto.getDescription());
+            System.out.println(applicationDto.getId());
+            System.out.println("boothqty " + applicationDto.getBoothQty());
+            System.out.println("eventid " + applicationDto.getEventId());
             BusinessPartner bp = bpService
                     .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
-            // ApplicationResponse result =
-            // sellerApplicationService.createTransaction(applicationDto.getEventId(),
-            // applicationDto.getBoothQty(), bp);
             ApplicationResponse result = sellerApplicationService.createTransaction(applicationDto, bp);
-
             if (result != null) {
                 return ResponseEntity.ok(result);
             }
             throw new BoothCapacityExceededException();
-        } catch (StripeException | UserNotFoundException e) {
+        } catch (StripeException | UserNotFoundException | SellerApplicationNotFoundException e) {
             System.out.println(e.getMessage());
             throw new CheckoutException();
         }
