@@ -81,11 +81,14 @@ public interface EventDetailsDto {
 
     interface BoothSellerProfileSummary {
         BusinessPartnerSummary getBusinessPartner();
+
         Long getId();
     }
 
     interface BusinessPartnerSummary {
         String getName();
+
+        String getId();
     }
 
     interface ProductSummary {
