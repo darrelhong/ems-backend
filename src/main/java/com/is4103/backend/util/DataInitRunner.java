@@ -667,8 +667,8 @@ public class DataInitRunner implements ApplicationRunner {
         event9.setCategory(eventCategories[4]);
         event9.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event9.setPhysical(true);
-        event9.setEventStartDate(LocalDateTime.now());
-        event9.setEventEndDate(LocalDateTime.now());
+        event9.setEventStartDate(LocalDateTime.of(2021, Month.MAY,1, 9, 0).plusDays(10).plusHours(2 % 3));
+        event9.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(12).plusHours(2 % 3));
         event9.setTicketPrice(24);
         event9.setTicketCapacity(100);
         event9.setSaleStartDate(LocalDateTime.now());
@@ -682,6 +682,7 @@ public class DataInitRunner implements ApplicationRunner {
         event9.setEventStatus(EventStatus.CREATED);
         event9.setHidden(false);
         event9.setPublished(true);
+        event9.setVip(true);
 
         // EventOrganiser eventOrg =
         // eventOrganiserRepository.findByEmail("organiser@abc.com");
