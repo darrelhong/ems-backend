@@ -165,6 +165,20 @@ public class EventOrganiserService {
         EventOrganiser toApprove = getEventOrganiserById(eoId);
         toApprove.setApproved(true);
         toApprove.setApprovalMessage(null);
+        SimpleMailMessage email = new SimpleMailMessage();
+        User user = userService.getUserById(eoId);    
+        email.setFrom(fromEmail);
+        email.setTo(user.getEmail());
+        email.setSubject("Application for Business Document");
+        email.setText("You have received the following message from EventStop:" + "\r\n\r\n" + "\"" + "Your application has been approved. You may start to create new events!"
+                + "\"" + " " + "\r\n\r\n" + "<b>"
+                + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "</b>");
+                
+        // cc the person who submitted the enquiry.
+        System.out.println("You have received the following message from EventStop:" + "\r\n\r\n" + "\"" + "Your application has been approved. You may start to create new events!"
+        + "\"" + " " + "\r\n\r\n" + "<b>"
+        + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "</b>");
+        javaMailSender.send(email);
         return eoRepository.save(toApprove);
     }
 
@@ -172,6 +186,20 @@ public class EventOrganiserService {
         EventOrganiser toReject = getEventOrganiserById(eoId);
         toReject.setApproved(false);
         toReject.setApprovalMessage(message);
+        SimpleMailMessage email = new SimpleMailMessage();
+        User user = userService.getUserById(eoId);    
+        email.setFrom(fromEmail);
+        email.setTo(user.getEmail());
+        email.setSubject("Application for Business Document");
+        email.setText("You have received the following message from EventStop:" + "\r\n\r\n" + "\"" + "Your application has been rejected due to the foolowing reason : " + message + "You may re-upload your business document. Thank you for your understanding. "
+                + "\"" + " " + "\r\n\r\n" + "<b>"
+                + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "</b>");
+                
+        // cc the person who submitted the enquiry.
+        javaMailSender.send(email);
+        System.out.println("You have received the following message from EventStop:" + "\r\n\r\n" + "\"" + "Your application has been rejected due to the foolowing reason : " + message + "You may re-upload your business document. Thank you for your understanding. "
+        + "\"" + " " + "\r\n\r\n" + "<b>"
+        + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "</b>");
         return eoRepository.save(toReject);
     }
 
