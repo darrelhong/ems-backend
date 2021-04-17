@@ -143,7 +143,9 @@ public class DataInitRunner implements ApplicationRunner {
         if (sellerApplicationRepository.findAll().isEmpty()) {
             createBooths();
             createSellerApplications();
+            createSellerApplicationsForDashboard();
             //setProducts(); //not working atm, get the lazy load issue
+
         }
         System.out.println("Data init done");
     }
@@ -349,7 +351,7 @@ public class DataInitRunner implements ApplicationRunner {
                 "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-3.jpg"));
         event.setBoothPrice(39);
-        event.setBoothCapacity(305);
+        event.setBoothCapacity(100);
         event.setRating(0);
         event.setEventStatus(EventStatus.CREATED);
         event.setHidden(false);
@@ -392,7 +394,7 @@ public class DataInitRunner implements ApplicationRunner {
                 "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-3.jpg"));
 
         event2.setBoothPrice(39);
-        event2.setBoothCapacity(305);
+        event2.setBoothCapacity(100);
         event2.setRating(0);
         event2.setEventStatus(EventStatus.CREATED);
         event2.setHidden(false);
@@ -421,7 +423,7 @@ public class DataInitRunner implements ApplicationRunner {
                 "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
         event3.setBoothPrice(39);
-        event3.setBoothCapacity(305);
+        event3.setBoothCapacity(100);
         event3.setRating(0);
         event3.setEventStatus(EventStatus.CREATED);
         event3.setHidden(false);
@@ -453,7 +455,7 @@ public class DataInitRunner implements ApplicationRunner {
                 "https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-3.jpg"));
         event4.setBoothPrice(39);
-        event4.setBoothCapacity(305);
+        event4.setBoothCapacity(100);
         event4.setRating(0);
         event4.setEventStatus(EventStatus.CREATED);
         event4.setHidden(false);
@@ -484,7 +486,7 @@ public class DataInitRunner implements ApplicationRunner {
                 "https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-3.jpg"));
         event4_1.setBoothPrice(39);
-        event4_1.setBoothCapacity(305);
+        event4_1.setBoothCapacity(100);
         event4_1.setRating(0);
         event4_1.setEventStatus(EventStatus.CREATED);
         event4_1.setHidden(false);
@@ -515,7 +517,7 @@ public class DataInitRunner implements ApplicationRunner {
                 "https://storage.googleapis.com/ems-images/events/event-" + 6 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 6 + "/image-3.jpg"));
         event4_2.setBoothPrice(39);
-        event4_2.setBoothCapacity(305);
+        event4_2.setBoothCapacity(100);
         event4_2.setRating(0);
         event4_2.setEventStatus(EventStatus.CREATED);
         event4_2.setHidden(false);
@@ -546,7 +548,7 @@ public class DataInitRunner implements ApplicationRunner {
                 "https://storage.googleapis.com/ems-images/events/event-" + 7 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 7 + "/image-3.jpg"));
         event4_3.setBoothPrice(39);
-        event4_3.setBoothCapacity(305);
+        event4_3.setBoothCapacity(100);
         event4_3.setRating(0);
         event4_3.setEventStatus(EventStatus.CREATED);
         event4_3.setHidden(false);
@@ -574,7 +576,7 @@ public class DataInitRunner implements ApplicationRunner {
                 "https://storage.googleapis.com/ems-images/events/event-" + 8 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 8 + "/image-3.jpg"));
         event5.setBoothPrice(39);
-        event5.setBoothCapacity(305);
+        event5.setBoothCapacity(100);
         event5.setRating(5);
         event5.setEventStatus(EventStatus.CREATED);
         event5.setHidden(false);
@@ -598,7 +600,7 @@ public class DataInitRunner implements ApplicationRunner {
                 "https://storage.googleapis.com/ems-images/events/event-" + 9 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 9 + "/image-3.jpg"));
         event6.setBoothPrice(39);
-        event6.setBoothCapacity(305);
+        event6.setBoothCapacity(100);
         event6.setRating(5);
         event6.setEventStatus(EventStatus.CREATED);
         event6.setHidden(false);
@@ -622,7 +624,7 @@ public class DataInitRunner implements ApplicationRunner {
                 "https://storage.googleapis.com/ems-images/events/event-" + 10 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 10 + "/image-3.jpg"));
         event7.setBoothPrice(39);
-        event7.setBoothCapacity(305);
+        event7.setBoothCapacity(100);
         event7.setRating(5);
         event7.setEventStatus(EventStatus.CREATED);
         event7.setHidden(false);
@@ -646,7 +648,7 @@ public class DataInitRunner implements ApplicationRunner {
                 "https://storage.googleapis.com/ems-images/events/event-" + 11 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 11 + "/image-3.jpg"));
         event8.setBoothPrice(39);
-        event8.setBoothCapacity(305);
+        event8.setBoothCapacity(100);
         event8.setRating(5);
         event8.setEventStatus(EventStatus.CREATED);
         event8.setHidden(false);
@@ -670,7 +672,7 @@ public class DataInitRunner implements ApplicationRunner {
                 "https://storage.googleapis.com/ems-images/events/event-" + 12 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 12 + "/image-3.jpg"));
         event9.setBoothPrice(39);
-        event9.setBoothCapacity(305);
+        event9.setBoothCapacity(100);
         event9.setRating(5);
         event9.setEventStatus(EventStatus.CREATED);
         event9.setHidden(false);
@@ -726,7 +728,7 @@ public class DataInitRunner implements ApplicationRunner {
                 "https://storage.googleapis.com/ems-images/events/previous-event/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/previous-event/image-3.jpg"));
         previous.setBoothPrice(39);
-        previous.setBoothCapacity(305);
+        previous.setBoothCapacity(100);
         previous.setRating(5);
         previous.setEventStatus(EventStatus.CREATED);
         previous.setHidden(false);
@@ -1014,6 +1016,135 @@ public class DataInitRunner implements ApplicationRunner {
         ;
     }
 
+    
+    @Transactional
+    private void createSellerApplicationsForDashboard() {
+        Random rand = new Random();
+        Lorem lorem = LoremIpsum.getInstance();
+        Event secondEvent = eventRepository.findAll().get(1);
+       
+        BusinessPartner bp = businessPartnerRepository.findByEmail("partner@abc.com");
+        BusinessPartner bp2 = businessPartnerRepository.findByEmail("linlili2319@gmail.com");
+        SellerApplication application = new SellerApplication();
+
+            // pending seller application
+            application.setBusinessPartner(bp);
+            application.setEvent(secondEvent);
+            application.setDescription(lorem.getWords(5, 20));
+            application.setComments(lorem.getWords(5, 20));
+            application.setBoothQuantity(rand.nextInt(300));
+            application.setSellerApplicationStatus(SellerApplicationStatus.PENDING);
+            application.setPaymentStatus(PaymentStatus.PENDING);
+            LocalDateTime applicationStart = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+            application.setApplicationDate(applicationStart);
+            application.setPaymentStatus(PaymentStatus.PENDING);
+            application.setStripePaymentId(null);
+            sellerApplicationRepository.save(application);
+
+            SellerApplication application2 = new SellerApplication();
+            application2.setBusinessPartner(bp2);
+            application2.setEvent(secondEvent);
+            application2.setDescription(lorem.getWords(5, 20));
+            application2.setComments(lorem.getWords(5, 20));
+            application2.setBoothQuantity(rand.nextInt(300));
+            application2.setSellerApplicationStatus(SellerApplicationStatus.PENDING);
+            application2.setPaymentStatus(PaymentStatus.PENDING);
+            LocalDateTime applicationStart2 = LocalDateTime.of(2021, Month.APRIL, 15, 8, 0);
+            application2.setApplicationDate(applicationStart2);
+            application2.setPaymentStatus(PaymentStatus.PENDING);
+            application2.setStripePaymentId(null);
+            sellerApplicationRepository.save(application2);
+
+
+     
+            //Paid and Complete Application for the day
+            SellerApplication application4 = new SellerApplication();
+            application4.setBusinessPartner(bp);
+            application4.setEvent(secondEvent);
+            application4.setDescription(lorem.getWords(5, 20));
+            application4.setComments(lorem.getWords(5, 20));
+            application4.setBoothQuantity(rand.nextInt(300));
+            application4.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+            application4.setPaymentStatus(PaymentStatus.COMPLETED);
+            LocalDateTime applicationStart4 = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
+            application4.setApplicationDate(applicationStart4);
+            LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+            application4.setPaymentDate(paymentDate4);
+            application4.setPaymentStatus(PaymentStatus.COMPLETED);
+            application4.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+            sellerApplicationRepository.save(application4);
+
+                //Paid and Complete Application for the day
+            SellerApplication application5 = new SellerApplication();
+            application5.setBusinessPartner(bp);
+            application5.setEvent(secondEvent);
+            application5.setDescription(lorem.getWords(5, 20));
+            application5.setComments(lorem.getWords(5, 20));
+            application5.setBoothQuantity(rand.nextInt(300));
+            application5.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+            application5.setPaymentStatus(PaymentStatus.COMPLETED);
+            LocalDateTime applicationStart5 = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
+            application5.setApplicationDate(applicationStart5);
+            LocalDateTime paymentDate5 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+            application5.setPaymentDate(paymentDate5);
+            application5.setPaymentStatus(PaymentStatus.COMPLETED);
+            application5.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+            sellerApplicationRepository.save(application5);
+
+            //Paid and Complete Application for the month
+            SellerApplication application6 = new SellerApplication();
+            application6.setBusinessPartner(bp);
+            application6.setEvent(secondEvent);
+            application6.setDescription(lorem.getWords(5, 20));
+            application6.setComments(lorem.getWords(5, 20));
+            application6.setBoothQuantity(rand.nextInt(300));
+            application6.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+            application6.setPaymentStatus(PaymentStatus.COMPLETED);
+            LocalDateTime applicationStart6 = LocalDateTime.of(2021, Month.APRIL, 2, 8, 0);
+            application6.setApplicationDate(applicationStart6);
+            LocalDateTime paymentDate6 = LocalDateTime.of(2021, Month.APRIL, 4, 8, 0);
+            application6.setPaymentDate(paymentDate6);
+            application6.setPaymentStatus(PaymentStatus.COMPLETED);
+            application6.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+            sellerApplicationRepository.save(application6);
+
+            SellerApplication application7 = new SellerApplication();
+            application7.setBusinessPartner(bp);
+            application7.setEvent(secondEvent);
+            application7.setDescription(lorem.getWords(5, 20));
+            application7.setComments(lorem.getWords(5, 20));
+            application7.setBoothQuantity(rand.nextInt(300));
+            application7.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+            application7.setPaymentStatus(PaymentStatus.COMPLETED);
+            LocalDateTime applicationStart7 = LocalDateTime.of(2021, Month.APRIL, 1, 8, 0);
+            application7.setApplicationDate(applicationStart7);
+            LocalDateTime paymentDate7 = LocalDateTime.of(2021, Month.APRIL, 3, 8, 0);
+            application7.setPaymentDate(paymentDate7);
+            application7.setPaymentStatus(PaymentStatus.COMPLETED);
+            application7.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+            sellerApplicationRepository.save(application7);
+
+
+            // Paid and Complete Application for the year
+            SellerApplication application8 = new SellerApplication();
+            application8.setBusinessPartner(bp);
+            application8.setEvent(secondEvent);
+            application8.setDescription(lorem.getWords(5, 20));
+            application8.setComments(lorem.getWords(5, 20));
+            application8.setBoothQuantity(rand.nextInt(300));
+            application8.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+            application8.setPaymentStatus(PaymentStatus.COMPLETED);
+            LocalDateTime applicationStart8 = LocalDateTime.of(2021, Month.MARCH,1, 8, 0);
+            application8.setApplicationDate(applicationStart8);
+            LocalDateTime paymentDate8 = LocalDateTime.of(2021, Month.MARCH, 3, 8, 0);
+            application8.setPaymentDate(paymentDate8);
+            application8.setPaymentStatus(PaymentStatus.COMPLETED);
+            application8.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+            sellerApplicationRepository.save(application8);
+
+
+    }
+
     @Transactional
     private void createSellerApplications() {
         // List<Event> allEvents = eventRepository.findAll();
@@ -1028,21 +1159,27 @@ public class DataInitRunner implements ApplicationRunner {
         // COMBI 0 : APPROVED PENDING PAYMENT
         // COMBI 0-1: APPROVED PENDING PAYMENT PLUS ALLOCATED
         // COMBI 1 : FINISHED PROCESS - SELLER PROFILE CREATED
-        // COMBI 2 : REJECTED
+        // COMBI 2 : REJECTED TAKE OUT THIS FIRST
         // COMBI 3 : NEW APPLICAION
 
-        SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
-                SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.REJECTED, SellerApplicationStatus.PENDING };
+        // SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
+        //         SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.REJECTED, SellerApplicationStatus.PENDING };
 
-        PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED, PaymentStatus.PENDING,
-                PaymentStatus.PENDING };
+        // PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED, PaymentStatus.PENDING,
+        //         PaymentStatus.PENDING };
 
+                SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
+                    SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.PENDING };
+    
+            PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED, PaymentStatus.PENDING };
+
+                    
         // CREATE MORE FOR EVENT 1
         Event firstEvent = eventRepository.findAll().get(0);
         List<BusinessPartner> businessPartners = businessPartnerRepository.findAll();
         for (BusinessPartner bp : businessPartners) {
             SellerApplication application = new SellerApplication();
-            int count = rand.nextInt(4); // now just make the applications randomly
+            int count = rand.nextInt(3); // now just make the applications randomly
             application.setBusinessPartner(bp);
             application.setEvent(firstEvent);
             application.setDescription(lorem.getWords(5, 20));
@@ -1056,11 +1193,11 @@ public class DataInitRunner implements ApplicationRunner {
             if (count == 0) {
                 // WE NEEDA ACCOUNT FOR BOTH TYPES OF THIS SCENARIO, ONE IS WITH BOOTH ONE IS
                 // WITHOUT
-                int ifAllocateBooth = rand.nextInt(2);
-                if (ifAllocateBooth == 1) {
+                int ifAllocateBooth = rand.nextInt(2); 
+                if (ifAllocateBooth > -1 ) { //used to do random but now we just do all already allocated to facilitate some payment
+                    // if (ifAllocateBooth == 1) {
                     // 1 FOR ALLOCATING BOOTHS TO THAT APPLICATION
                     List<Booth> eventBooths = firstEvent.getBooths();
-                    List<Booth> allocatedBooths = new ArrayList<>();
                     int allocatedBoothCount = 0;
                     for (Booth b : eventBooths) {
                         if (allocatedBoothCount >= application.getBoothQuantity())
@@ -1109,6 +1246,7 @@ public class DataInitRunner implements ApplicationRunner {
                 // SellerProfile savedProfile = sellerProfileRepository.save(profile);
             }
         }
+
         // CREATE RANDOM NUMBERS FOR THE REST
         List<Event> allEvents = eventRepository.findAll();
         allEvents.remove(allEvents.get(0));
@@ -1133,7 +1271,8 @@ public class DataInitRunner implements ApplicationRunner {
                 if (statusTypeIndex == 0) {
                     // WE NEEDA ACCOUNT FOR BOTH TYPES OF THIS SCENARIO, ONE IS WITH BOOTH ONE IS WITHOUT
                     int ifAllocateBooth = rand.nextInt(2);
-                    if (ifAllocateBooth == 1) {
+                    // if (ifAllocateBooth == 1) {
+                        if (ifAllocateBooth > -1) { //just allocate to all such applications to make payment easier
                         // 1 FOR ALLOCATING BOOTHS TO THAT APPLICATION
                         List<Booth> eventBooths = e.getBooths();
                         List<Booth> allocatedBooths = new ArrayList<>();

@@ -121,8 +121,7 @@ public class SellerApplicationController {
             request.setSubject("Approved application for " + event.getName());
             request.setTextBody("Congratulations, your application for " + event.getName()
                     + " was successful. You will hear about your booth allocation soon!\r\n\r\nDo contact "
-                    + organiser.getName() + " at " + organiser.getEmail() + " if you have any queries.\r\n\r\n" + "<b>"
-                    + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>");
+                    + organiser.getName() + " at " + organiser.getEmail() + " if you have any queries.\r\n\r\n" + "<b>");
             mailService.sendEmailNotif(request);
             return sellerApplicationService.updateSellerApplication(app);
         } catch (Exception e) {
@@ -130,6 +129,25 @@ public class SellerApplicationController {
         }
     }
 
+    @PostMapping(value = "/test")
+    public void testMail() {
+        EmailRequest request = new EmailRequest();
+            EventOrganiser organiser = eventOrganiserService.getEventOrganiserById(2L);
+            Event event = eventService.getEventById(1L);
+            request.setSenderId(organiser.getId());
+            request.setRecipientId(organiser.getId());
+            // request.setSubject("Approved application for " + event.getName());
+            // request.setTextBody("Congratulations, your application for " + event.getName()
+            //         + " was successful. You will hear about your booth allocation soon!\r\n\r\nDo contact "
+            //         + organiser.getName() + " at " + organiser.getEmail() + " if you have any queries.\r\n\r\n" + "<b>");
+                    request.setSubject("Rejected application for " + event.getName());
+                    request.setTextBody("Sorry, your application for " + event.getName()
+                            + " was unsuccessful. Thank you for applying!\r\n\r\nDo contact " + organiser.getName() + " at "
+                            + organiser.getEmail() + " if you have any queries.\r\n\r\n" + "<b>");
+
+            mailService.sendEmailNotif(request);
+    }
+    
     @PostMapping(value = "/reject/{id}")
     public SellerApplication rejectApplication(@PathVariable String id) throws SellerApplicationNotFoundException {
         try {
@@ -144,8 +162,7 @@ public class SellerApplicationController {
             request.setSubject("Rejected application for " + event.getName());
             request.setTextBody("Sorry, your application for " + event.getName()
                     + " was unsuccessful. Thank you for applying!\r\n\r\nDo contact " + organiser.getName() + " at "
-                    + organiser.getEmail() + " if you have any queries.\r\n\r\n" + "<b>"
-                    + "This is an automated email from EventStop. Do not reply to this email.</b>" + "\r\n" + "<b>");
+                    + organiser.getEmail() + " if you have any queries.\r\n\r\n" + "<b>");
             mailService.sendEmailNotif(request);
             return sellerApplicationService.updateSellerApplication(app);
         } catch (Exception e) {
@@ -166,6 +183,16 @@ public class SellerApplicationController {
             // either no seller profile found, or cannot delete
             System.out.println(e);
         }
+        EmailRequest request = new EmailRequest();
+        EventOrganiser organiser = app.getEvent().getEventOrganiser();
+        BusinessPartner partner = app.getBusinessPartner();
+        Event event = app.getEvent();
+        request.setSenderId(organiser.getId());
+        request.setRecipientId(partner.getId());
+        request.setSubject(app.getBusinessPartner().getName() +"'s withdrawal");
+        request.setTextBody("We regret to inform you that " + app.getBusinessPartner().getName() +  "has withdrawn from " + event.getName() +".\r\n\r\n" + "<b>" 
+        +"Manage the event at http://localhost:3000/organiser/events/" +event.getEid() +"\r\n\r\n" +"<br>");
+        mailService.sendEmailNotif(request);
         return sellerApplicationService.updateSellerApplication(app);
     };
 
