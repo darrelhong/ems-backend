@@ -264,7 +264,7 @@ public class EventController {
 
     @GetMapping(path = "/search")
     public Page<EventCardClassDto> search(EventSearchCriteria eventSearchCriteria) {
-        eventSearchCriteria.setEventStartAfter(LocalDateTime.now());
+        // eventSearchCriteria.setEventStartAfter(LocalDateTime.now());
         eventSearchCriteria.setIsPublished(true);
         Page<Event> result = eventService.search(eventSearchCriteria);
         return result.map(event -> modelMapper.map(event, EventCardClassDto.class));
@@ -272,7 +272,7 @@ public class EventController {
 
     @GetMapping(path = "public/search")
     public Page<EventCardClassDto> searchPublic(EventSearchCriteria eventSearchCriteria) {
-        eventSearchCriteria.setEventStartAfter(LocalDateTime.now());
+        // eventSearchCriteria.setEventStartAfter(LocalDateTime.now());
         eventSearchCriteria.setIsPublished(true);
         Page<Event> result = eventService.search(eventSearchCriteria);
         return result.map(event -> modelMapper.map(event, EventCardClassDto.class));
