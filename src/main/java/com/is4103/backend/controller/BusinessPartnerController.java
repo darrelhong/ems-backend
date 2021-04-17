@@ -318,6 +318,12 @@ public class BusinessPartnerController {
         return sellerApplicationService.removeCancelledApplications(bp.getSellerApplications());
     }
 
+    @GetMapping(value = "/checkVIP/{eoid}/{bpid}")
+    public Boolean checkIfVip(@PathVariable Long eoid, @PathVariable Long bpid) {
+       
+        return bpService.checkIfBPIsVIP(eoid, bpid);
+    }
+
     @PostMapping(value = "/payment-methods/remove")
     public ResponseEntity<String> removePaymentMethod(@RequestBody Map<String, String> body) {
         try {

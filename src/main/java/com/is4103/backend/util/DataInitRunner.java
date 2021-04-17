@@ -164,7 +164,9 @@ public class DataInitRunner implements ApplicationRunner {
     private void createEventOrganisers() {
         EventOrganiser eo = new EventOrganiser();
         eo.setEmail("linlili7842@gmail.com");
-        eo.setName("First Organiser");
+        eo.setName("SG Events");
+        eo.setDescription("We plan and execute the most cohesive and efficient events. Join us in our events!");
+        eo.setProfilePic("https://cdn.logojoy.com/wp-content/uploads/2018/05/30163918/1241-768x591.png");
         eo.setPassword(passwordEncoder.encode("password"));
         eo.setEnabled(true);
         eo.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.EVNTORG)));
@@ -201,8 +203,10 @@ public class DataInitRunner implements ApplicationRunner {
         // create first Bp
         BusinessPartner bp = new BusinessPartner();
         bp.setEmail("linlili2319@gmail.com");
-        bp.setName("First Business Partner");
+        bp.setName("Greenify");
+        bp.setProfilePic("https://cdn5.f-cdn.com/contestentries/543961/1674774/5770edd040e19_thumb900.jpg");
         bp.setPassword(passwordEncoder.encode("password"));
+        bp.setDescription("We focus on providing the best environmentally friendly products to you!");
         bp.setEnabled(true);
         bp.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.BIZPTNR)));
         bp.setBusinessCategory("Home & Garden");
@@ -242,13 +246,14 @@ public class DataInitRunner implements ApplicationRunner {
         // create attendee
         Attendee atn = new Attendee();
         atn.setEmail("linlili53012@gmail.com");
-        atn.setName("first attendee");
+        atn.setName("Lin li li");
         atn.setPassword(passwordEncoder.encode("password"));
-        atn.setDescription("description for frst attendeeeeeeee :)");
+        atn.setDescription("Enjoy attending events!");
+        atn.setProfilePic("https://www.nydailynews.com/resizer/5xExdVWHQXsxm_h9RdEF-LBm6x4=/1200x0/top/arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/GCGGNME765VTQM4IQ2OBXBSTQE.jpg");
         atn.setEnabled(true);
         atn.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.ATND)));
         List<String> category = new ArrayList<>();
-        category.add("Travel");
+        category.add("Home & Garden");
         category.add("Healthcare");
         atn.setCategoryPreferences(category);
         // atn.addfollowBP(businesspartner);
@@ -608,7 +613,7 @@ public class DataInitRunner implements ApplicationRunner {
 
         // past events
         Event event7 = new Event();
-        event7.setName("Tech Analystics 2020");
+        event7.setName("Tech Analytics 2020");
         event7.setAddress("Sembwang 6");
         event7.setDescriptions("Some description 6");
         event7.setCategory(eventCategories[2]);
@@ -656,14 +661,14 @@ public class DataInitRunner implements ApplicationRunner {
 
         // past events
         Event event9 = new Event();
-        event9.setName("Tech Conferences 2020");
+        event9.setName("Employment Conferences 2020");
         event9.setAddress("Sembwang 6");
         event9.setDescriptions("Some description 6");
         event9.setCategory(eventCategories[4]);
         event9.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event9.setPhysical(true);
-        event9.setEventStartDate(LocalDateTime.now());
-        event9.setEventEndDate(LocalDateTime.now());
+        event9.setEventStartDate(LocalDateTime.of(2021, Month.MAY,1, 9, 0).plusDays(10).plusHours(2 % 3));
+        event9.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(12).plusHours(2 % 3));
         event9.setTicketPrice(24);
         event9.setTicketCapacity(100);
         event9.setSaleStartDate(LocalDateTime.now());
@@ -677,6 +682,7 @@ public class DataInitRunner implements ApplicationRunner {
         event9.setEventStatus(EventStatus.CREATED);
         event9.setHidden(false);
         event9.setPublished(true);
+        event9.setVip(true);
 
         // EventOrganiser eventOrg =
         // eventOrganiserRepository.findByEmail("organiser@abc.com");
@@ -711,7 +717,7 @@ public class DataInitRunner implements ApplicationRunner {
 
         Event previous = new Event();
         previous.setEventOrganiser(eventOrg);
-        previous.setName("Previous event");
+        previous.setName("Health event");
         previous.setAddress("some location string");
         previous.setDescriptions("lorem ipsum dolor sit amet");
         previous.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
