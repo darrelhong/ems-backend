@@ -1114,7 +1114,7 @@ public class DataInitRunner implements ApplicationRunner {
                     }
             
                 }
-                   LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+                   LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.MARCH, 18, 8, 0);
                         savedApplication.setPaymentDate(paymentDate4);
                         savedApplication.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
                         sellerApplicationRepository.save(savedApplication);
@@ -1202,7 +1202,7 @@ public class DataInitRunner implements ApplicationRunner {
                         }
                        
                     }
-                     LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+                     LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 17, 8, 0);
                         savedApplication.setPaymentDate(paymentDate4);
                         savedApplication.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
                         sellerApplicationRepository.save(savedApplication);
