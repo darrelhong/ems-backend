@@ -177,7 +177,7 @@ public class DataInitRunner implements ApplicationRunner {
 
         // Lili EO
         EventOrganiser eo2 = new EventOrganiser();
-        eo2.setEmail("organiser@abc.com ");
+        eo2.setEmail("organiser@abc.com");
         eo2.setName("Lili Organiser");
         eo2.setPassword(passwordEncoder.encode("password"));
         eo2.setEnabled(true);
