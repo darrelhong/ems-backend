@@ -395,7 +395,7 @@ public class BusinessPartnerService {
             EventOrganiser eo = eoFollowerList.get(i);
             List<Event> eoEventList = eoController.getAllEventsByEventOrgId(eo.getId());
             for (Event event : eoEventList) {
-                if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                if (event.getEventStatus().toString().equals("CREATED") && event.isHidden() == false
                         && !(event.getEventStartDate().isBefore(thirdDay))
                         && !(event.getSalesEndDate().isBefore(now))) {
                     filterEventList.add(event);
@@ -419,7 +419,7 @@ public class BusinessPartnerService {
             EventOrganiser eo = eoFollowerList.get(i);
             List<Event> eoEventList = eoController.getAllEventsByEventOrgId(eo.getId());
             for (Event event : eoEventList) {
-                if (event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
+                if (event.getEventStatus().toString().equals("CREATED") && event.isHidden() == false
                         && !(event.getEventStartDate().isBefore(thirdDay))
                         && !(event.getSalesEndDate().isBefore(now))) {
                     currentEventNo += 1;
@@ -446,8 +446,8 @@ public class BusinessPartnerService {
         thirdDay = thirdDay.withHour(0).withMinute(0).withSecond(0).withNano(0);
 
         for (Event event : eventList) {
-            if (event.getCategory() == bizCat && event.getEventStatus().toString().equals("CREATED")
-                    && event.isPublished() == true && !(event.getEventStartDate().isBefore(thirdDay))
+            if (event.getCategory().equals(bizCat) && event.getEventStatus().toString().equals("CREATED")
+                    && event.isHidden() == false && !(event.getEventStartDate().isBefore(thirdDay))
                     && !(event.getSalesEndDate().isBefore(now))) {
                 filterEventList.add(event);
             }
@@ -467,8 +467,8 @@ public class BusinessPartnerService {
         thirdDay = thirdDay.withHour(0).withMinute(0).withSecond(0).withNano(0);
 
         for (Event event : eventList) {
-            if (event.getCategory() == bizCat && event.getEventStatus().toString().equals("CREATED")
-                    && event.isPublished() == true && !(event.getEventStartDate().isBefore(thirdDay))
+            if (event.getCategory().equals(bizCat) && event.getEventStatus().toString().equals("CREATED")
+                    && event.isHidden() == false && !(event.getEventStartDate().isBefore(thirdDay))
                     && !(event.getSalesEndDate().isBefore(now))) {
                 currentEventNo += 1;
 

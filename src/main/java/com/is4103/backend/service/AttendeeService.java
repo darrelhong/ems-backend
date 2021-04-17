@@ -336,7 +336,7 @@ public class AttendeeService {
         
         for (Event event : eventList) {
             for (String category : categoryList) {
-                if (event.getCategory() == category
+                if (event.getCategory().equals(category)
                         && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                         && !(event.getSalesEndDate().isBefore(now))) {
                     filterEventList.add(event);
@@ -357,7 +357,7 @@ public class AttendeeService {
         
         for (Event event : eventList) {
             for (String category : categoryList) {
-                if (event.getCategory() == category
+                if (event.getCategory().equals(category)
                         && event.getEventStatus().toString().equals("CREATED") && event.isPublished() == true
                         && !(event.getSalesEndDate().isBefore(now))) {
                     currentEventNo += 1;

@@ -144,7 +144,12 @@ public class DataInitRunner implements ApplicationRunner {
             createBooths();
             createSellerApplications();
             setProducts();
+            createSellerApplicationsForDashboard();
 
+        }
+        if (eventRepository.findByName("Tech Conferences 2021").isEmpty()) {
+            // justin
+            createHomePageEvents();
         }
         System.out.println("Data init done");
     }
@@ -1009,20 +1014,165 @@ public class DataInitRunner implements ApplicationRunner {
             for (int j = 0; j < numberOfProducts; j++) {
                 sellerProfileProducts.add(allProducts.get(j));
             }
-
             b.setProducts(sellerProfileProducts);
             b.setBoothNumber(rand.nextInt(70) + 1);
             b.setDescription(lorem.getWords(5, 20));
             b.setSellerProfile(sellerProfileRepository.findById(1L).get());
             boothRepository.save(b);
         }
+        ;
+    }
+
+    
+    @Transactional
+    private void createSellerApplicationsForDashboard() {
+        Random rand = new Random();
+        Lorem lorem = LoremIpsum.getInstance();
+        Event secondEvent = eventRepository.findAll().get(1);
+       
+        BusinessPartner bp = businessPartnerRepository.findByEmail("partner@abc.com");
+        BusinessPartner bp2 = businessPartnerRepository.findByEmail("linlili2319@gmail.com");
+        SellerApplication application = new SellerApplication();
+
+            // pending seller application
+            application.setBusinessPartner(bp);
+            application.setEvent(secondEvent);
+            application.setDescription(lorem.getWords(5, 20));
+            application.setComments(lorem.getWords(5, 20));
+            application.setBoothQuantity(rand.nextInt(300));
+            application.setSellerApplicationStatus(SellerApplicationStatus.PENDING);
+            application.setPaymentStatus(PaymentStatus.PENDING);
+            LocalDateTime applicationStart = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+            application.setApplicationDate(applicationStart);
+            application.setPaymentStatus(PaymentStatus.PENDING);
+            application.setStripePaymentId(null);
+            sellerApplicationRepository.save(application);
+
+            SellerApplication application2 = new SellerApplication();
+            application2.setBusinessPartner(bp2);
+            application2.setEvent(secondEvent);
+            application2.setDescription(lorem.getWords(5, 20));
+            application2.setComments(lorem.getWords(5, 20));
+            application2.setBoothQuantity(rand.nextInt(300));
+            application2.setSellerApplicationStatus(SellerApplicationStatus.PENDING);
+            application2.setPaymentStatus(PaymentStatus.PENDING);
+            LocalDateTime applicationStart2 = LocalDateTime.of(2021, Month.APRIL, 15, 8, 0);
+            application2.setApplicationDate(applicationStart2);
+            application2.setPaymentStatus(PaymentStatus.PENDING);
+            application2.setStripePaymentId(null);
+            sellerApplicationRepository.save(application2);
+
+
+     
+            //Paid and Complete Application for the day
+            SellerApplication application4 = new SellerApplication();
+            application4.setBusinessPartner(bp);
+            application4.setEvent(secondEvent);
+            application4.setDescription(lorem.getWords(5, 20));
+            application4.setComments(lorem.getWords(5, 20));
+            application4.setBoothQuantity(rand.nextInt(300));
+            application4.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+            application4.setPaymentStatus(PaymentStatus.COMPLETED);
+            LocalDateTime applicationStart4 = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
+            application4.setApplicationDate(applicationStart4);
+            LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+            application4.setPaymentDate(paymentDate4);
+            application4.setPaymentStatus(PaymentStatus.COMPLETED);
+            application4.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+            sellerApplicationRepository.save(application4);
+
+                //Paid and Complete Application for the day
+            SellerApplication application5 = new SellerApplication();
+            application5.setBusinessPartner(bp);
+            application5.setEvent(secondEvent);
+            application5.setDescription(lorem.getWords(5, 20));
+            application5.setComments(lorem.getWords(5, 20));
+            application5.setBoothQuantity(rand.nextInt(300));
+            application5.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+            application5.setPaymentStatus(PaymentStatus.COMPLETED);
+            LocalDateTime applicationStart5 = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
+            application5.setApplicationDate(applicationStart5);
+            LocalDateTime paymentDate5 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+            application5.setPaymentDate(paymentDate5);
+            application5.setPaymentStatus(PaymentStatus.COMPLETED);
+            application5.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+            sellerApplicationRepository.save(application5);
+
+            //Paid and Complete Application for the month
+            SellerApplication application6 = new SellerApplication();
+            application6.setBusinessPartner(bp);
+            application6.setEvent(secondEvent);
+            application6.setDescription(lorem.getWords(5, 20));
+            application6.setComments(lorem.getWords(5, 20));
+            application6.setBoothQuantity(rand.nextInt(300));
+            application6.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+            application6.setPaymentStatus(PaymentStatus.COMPLETED);
+            LocalDateTime applicationStart6 = LocalDateTime.of(2021, Month.APRIL, 2, 8, 0);
+            application6.setApplicationDate(applicationStart6);
+            LocalDateTime paymentDate6 = LocalDateTime.of(2021, Month.APRIL, 4, 8, 0);
+            application6.setPaymentDate(paymentDate6);
+            application6.setPaymentStatus(PaymentStatus.COMPLETED);
+            application6.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+            sellerApplicationRepository.save(application6);
+
+            SellerApplication application7 = new SellerApplication();
+            application7.setBusinessPartner(bp);
+            application7.setEvent(secondEvent);
+            application7.setDescription(lorem.getWords(5, 20));
+            application7.setComments(lorem.getWords(5, 20));
+            application7.setBoothQuantity(rand.nextInt(300));
+            application7.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+            application7.setPaymentStatus(PaymentStatus.COMPLETED);
+            LocalDateTime applicationStart7 = LocalDateTime.of(2021, Month.APRIL, 1, 8, 0);
+            application7.setApplicationDate(applicationStart7);
+            LocalDateTime paymentDate7 = LocalDateTime.of(2021, Month.APRIL, 3, 8, 0);
+            application7.setPaymentDate(paymentDate7);
+            application7.setPaymentStatus(PaymentStatus.COMPLETED);
+            application7.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+            sellerApplicationRepository.save(application7);
+
+
+            // Paid and Complete Application for the year
+            SellerApplication application8 = new SellerApplication();
+            application8.setBusinessPartner(bp);
+            application8.setEvent(secondEvent);
+            application8.setDescription(lorem.getWords(5, 20));
+            application8.setComments(lorem.getWords(5, 20));
+            application8.setBoothQuantity(rand.nextInt(300));
+            application8.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+            application8.setPaymentStatus(PaymentStatus.COMPLETED);
+            LocalDateTime applicationStart8 = LocalDateTime.of(2021, Month.MARCH,1, 8, 0);
+            application8.setApplicationDate(applicationStart8);
+            LocalDateTime paymentDate8 = LocalDateTime.of(2021, Month.MARCH, 3, 8, 0);
+            application8.setPaymentDate(paymentDate8);
+            application8.setPaymentStatus(PaymentStatus.COMPLETED);
+            application8.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+            sellerApplicationRepository.save(application8);
+
+            
+            Event followerEvent = eventRepository.findAll().get(1);
+            //Paid and Complete Application for the day
+            SellerApplication application9 = new SellerApplication();
+            application9.setBusinessPartner(bp);
+            application9.setEvent(secondEvent);
+            application9.setDescription(lorem.getWords(5, 20));
+            application9.setComments(lorem.getWords(5, 20));
+            application9.setBoothQuantity(rand.nextInt(300));
+            application9.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+            application9.setPaymentStatus(PaymentStatus.COMPLETED);
+            LocalDateTime applicationStart9 = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
+            application4.setApplicationDate(applicationStart9);
+            LocalDateTime paymentDate9 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+            application9.setPaymentDate(paymentDate9);
+            application9.setPaymentStatus(PaymentStatus.COMPLETED);
+            application9.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+            sellerApplicationRepository.save(application9);
 
     }
 
     @Transactional
     private void createSellerApplications() {
         // List<Event> allEvents = eventRepository.findAll();
-        System.out.println("hello");
         Lorem lorem = LoremIpsum.getInstance();
         Random rand = new Random();
 
@@ -1378,5 +1528,586 @@ public class DataInitRunner implements ApplicationRunner {
                 boothRepository.save(b);
             }
         }
+    }
+
+    @Transactional
+    private void createHomePageEvents() {
+        Random rand = new Random();
+        Lorem lorem = LoremIpsum.getInstance();
+        EventOrganiser eventOrg = eventOrganiserRepository.findByEmail("linlili7842@gmail.com");
+        BusinessPartner bp = businessPartnerRepository.findByEmail("partner@abc.com");
+
+        Event event = new Event();
+        event.setName("Tech Conferences 2021");
+        event.setAddress("Sembawang 7");
+        event.setDescriptions("Some description 7");
+        event.setCategory(eventCategories[4]);
+        event.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event.setPhysical(true);
+        event.setEventStartDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0));
+        event.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 11, 9, 0));
+        event.setTicketPrice(24);
+        event.setTicketCapacity(100);
+        event.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event.setSalesEndDate(LocalDateTime.of(2021, Month.MAY, 10, 9, 0));
+        event.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 13 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 13 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 13 + "/image-3.jpg"));
+        event.setBoothPrice(39);
+        event.setBoothCapacity(100);
+        event.setRating(5);
+        event.setEventStatus(EventStatus.CREATED);
+        event.setHidden(false);
+        event.setPublished(true);
+        event.setEventOrganiser(eventOrg);
+        eventRepository.save(event);
+
+        Event event2 = new Event();
+        event2.setName("Gardening Made Simple");
+        event2.setAddress("Sembawang 7");
+        event2.setDescriptions("Some description 7");
+        event2.setCategory(eventCategories[9]);
+        event2.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event2.setPhysical(true);
+        event2.setEventStartDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0));
+        event2.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 11, 9, 0));
+        event2.setTicketPrice(24);
+        event2.setTicketCapacity(100);
+        event2.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event2.setSalesEndDate(LocalDateTime.of(2021, Month.MAY, 10, 9, 0));
+        event2.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 19 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 19 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 19 + "/image-3.jpg"));
+        event2.setBoothPrice(39);
+        event2.setBoothCapacity(100);
+        event2.setRating(5);
+        event2.setEventStatus(EventStatus.CREATED);
+        event2.setHidden(false);
+        event2.setPublished(true);
+        event2.setEventOrganiser(eventOrg);
+        eventRepository.save(event2);
+
+        Event event3 = new Event();
+        event3.setName("Movie Marathon 2021");
+        event3.setAddress("Sembawang 7");
+        event3.setDescriptions("Some description 7");
+        event3.setCategory(eventCategories[6]);
+        event3.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event3.setPhysical(true);
+        event3.setEventStartDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0));
+        event3.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 11, 9, 0));
+        event3.setTicketPrice(24);
+        event3.setTicketCapacity(100);
+        event3.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event3.setSalesEndDate(LocalDateTime.of(2021, Month.MAY, 10, 9, 0));
+        event3.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 16 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 16 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 16 + "/image-3.jpg"));
+        event3.setBoothPrice(39);
+        event3.setBoothCapacity(100);
+        event3.setRating(5);
+        event3.setEventStatus(EventStatus.CREATED);
+        event3.setHidden(false);
+        event3.setPublished(true);
+        event3.setEventOrganiser(eventOrg);
+        eventRepository.save(event3);
+
+        Event event4 = new Event();
+        event4.setName("Taiwanese Street Food 2021");
+        event4.setAddress("Sembawang 7");
+        event4.setDescriptions("Some description 7");
+        event4.setCategory(eventCategories[7]);
+        event4.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event4.setPhysical(true);
+        event4.setEventStartDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0));
+        event4.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 11, 9, 0));
+        event4.setTicketPrice(24);
+        event4.setTicketCapacity(100);
+        event4.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event4.setSalesEndDate(LocalDateTime.of(2021, Month.MAY, 10, 9, 0));
+        event4.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 18 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 18 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 18 + "/image-3.jpg"));
+        event4.setBoothPrice(39);
+        event4.setBoothCapacity(100);
+        event4.setRating(5);
+        event4.setEventStatus(EventStatus.CREATED);
+        event4.setHidden(false);
+        event4.setPublished(true);
+        event4.setEventOrganiser(eventOrg);
+        eventRepository.save(event4);
+
+        Event event5 = new Event();
+        event5.setName("Japanese Street Food 2021");
+        event5.setAddress("Sembawang 7");
+        event5.setDescriptions("Some description 7");
+        event5.setCategory(eventCategories[7]);
+        event5.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event5.setPhysical(true);
+        event5.setEventStartDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0));
+        event5.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 11, 9, 0));
+        event5.setTicketPrice(24);
+        event5.setTicketCapacity(100);
+        event5.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event5.setSalesEndDate(LocalDateTime.of(2021, Month.MAY, 10, 9, 0));
+        event5.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 21 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 21 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 21 + "/image-3.jpg"));
+        event5.setBoothPrice(39);
+        event5.setBoothCapacity(100);
+        event5.setRating(5);
+        event5.setEventStatus(EventStatus.CREATED);
+        event5.setHidden(false);
+        event5.setPublished(true);
+        event5.setEventOrganiser(eventOrg);
+        eventRepository.save(event5);
+
+        Event event6 = new Event();
+        event6.setName("Japanese Street Food 2020");
+        event6.setAddress("Sembawang 7");
+        event6.setDescriptions("Some description 7");
+        event6.setCategory(eventCategories[7]);
+        event6.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event6.setPhysical(true);
+        event6.setEventStartDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0));
+        event6.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 11, 9, 0));
+        event6.setTicketPrice(24);
+        event6.setTicketCapacity(100);
+        event6.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event6.setSalesEndDate(LocalDateTime.of(2021, Month.MAY, 10, 9, 0));
+        event6.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 22 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 22 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 22 + "/image-3.jpg"));
+        event6.setBoothPrice(39);
+        event6.setBoothCapacity(100);
+        event6.setRating(5);
+        event6.setEventStatus(EventStatus.CREATED);
+        event6.setHidden(false);
+        event6.setPublished(true);
+        event6.setEventOrganiser(eventOrg);
+        eventRepository.save(event6);
+
+        Event event7 = new Event();
+        event7.setName("Taiwanese Street Food 2020");
+        event7.setAddress("Sembawang 7");
+        event7.setDescriptions("Some description 7");
+        event7.setCategory(eventCategories[7]);
+        event7.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event7.setPhysical(true);
+        event7.setEventStartDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0));
+        event7.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 11, 9, 0));
+        event7.setTicketPrice(24);
+        event7.setTicketCapacity(100);
+        event7.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event7.setSalesEndDate(LocalDateTime.of(2021, Month.MAY, 10, 9, 0));
+        event7.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 23 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 23 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 23 + "/image-3.jpg"));
+        event7.setBoothPrice(39);
+        event7.setBoothCapacity(100);
+        event7.setRating(5);
+        event7.setEventStatus(EventStatus.CREATED);
+        event7.setHidden(false);
+        event7.setPublished(true);
+        event7.setEventOrganiser(eventOrg);
+        eventRepository.save(event7);
+
+        Event event8 = new Event();
+        event8.setName("Chinese Street Food 2021");
+        event8.setAddress("Sembawang 7");
+        event8.setDescriptions("Some description 7");
+        event8.setCategory(eventCategories[7]);
+        event8.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event8.setPhysical(true);
+        event8.setEventStartDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0));
+        event8.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 11, 9, 0));
+        event8.setTicketPrice(24);
+        event8.setTicketCapacity(100);
+        event8.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event8.setSalesEndDate(LocalDateTime.of(2021, Month.MAY, 10, 9, 0));
+        event8.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 24 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 24 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 24 + "/image-3.jpg"));
+        event8.setBoothPrice(39);
+        event8.setBoothCapacity(100);
+        event8.setRating(5);
+        event8.setEventStatus(EventStatus.CREATED);
+        event8.setHidden(false);
+        event8.setPublished(true);
+        event8.setEventOrganiser(eventOrg);
+        eventRepository.save(event8);
+
+        Event event9 = new Event();
+        event9.setName("Chinese Street Food 2020");
+        event9.setAddress("Sembawang 7");
+        event9.setDescriptions("Some description 7");
+        event9.setCategory(eventCategories[7]);
+        event9.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event9.setPhysical(true);
+        event9.setEventStartDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0));
+        event9.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 11, 9, 0));
+        event9.setTicketPrice(24);
+        event9.setTicketCapacity(100);
+        event9.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event9.setSalesEndDate(LocalDateTime.of(2021, Month.MAY, 10, 9, 0));
+        event9.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 1 + "/image-3.jpg"));
+        event9.setBoothPrice(39);
+        event9.setBoothCapacity(100);
+        event9.setRating(5);
+        event9.setEventStatus(EventStatus.CREATED);
+        event9.setHidden(false);
+        event9.setPublished(true);
+        event9.setEventOrganiser(eventOrg);
+        eventRepository.save(event9);
+
+        Event event10 = new Event();
+        event10.setName("Tech Convention 2020");
+        event10.setAddress("Sembawang 7");
+        event10.setDescriptions("Some description 7");
+        event10.setCategory(eventCategories[2]);
+        event10.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event10.setPhysical(true);
+        event10.setEventStartDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0));
+        event10.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 11, 9, 0));
+        event10.setTicketPrice(24);
+        event10.setTicketCapacity(100);
+        event10.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event10.setSalesEndDate(LocalDateTime.of(2021, Month.MAY, 10, 9, 0));
+        event10.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 2 + "/image-3.jpg"));
+        event10.setBoothPrice(39);
+        event10.setBoothCapacity(100);
+        event10.setRating(5);
+        event10.setEventStatus(EventStatus.CREATED);
+        event10.setHidden(false);
+        event10.setPublished(true);
+        event10.setEventOrganiser(eventOrg);
+        eventRepository.save(event10);
+
+        Event event11 = new Event();
+        event11.setName("Tech Convention 2021");
+        event11.setAddress("Sembawang 7");
+        event11.setDescriptions("Some description 7");
+        event11.setCategory(eventCategories[2]);
+        event11.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event11.setPhysical(true);
+        event11.setEventStartDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0));
+        event11.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 11, 9, 0));
+        event11.setTicketPrice(24);
+        event11.setTicketCapacity(100);
+        event11.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event11.setSalesEndDate(LocalDateTime.of(2021, Month.MAY, 10, 9, 0));
+        event11.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 3 + "/image-3.jpg"));
+        event11.setBoothPrice(39);
+        event11.setBoothCapacity(100);
+        event11.setRating(5);
+        event11.setEventStatus(EventStatus.CREATED);
+        event11.setHidden(false);
+        event11.setPublished(true);
+        event11.setEventOrganiser(eventOrg);
+        eventRepository.save(event11);
+
+        Event event12 = new Event();
+        event12.setName("Beyblade World Championships 2021");
+        event12.setAddress("Sembawang 7");
+        event12.setDescriptions("Some description 7");
+        event12.setCategory(eventCategories[6]);
+        event12.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event12.setPhysical(true);
+        event12.setEventStartDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0));
+        event12.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 11, 9, 0));
+        event12.setTicketPrice(24);
+        event12.setTicketCapacity(100);
+        event12.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event12.setSalesEndDate(LocalDateTime.of(2021, Month.MAY, 10, 9, 0));
+        event12.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 4 + "/image-3.jpg"));
+        event12.setBoothPrice(39);
+        event12.setBoothCapacity(100);
+        event12.setRating(5);
+        event12.setEventStatus(EventStatus.CREATED);
+        event12.setHidden(false);
+        event12.setPublished(true);
+        event12.setEventOrganiser(eventOrg);
+        eventRepository.save(event12);
+
+        Event event13 = new Event();
+        event13.setName("Weekend + Next Week Event");
+        event13.setAddress("Sembawang 7");
+        event13.setDescriptions("Some description 7");
+        event13.setCategory(eventCategories[13]);
+        event13.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event13.setPhysical(true);
+        event13.setEventStartDate(LocalDateTime.of(2021, Month.APRIL, 15, 9, 0));
+        event13.setEventEndDate(LocalDateTime.of(2021, Month.APRIL, 25, 9, 0));
+        event13.setTicketPrice(24);
+        event13.setTicketCapacity(100);
+        event13.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event13.setSalesEndDate(LocalDateTime.of(2021, Month.APRIL, 24, 9, 0));
+        event13.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 5 + "/image-3.jpg"));
+        event13.setBoothPrice(39);
+        event13.setBoothCapacity(100);
+        event13.setRating(5);
+        event13.setEventStatus(EventStatus.CREATED);
+        event13.setHidden(false);
+        event13.setPublished(true);
+        event13.setEventOrganiser(eventOrg);
+        eventRepository.save(event13);
+
+        Event event14 = new Event();
+        event14.setName("Next Week Event");
+        event14.setAddress("Sembawang 7");
+        event14.setDescriptions("Some description 7");
+        event14.setCategory(eventCategories[13]);
+        event14.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event14.setPhysical(true);
+        event14.setEventStartDate(LocalDateTime.of(2021, Month.APRIL, 19, 9, 0));
+        event14.setEventEndDate(LocalDateTime.of(2021, Month.APRIL, 29, 9, 0));
+        event14.setTicketPrice(24);
+        event14.setTicketCapacity(100);
+        event14.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event14.setSalesEndDate(LocalDateTime.of(2021, Month.APRIL, 28, 9, 0));
+        event14.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 6 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 6 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 6 + "/image-3.jpg"));
+        event14.setBoothPrice(39);
+        event14.setBoothCapacity(100);
+        event14.setRating(5);
+        event14.setEventStatus(EventStatus.CREATED);
+        event14.setHidden(false);
+        event14.setPublished(true);
+        event14.setEventOrganiser(eventOrg);
+        eventRepository.save(event14);
+
+        Event event15 = new Event();
+        event15.setName("Xtreme Gardening");
+        event15.setAddress("Sembawang 7");
+        event15.setDescriptions("Some description 7");
+        event15.setCategory(eventCategories[9]);
+        event15.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
+        event15.setPhysical(true);
+        event15.setEventStartDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0));
+        event15.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 11, 9, 0));
+        event15.setTicketPrice(24);
+        event15.setTicketCapacity(100);
+        event15.setSaleStartDate(LocalDateTime.of(2021, Month.APRIL, 1, 9, 0));
+        event15.setSalesEndDate(LocalDateTime.of(2021, Month.MAY, 10, 9, 0));
+        event15.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 7 + "/image-1.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 7 + "/image-2.jpg",
+                "https://storage.googleapis.com/ems-images/events/event-" + 7 + "/image-3.jpg"));
+        event15.setBoothPrice(39);
+        event15.setBoothCapacity(100);
+        event15.setRating(5);
+        event15.setEventStatus(EventStatus.CREATED);
+        event15.setHidden(false);
+        event15.setPublished(true);
+        event15.setEventOrganiser(eventOrg);
+        eventRepository.save(event15);
+     
+        //Paid and Complete Application for the day
+        LocalDateTime applicationStart = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
+        LocalDateTime paymentDate = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+
+        SellerApplication application = new SellerApplication();
+        application.setBusinessPartner(bp);
+        application.setEvent(event);
+        application.setDescription(lorem.getWords(5, 20));
+        application.setComments(lorem.getWords(5, 20));
+        application.setBoothQuantity(rand.nextInt(300));
+        application.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application.setPaymentStatus(PaymentStatus.COMPLETED);
+        application.setApplicationDate(applicationStart);
+        application.setPaymentDate(paymentDate);
+        application.setPaymentStatus(PaymentStatus.COMPLETED);
+        application.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application);
+     
+        //Paid and Complete Application for the day
+        SellerApplication application2 = new SellerApplication();
+        application2.setBusinessPartner(bp);
+        application2.setEvent(event3);
+        application2.setDescription(lorem.getWords(5, 20));
+        application2.setComments(lorem.getWords(5, 20));
+        application2.setBoothQuantity(rand.nextInt(300));
+        application2.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application2.setPaymentStatus(PaymentStatus.COMPLETED);
+        application2.setApplicationDate(applicationStart);
+        application2.setPaymentDate(paymentDate);
+        application2.setPaymentStatus(PaymentStatus.COMPLETED);
+        application2.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application2);
+     
+        //Paid and Complete Application for the day
+        SellerApplication application3 = new SellerApplication();
+        application3.setBusinessPartner(bp);
+        application3.setEvent(event4);
+        application3.setDescription(lorem.getWords(5, 20));
+        application3.setComments(lorem.getWords(5, 20));
+        application3.setBoothQuantity(rand.nextInt(300));
+        application3.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application3.setPaymentStatus(PaymentStatus.COMPLETED);
+        application3.setApplicationDate(applicationStart);
+        application3.setPaymentDate(paymentDate);
+        application3.setPaymentStatus(PaymentStatus.COMPLETED);
+        application3.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application3);
+     
+        //Paid and Complete Application for the day
+        SellerApplication application4 = new SellerApplication();
+        application4.setBusinessPartner(bp);
+        application4.setEvent(event5);
+        application4.setDescription(lorem.getWords(5, 20));
+        application4.setComments(lorem.getWords(5, 20));
+        application4.setBoothQuantity(rand.nextInt(300));
+        application4.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application4.setPaymentStatus(PaymentStatus.COMPLETED);
+        application4.setApplicationDate(applicationStart);
+        application4.setPaymentDate(paymentDate);
+        application4.setPaymentStatus(PaymentStatus.COMPLETED);
+        application4.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application4);
+     
+        //Paid and Complete Application for the day
+        SellerApplication application5 = new SellerApplication();
+        application5.setBusinessPartner(bp);
+        application5.setEvent(event6);
+        application5.setDescription(lorem.getWords(5, 20));
+        application5.setComments(lorem.getWords(5, 20));
+        application5.setBoothQuantity(rand.nextInt(300));
+        application5.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application5.setPaymentStatus(PaymentStatus.COMPLETED);
+        application5.setApplicationDate(applicationStart);
+        application5.setPaymentDate(paymentDate);
+        application5.setPaymentStatus(PaymentStatus.COMPLETED);
+        application5.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application5);
+     
+        //Paid and Complete Application for the day
+        SellerApplication application6 = new SellerApplication();
+        application6.setBusinessPartner(bp);
+        application6.setEvent(event7);
+        application6.setDescription(lorem.getWords(5, 20));
+        application6.setComments(lorem.getWords(5, 20));
+        application6.setBoothQuantity(rand.nextInt(300));
+        application6.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application6.setPaymentStatus(PaymentStatus.COMPLETED);
+        application6.setApplicationDate(applicationStart);
+        application6.setPaymentDate(paymentDate);
+        application6.setPaymentStatus(PaymentStatus.COMPLETED);
+        application6.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application6);
+     
+        //Paid and Complete Application for the day
+        SellerApplication application7 = new SellerApplication();
+        application7.setBusinessPartner(bp);
+        application7.setEvent(event8);
+        application7.setDescription(lorem.getWords(5, 20));
+        application7.setComments(lorem.getWords(5, 20));
+        application7.setBoothQuantity(rand.nextInt(300));
+        application7.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application7.setPaymentStatus(PaymentStatus.COMPLETED);
+        application7.setApplicationDate(applicationStart);
+        application7.setPaymentDate(paymentDate);
+        application7.setPaymentStatus(PaymentStatus.COMPLETED);
+        application7.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application7);
+     
+        //Paid and Complete Application for the day
+        SellerApplication application8 = new SellerApplication();
+        application8.setBusinessPartner(bp);
+        application8.setEvent(event9);
+        application8.setDescription(lorem.getWords(5, 20));
+        application8.setComments(lorem.getWords(5, 20));
+        application8.setBoothQuantity(rand.nextInt(300));
+        application8.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application8.setPaymentStatus(PaymentStatus.COMPLETED);
+        application8.setApplicationDate(applicationStart);
+        application8.setPaymentDate(paymentDate);
+        application8.setPaymentStatus(PaymentStatus.COMPLETED);
+        application8.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application8);
+     
+        //Paid and Complete Application for the day
+        SellerApplication application9 = new SellerApplication();
+        application9.setBusinessPartner(bp);
+        application9.setEvent(event10);
+        application9.setDescription(lorem.getWords(5, 20));
+        application9.setComments(lorem.getWords(5, 20));
+        application9.setBoothQuantity(rand.nextInt(300));
+        application9.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application9.setPaymentStatus(PaymentStatus.COMPLETED);
+        application9.setApplicationDate(applicationStart);
+        application9.setPaymentDate(paymentDate);
+        application9.setPaymentStatus(PaymentStatus.COMPLETED);
+        application9.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application9);
+     
+        //Paid and Complete Application for the day
+        SellerApplication application10 = new SellerApplication();
+        application10.setBusinessPartner(bp);
+        application10.setEvent(event11);
+        application10.setDescription(lorem.getWords(5, 20));
+        application10.setComments(lorem.getWords(5, 20));
+        application10.setBoothQuantity(rand.nextInt(300));
+        application10.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application10.setPaymentStatus(PaymentStatus.COMPLETED);
+        application10.setApplicationDate(applicationStart);
+        application10.setPaymentDate(paymentDate);
+        application10.setPaymentStatus(PaymentStatus.COMPLETED);
+        application10.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application10);
+     
+        //Paid and Complete Application for the day
+        SellerApplication application11 = new SellerApplication();
+        application11.setBusinessPartner(bp);
+        application11.setEvent(event12);
+        application11.setDescription(lorem.getWords(5, 20));
+        application11.setComments(lorem.getWords(5, 20));
+        application11.setBoothQuantity(rand.nextInt(300));
+        application11.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application11.setPaymentStatus(PaymentStatus.COMPLETED);
+        application11.setApplicationDate(applicationStart);
+        application11.setPaymentDate(paymentDate);
+        application11.setPaymentStatus(PaymentStatus.COMPLETED);
+        application11.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application11);
+     
+        //Paid and Complete Application for the day
+        SellerApplication application12 = new SellerApplication();
+        application12.setBusinessPartner(bp);
+        application12.setEvent(event13);
+        application12.setDescription(lorem.getWords(5, 20));
+        application12.setComments(lorem.getWords(5, 20));
+        application12.setBoothQuantity(rand.nextInt(300));
+        application12.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application12.setPaymentStatus(PaymentStatus.COMPLETED);
+        application12.setApplicationDate(applicationStart);
+        application12.setPaymentDate(paymentDate);
+        application12.setPaymentStatus(PaymentStatus.COMPLETED);
+        application12.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application12);
+     
+        //Paid and Complete Application for the day
+        SellerApplication application13 = new SellerApplication();
+        application13.setBusinessPartner(bp);
+        application13.setEvent(event14);
+        application13.setDescription(lorem.getWords(5, 20));
+        application13.setComments(lorem.getWords(5, 20));
+        application13.setBoothQuantity(rand.nextInt(300));
+        application13.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application13.setPaymentStatus(PaymentStatus.COMPLETED);
+        application13.setApplicationDate(applicationStart);
+        application13.setPaymentDate(paymentDate);
+        application13.setPaymentStatus(PaymentStatus.COMPLETED);
+        application13.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application13);
     }
 }
