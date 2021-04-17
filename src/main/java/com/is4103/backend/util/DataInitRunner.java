@@ -1086,21 +1086,27 @@ public class DataInitRunner implements ApplicationRunner {
         // COMBI 0 : APPROVED PENDING PAYMENT
         // COMBI 0-1: APPROVED PENDING PAYMENT PLUS ALLOCATED
         // COMBI 1 : FINISHED PROCESS - SELLER PROFILE CREATED
-        // COMBI 2 : REJECTED
+        // COMBI 2 : REJECTED TAKE OUT THIS FIRST
         // COMBI 3 : NEW APPLICAION
 
-        SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
-                SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.REJECTED, SellerApplicationStatus.PENDING };
+        // SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
+        //         SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.REJECTED, SellerApplicationStatus.PENDING };
 
-        PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED, PaymentStatus.PENDING,
-                PaymentStatus.PENDING };
+        // PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED, PaymentStatus.PENDING,
+        //         PaymentStatus.PENDING };
 
+                SellerApplicationStatus[] sellerApplicationStatusArray = { SellerApplicationStatus.APPROVED,
+                    SellerApplicationStatus.CONFIRMED, SellerApplicationStatus.PENDING };
+    
+            PaymentStatus[] paymentStatusArray = { PaymentStatus.PENDING, PaymentStatus.COMPLETED, PaymentStatus.PENDING };
+
+                    
         // CREATE MORE FOR EVENT 1
         Event firstEvent = eventRepository.findAll().get(0);
         List<BusinessPartner> businessPartners = businessPartnerRepository.findAll();
         for (BusinessPartner bp : businessPartners) {
             SellerApplication application = new SellerApplication();
-            int count = rand.nextInt(4); // now just make the applications randomly
+            int count = rand.nextInt(3); // now just make the applications randomly
             application.setBusinessPartner(bp);
             application.setEvent(firstEvent);
             application.setDescription(lorem.getWords(5, 20));
