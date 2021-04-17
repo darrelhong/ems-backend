@@ -788,7 +788,7 @@ public class EventOrganiserService {
                 totalSales += amount;
             }
         }
-
+        System.out.println("totalSales yearly" + totalSales);
         return totalSales;
 
     }
@@ -978,6 +978,7 @@ public class EventOrganiserService {
     public Long getDaysToEndOfTicketSale(Long eventId) {
         
         LocalDateTime now = LocalDateTime.now();
+        System.out.println(eventId + "eventId");
        Event event = eventService.getEventById(eventId);
     //   long daysBetween = DAYS.between(now, event.getSalesEndDate());
     return now.until(event.getSalesEndDate(), ChronoUnit.DAYS);
@@ -1017,10 +1018,12 @@ public class EventOrganiserService {
     public Event upcomingEvent(EventOrganiser eo) {
         List<Event> events = getEventsWithTicketTransactionsCurrent(eo);
         LocalDateTime now = LocalDateTime.now();
-        long days =360;
+        long days =1000000;
         Event eventFinal = new Event();
         if(events.size() >0){
-           for(Event event : events){
+           for(Event event : events){           
+                System.out.println("current" + event.getEid());
+
             if(event.getSalesEndDate().isAfter(now) && now.until(event.getSalesEndDate(), ChronoUnit.DAYS) < days){
                 days = now.until(event.getSalesEndDate(), ChronoUnit.DAYS);
                 eventFinal = event;
@@ -1029,13 +1032,15 @@ public class EventOrganiserService {
         }else{
             events = getEventsWithTicketTransactionsPast(eo);
             for(Event event : events){
+                System.out.println("past" + event.getEid());
+
                 if(event.getEventStartDate().isAfter(now) && now.until(event.getEventStartDate(), ChronoUnit.DAYS) < days){
                     days = now.until(event.getSalesEndDate(), ChronoUnit.DAYS);
                     eventFinal = event;
                 }
             }
         }
-        
+        System.out.println("upcoming event" + eventFinal.getEid());
         return eventFinal;
 
 
