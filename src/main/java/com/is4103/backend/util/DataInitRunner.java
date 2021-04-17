@@ -143,8 +143,7 @@ public class DataInitRunner implements ApplicationRunner {
         if (sellerApplicationRepository.findAll().isEmpty()) {
             createBooths();
             createSellerApplications();
-
-            //setProducts(); //not working atm, get the lazy load issue
+            setProducts();
 
         }
         System.out.println("Data init done");
@@ -179,7 +178,7 @@ public class DataInitRunner implements ApplicationRunner {
 
         // Lili EO
         EventOrganiser eo2 = new EventOrganiser();
-        eo2.setEmail("organiser@abc.com ");
+        eo2.setEmail("organiser@abc.com");
         eo2.setName("Lili Organiser");
         eo2.setPassword(passwordEncoder.encode("password"));
         eo2.setEnabled(true);
@@ -1119,7 +1118,7 @@ public class DataInitRunner implements ApplicationRunner {
                     }
             
                 }
-                   LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+                   LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.MARCH, 18, 8, 0);
                         savedApplication.setPaymentDate(paymentDate4);
                         savedApplication.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
                         sellerApplicationRepository.save(savedApplication);
@@ -1207,7 +1206,7 @@ public class DataInitRunner implements ApplicationRunner {
                         }
                        
                     }
-                     LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+                     LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 17, 8, 0);
                         savedApplication.setPaymentDate(paymentDate4);
                         savedApplication.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
                         sellerApplicationRepository.save(savedApplication);
@@ -1368,15 +1367,8 @@ public class DataInitRunner implements ApplicationRunner {
         for (Booth b : allBooths) {
             if (b.getSellerProfile() != null) {
                 BusinessPartner bp = b.getSellerProfile().getBusinessPartner();
-                int numberOfBpProducts = bp.getProducts().size();
-                List<Product> bpProducts = bp.getProducts();
-                List<Product> productsToAllocate = new ArrayList<>();
-                for (int i = 0; i < 3; i++) { // set 3 products for each booth
-                    Random rand = new Random();
-                    int productNumber = rand.nextInt(numberOfBpProducts);
-                    productsToAllocate.add(bpProducts.get(productNumber));
-                }
-                b.setProducts(productsToAllocate);
+                List<Product> firstThreeBpProducts = productRepository.findProductsByBusinessPartner(bp.getId()).subList(0,3);
+                b.setProducts(firstThreeBpProducts);
                 boothRepository.save(b);
             }
         }
