@@ -8,6 +8,8 @@ import com.is4103.backend.model.EventStatus;
 public interface EventDetailsDto {
     Long getEid();
 
+    Boolean getIsVip();
+
     String getName();
 
     String getAddress();

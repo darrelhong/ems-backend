@@ -612,12 +612,12 @@ public class DataInitRunner implements ApplicationRunner {
         event7.setCategory(eventCategories[2]);
         event7.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event7.setPhysical(true);
-        event7.setEventStartDate(LocalDateTime.now());
-        event7.setEventEndDate(LocalDateTime.now());
+        event7.setEventStartDate(LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3));
+        event7.setEventEndDate(LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3));
         event7.setTicketPrice(24);
         event7.setTicketCapacity(100);
-        event7.setSaleStartDate(LocalDateTime.now());
-        event7.setSalesEndDate(LocalDateTime.now());
+        event7.setSaleStartDate(LocalDateTime.of(2020, Month.DECEMBER, 1, 9, 0).plusDays(2).plusHours(2 % 3));
+        event7.setSalesEndDate(LocalDateTime.of(2020, Month.DECEMBER, 1, 9, 0).plusDays(2).plusHours(2 % 3));
         event7.setImages(Arrays.asList("https://storage.googleapis.com/ems-images/events/event-" + 10 + "/image-1.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 10 + "/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-" + 10 + "/image-3.jpg"));
@@ -755,16 +755,37 @@ public class DataInitRunner implements ApplicationRunner {
         ticketTransactionRepository.save(ttransaction);
 
         ttransaction = new TicketTransaction();
-        ttransaction.setEvent(event);
+        ttransaction.setEvent(event2);
         ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
         ttransaction.setAttendee(atnd);
         ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
         ticketTransactionRepository.save(ttransaction);
 
         ttransaction = new TicketTransaction();
-        ttransaction.setEvent(event);
+        ttransaction.setEvent(event2);
         ttransaction.setAttendee(atnd);
         ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
+        ticketTransactionRepository.save(ttransaction);
+
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event3);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
+        ticketTransactionRepository.save(ttransaction);
+
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event3);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
+        ticketTransactionRepository.save(ttransaction);
+
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event4);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setAttendee(atnd);
         ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
         ticketTransactionRepository.save(ttransaction);
 
@@ -786,12 +807,37 @@ public class DataInitRunner implements ApplicationRunner {
 
 
         ttransaction = new TicketTransaction();
-        ttransaction.setEvent(event5);
+        ttransaction.setEvent(event7);
         ttransaction.setAttendee(atnd);
         ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
         ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
         ticketTransactionRepository.save(ttransaction);
-        ttransaction.setDateTimeOrdered(LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(4).plusHours(2 % 3));
+        ttransaction.setDateTimeOrdered(LocalDateTime.of(2020, Month.DECEMBER, 1, 9, 0).plusDays(2).plusHours(2 % 3));
+
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event7);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
+        ticketTransactionRepository.save(ttransaction);
+        ttransaction.setDateTimeOrdered(LocalDateTime.of(2020, Month.DECEMBER, 1, 9, 0).plusDays(2).plusHours(2 % 3));
+
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event7);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
+        ticketTransactionRepository.save(ttransaction);
+        ttransaction.setDateTimeOrdered(LocalDateTime.of(2020, Month.DECEMBER, 1, 9, 0).plusDays(2).plusHours(2 % 3));
+
+        ttransaction = new TicketTransaction();
+        ttransaction.setEvent(event7);
+        ttransaction.setAttendee(atnd);
+        ttransaction.setPaymentStatus(PaymentStatus.COMPLETED);
+        ttransaction.setStripePaymentId("pi_1Icne5EwwthOy8X1tHunHmmS");
+        ticketTransactionRepository.save(ttransaction);
+        ttransaction.setDateTimeOrdered(LocalDateTime.of(2020, Month.DECEMBER, 1, 9, 0).plusDays(2).plusHours(2 % 3));
+
 
 
         List<Event> eoEvents = new ArrayList<>();
