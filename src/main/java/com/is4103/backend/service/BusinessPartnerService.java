@@ -78,6 +78,10 @@ public class BusinessPartnerService {
     @Autowired
     private EventService eventService;
 
+    
+    @Autowired
+    private EventOrganiserService eventOrganiserService;
+
     @Autowired
     private SellerApplicationService sellerApplicationService;
 
@@ -497,5 +501,17 @@ public class BusinessPartnerService {
         Stripe.apiKey = stripeApiKey;
         PaymentMethod pm = PaymentMethod.retrieve(paymentMethodId);
         pm.detach();
+    }
+
+    public Boolean checkIfBPIsVIP(long eoid, long bpid){
+        List<BusinessPartner> vipList = eventOrganiserService.getAllVips(eoid);
+        // BusinessPartner partner = getBusinessPartnerById(bpid);
+        for(BusinessPartner vip : vipList){
+            if(vip.getId() == bpid){
+                return true;
+            }
+        }
+        return false;
+
     }
 }
