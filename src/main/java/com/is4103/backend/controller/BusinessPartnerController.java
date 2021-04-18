@@ -26,6 +26,7 @@ import com.is4103.backend.model.Event;
 import com.is4103.backend.model.EventOrganiser;
 import com.is4103.backend.model.User;
 import com.is4103.backend.model.Product;
+import com.is4103.backend.model.Rsvp;
 import com.is4103.backend.model.SellerApplication;
 import com.is4103.backend.service.BusinessPartnerService;
 import com.is4103.backend.service.FileStorageService;
@@ -331,4 +332,11 @@ public class BusinessPartnerController {
         }
     }
 
+    @GetMapping(value="/rsvp/{id}")
+    public List<Event> getRsvpEvents(@PathVariable Long id) {
+        BusinessPartner bp = bpService.getBusinessPartnerById(id);
+        List<Rsvp> rsvpList = bp.getRsvps();
+        List<Event> rsvpEvents = rsvpList.stream().map(rsvp -> rsvp.getEvent()).collect(Collectors.toList());
+        return rsvpEvents;
+    }
 }
