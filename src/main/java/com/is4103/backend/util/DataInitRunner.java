@@ -352,7 +352,7 @@ public class DataInitRunner implements ApplicationRunner {
         event.setEventEndDate(eventEnd1);
 
         LocalDateTime salesStart1 = LocalDateTime.of(2021, Month.JANUARY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
-        LocalDateTime salesEnd1 = LocalDateTime.of(2021, Month.APRIL, 2, 9, 0).plusDays(15).plusHours(2 % 3);
+        LocalDateTime salesEnd1 = LocalDateTime.of(2021, Month.JUNE, 2, 9, 0).plusDays(15).plusHours(2 % 3);
 
         event.setSaleStartDate(salesStart1);
         event.setSalesEndDate(salesEnd1);
@@ -686,7 +686,7 @@ public class DataInitRunner implements ApplicationRunner {
         event9.setEventStatus(EventStatus.CREATED);
         event9.setHidden(false);
         event9.setPublished(true);
-        event9.setVip(true);
+        event9.setVip(false);
 
         // EventOrganiser eventOrg =
         // eventOrganiserRepository.findByEmail("organiser@abc.com");
@@ -1068,6 +1068,10 @@ public class DataInitRunner implements ApplicationRunner {
             application.setPaymentStatus(paymentStatusArray[count]);
             application.setApplicationDate(firstEvent.getEventStartDate().minusDays(rand.nextInt(20)));
             SellerApplication savedApplication = sellerApplicationRepository.save(application);
+
+            if (bp.getEmail() == "linlili2319@gmail.com") {
+                count = 0;
+            }
 
             if (count == 0) {
                 // WE NEEDA ACCOUNT FOR BOTH TYPES OF THIS SCENARIO, ONE IS WITH BOOTH ONE IS
