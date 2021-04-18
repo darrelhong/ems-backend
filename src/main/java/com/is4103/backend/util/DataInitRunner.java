@@ -117,11 +117,11 @@ public class DataInitRunner implements ApplicationRunner {
             createAdmin();
         }
 
-        if (userRepository.findByEmail("organiser@abc.com") == null) {
+        if (userRepository.findByEmail("linlili7842@gmail.com") == null) {
             createEventOrganisers();
         }
 
-        if (userRepository.findByEmail("partner@abc.com") == null) {
+        if (userRepository.findByEmail("linlili2319@gmail.com") == null) {
             createBizPartners();
         }
 
@@ -254,7 +254,8 @@ public class DataInitRunner implements ApplicationRunner {
         atn.setName("Lin li li");
         atn.setPassword(passwordEncoder.encode("password"));
         atn.setDescription("Enjoy attending events!");
-        atn.setProfilePic("https://www.nydailynews.com/resizer/5xExdVWHQXsxm_h9RdEF-LBm6x4=/1200x0/top/arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/GCGGNME765VTQM4IQ2OBXBSTQE.jpg");
+        atn.setProfilePic(
+                "https://www.nydailynews.com/resizer/5xExdVWHQXsxm_h9RdEF-LBm6x4=/1200x0/top/arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/GCGGNME765VTQM4IQ2OBXBSTQE.jpg");
         atn.setEnabled(true);
         atn.setRoles(Set.of(roleRepository.findByRoleEnum(RoleEnum.ATND)));
         List<String> category = new ArrayList<>();
@@ -672,7 +673,7 @@ public class DataInitRunner implements ApplicationRunner {
         event9.setCategory(eventCategories[4]);
         event9.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event9.setPhysical(true);
-        event9.setEventStartDate(LocalDateTime.of(2021, Month.MAY,1, 9, 0).plusDays(10).plusHours(2 % 3));
+        event9.setEventStartDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(10).plusHours(2 % 3));
         event9.setEventEndDate(LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(12).plusHours(2 % 3));
         event9.setTicketPrice(24);
         event9.setTicketCapacity(100);
@@ -1023,150 +1024,145 @@ public class DataInitRunner implements ApplicationRunner {
         ;
     }
 
-    
     @Transactional
     private void createSellerApplicationsForDashboard() {
         Random rand = new Random();
         Lorem lorem = LoremIpsum.getInstance();
         Event secondEvent = eventRepository.findAll().get(1);
-       
+
         BusinessPartner bp = businessPartnerRepository.findByEmail("partner@abc.com");
         BusinessPartner bp2 = businessPartnerRepository.findByEmail("linlili2319@gmail.com");
         SellerApplication application = new SellerApplication();
 
-            // pending seller application
-            application.setBusinessPartner(bp);
-            application.setEvent(secondEvent);
-            application.setDescription(lorem.getWords(5, 20));
-            application.setComments(lorem.getWords(5, 20));
-            application.setBoothQuantity(rand.nextInt(300));
-            application.setSellerApplicationStatus(SellerApplicationStatus.PENDING);
-            application.setPaymentStatus(PaymentStatus.PENDING);
-            LocalDateTime applicationStart = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
-            application.setApplicationDate(applicationStart);
-            application.setPaymentStatus(PaymentStatus.PENDING);
-            application.setStripePaymentId(null);
-            sellerApplicationRepository.save(application);
+        // pending seller application
+        application.setBusinessPartner(bp);
+        application.setEvent(secondEvent);
+        application.setDescription(lorem.getWords(5, 20));
+        application.setComments(lorem.getWords(5, 20));
+        application.setBoothQuantity(rand.nextInt(300));
+        application.setSellerApplicationStatus(SellerApplicationStatus.PENDING);
+        application.setPaymentStatus(PaymentStatus.PENDING);
+        LocalDateTime applicationStart = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+        application.setApplicationDate(applicationStart);
+        application.setPaymentStatus(PaymentStatus.PENDING);
+        application.setStripePaymentId(null);
+        sellerApplicationRepository.save(application);
 
-            SellerApplication application2 = new SellerApplication();
-            application2.setBusinessPartner(bp2);
-            application2.setEvent(secondEvent);
-            application2.setDescription(lorem.getWords(5, 20));
-            application2.setComments(lorem.getWords(5, 20));
-            application2.setBoothQuantity(rand.nextInt(300));
-            application2.setSellerApplicationStatus(SellerApplicationStatus.PENDING);
-            application2.setPaymentStatus(PaymentStatus.PENDING);
-            LocalDateTime applicationStart2 = LocalDateTime.of(2021, Month.APRIL, 15, 8, 0);
-            application2.setApplicationDate(applicationStart2);
-            application2.setPaymentStatus(PaymentStatus.PENDING);
-            application2.setStripePaymentId(null);
-            sellerApplicationRepository.save(application2);
+        SellerApplication application2 = new SellerApplication();
+        application2.setBusinessPartner(bp2);
+        application2.setEvent(secondEvent);
+        application2.setDescription(lorem.getWords(5, 20));
+        application2.setComments(lorem.getWords(5, 20));
+        application2.setBoothQuantity(rand.nextInt(300));
+        application2.setSellerApplicationStatus(SellerApplicationStatus.PENDING);
+        application2.setPaymentStatus(PaymentStatus.PENDING);
+        LocalDateTime applicationStart2 = LocalDateTime.of(2021, Month.APRIL, 15, 8, 0);
+        application2.setApplicationDate(applicationStart2);
+        application2.setPaymentStatus(PaymentStatus.PENDING);
+        application2.setStripePaymentId(null);
+        sellerApplicationRepository.save(application2);
 
+        // Paid and Complete Application for the day
+        SellerApplication application4 = new SellerApplication();
+        application4.setBusinessPartner(bp);
+        application4.setEvent(secondEvent);
+        application4.setDescription(lorem.getWords(5, 20));
+        application4.setComments(lorem.getWords(5, 20));
+        application4.setBoothQuantity(rand.nextInt(300));
+        application4.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application4.setPaymentStatus(PaymentStatus.COMPLETED);
+        LocalDateTime applicationStart4 = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
+        application4.setApplicationDate(applicationStart4);
+        LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+        application4.setPaymentDate(paymentDate4);
+        application4.setPaymentStatus(PaymentStatus.COMPLETED);
+        application4.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application4);
 
-     
-            //Paid and Complete Application for the day
-            SellerApplication application4 = new SellerApplication();
-            application4.setBusinessPartner(bp);
-            application4.setEvent(secondEvent);
-            application4.setDescription(lorem.getWords(5, 20));
-            application4.setComments(lorem.getWords(5, 20));
-            application4.setBoothQuantity(rand.nextInt(300));
-            application4.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
-            application4.setPaymentStatus(PaymentStatus.COMPLETED);
-            LocalDateTime applicationStart4 = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
-            application4.setApplicationDate(applicationStart4);
-            LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
-            application4.setPaymentDate(paymentDate4);
-            application4.setPaymentStatus(PaymentStatus.COMPLETED);
-            application4.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
-            sellerApplicationRepository.save(application4);
+        // Paid and Complete Application for the day
+        SellerApplication application5 = new SellerApplication();
+        application5.setBusinessPartner(bp);
+        application5.setEvent(secondEvent);
+        application5.setDescription(lorem.getWords(5, 20));
+        application5.setComments(lorem.getWords(5, 20));
+        application5.setBoothQuantity(rand.nextInt(300));
+        application5.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application5.setPaymentStatus(PaymentStatus.COMPLETED);
+        LocalDateTime applicationStart5 = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
+        application5.setApplicationDate(applicationStart5);
+        LocalDateTime paymentDate5 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+        application5.setPaymentDate(paymentDate5);
+        application5.setPaymentStatus(PaymentStatus.COMPLETED);
+        application5.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application5);
 
-                //Paid and Complete Application for the day
-            SellerApplication application5 = new SellerApplication();
-            application5.setBusinessPartner(bp);
-            application5.setEvent(secondEvent);
-            application5.setDescription(lorem.getWords(5, 20));
-            application5.setComments(lorem.getWords(5, 20));
-            application5.setBoothQuantity(rand.nextInt(300));
-            application5.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
-            application5.setPaymentStatus(PaymentStatus.COMPLETED);
-            LocalDateTime applicationStart5 = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
-            application5.setApplicationDate(applicationStart5);
-            LocalDateTime paymentDate5 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
-            application5.setPaymentDate(paymentDate5);
-            application5.setPaymentStatus(PaymentStatus.COMPLETED);
-            application5.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
-            sellerApplicationRepository.save(application5);
+        // Paid and Complete Application for the month
+        SellerApplication application6 = new SellerApplication();
+        application6.setBusinessPartner(bp);
+        application6.setEvent(secondEvent);
+        application6.setDescription(lorem.getWords(5, 20));
+        application6.setComments(lorem.getWords(5, 20));
+        application6.setBoothQuantity(rand.nextInt(300));
+        application6.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application6.setPaymentStatus(PaymentStatus.COMPLETED);
+        LocalDateTime applicationStart6 = LocalDateTime.of(2021, Month.APRIL, 2, 8, 0);
+        application6.setApplicationDate(applicationStart6);
+        LocalDateTime paymentDate6 = LocalDateTime.of(2021, Month.APRIL, 4, 8, 0);
+        application6.setPaymentDate(paymentDate6);
+        application6.setPaymentStatus(PaymentStatus.COMPLETED);
+        application6.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application6);
 
-            //Paid and Complete Application for the month
-            SellerApplication application6 = new SellerApplication();
-            application6.setBusinessPartner(bp);
-            application6.setEvent(secondEvent);
-            application6.setDescription(lorem.getWords(5, 20));
-            application6.setComments(lorem.getWords(5, 20));
-            application6.setBoothQuantity(rand.nextInt(300));
-            application6.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
-            application6.setPaymentStatus(PaymentStatus.COMPLETED);
-            LocalDateTime applicationStart6 = LocalDateTime.of(2021, Month.APRIL, 2, 8, 0);
-            application6.setApplicationDate(applicationStart6);
-            LocalDateTime paymentDate6 = LocalDateTime.of(2021, Month.APRIL, 4, 8, 0);
-            application6.setPaymentDate(paymentDate6);
-            application6.setPaymentStatus(PaymentStatus.COMPLETED);
-            application6.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
-            sellerApplicationRepository.save(application6);
+        SellerApplication application7 = new SellerApplication();
+        application7.setBusinessPartner(bp);
+        application7.setEvent(secondEvent);
+        application7.setDescription(lorem.getWords(5, 20));
+        application7.setComments(lorem.getWords(5, 20));
+        application7.setBoothQuantity(rand.nextInt(300));
+        application7.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application7.setPaymentStatus(PaymentStatus.COMPLETED);
+        LocalDateTime applicationStart7 = LocalDateTime.of(2021, Month.APRIL, 1, 8, 0);
+        application7.setApplicationDate(applicationStart7);
+        LocalDateTime paymentDate7 = LocalDateTime.of(2021, Month.APRIL, 3, 8, 0);
+        application7.setPaymentDate(paymentDate7);
+        application7.setPaymentStatus(PaymentStatus.COMPLETED);
+        application7.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application7);
 
-            SellerApplication application7 = new SellerApplication();
-            application7.setBusinessPartner(bp);
-            application7.setEvent(secondEvent);
-            application7.setDescription(lorem.getWords(5, 20));
-            application7.setComments(lorem.getWords(5, 20));
-            application7.setBoothQuantity(rand.nextInt(300));
-            application7.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
-            application7.setPaymentStatus(PaymentStatus.COMPLETED);
-            LocalDateTime applicationStart7 = LocalDateTime.of(2021, Month.APRIL, 1, 8, 0);
-            application7.setApplicationDate(applicationStart7);
-            LocalDateTime paymentDate7 = LocalDateTime.of(2021, Month.APRIL, 3, 8, 0);
-            application7.setPaymentDate(paymentDate7);
-            application7.setPaymentStatus(PaymentStatus.COMPLETED);
-            application7.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
-            sellerApplicationRepository.save(application7);
+        // Paid and Complete Application for the year
+        SellerApplication application8 = new SellerApplication();
+        application8.setBusinessPartner(bp);
+        application8.setEvent(secondEvent);
+        application8.setDescription(lorem.getWords(5, 20));
+        application8.setComments(lorem.getWords(5, 20));
+        application8.setBoothQuantity(rand.nextInt(300));
+        application8.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application8.setPaymentStatus(PaymentStatus.COMPLETED);
+        LocalDateTime applicationStart8 = LocalDateTime.of(2021, Month.MARCH, 1, 8, 0);
+        application8.setApplicationDate(applicationStart8);
+        LocalDateTime paymentDate8 = LocalDateTime.of(2021, Month.MARCH, 3, 8, 0);
+        application8.setPaymentDate(paymentDate8);
+        application8.setPaymentStatus(PaymentStatus.COMPLETED);
+        application8.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application8);
 
-
-            // Paid and Complete Application for the year
-            SellerApplication application8 = new SellerApplication();
-            application8.setBusinessPartner(bp);
-            application8.setEvent(secondEvent);
-            application8.setDescription(lorem.getWords(5, 20));
-            application8.setComments(lorem.getWords(5, 20));
-            application8.setBoothQuantity(rand.nextInt(300));
-            application8.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
-            application8.setPaymentStatus(PaymentStatus.COMPLETED);
-            LocalDateTime applicationStart8 = LocalDateTime.of(2021, Month.MARCH,1, 8, 0);
-            application8.setApplicationDate(applicationStart8);
-            LocalDateTime paymentDate8 = LocalDateTime.of(2021, Month.MARCH, 3, 8, 0);
-            application8.setPaymentDate(paymentDate8);
-            application8.setPaymentStatus(PaymentStatus.COMPLETED);
-            application8.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
-            sellerApplicationRepository.save(application8);
-
-            
-            Event followerEvent = eventRepository.findAll().get(1);
-            //Paid and Complete Application for the day
-            SellerApplication application9 = new SellerApplication();
-            application9.setBusinessPartner(bp);
-            application9.setEvent(secondEvent);
-            application9.setDescription(lorem.getWords(5, 20));
-            application9.setComments(lorem.getWords(5, 20));
-            application9.setBoothQuantity(rand.nextInt(300));
-            application9.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
-            application9.setPaymentStatus(PaymentStatus.COMPLETED);
-            LocalDateTime applicationStart9 = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
-            application4.setApplicationDate(applicationStart9);
-            LocalDateTime paymentDate9 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
-            application9.setPaymentDate(paymentDate9);
-            application9.setPaymentStatus(PaymentStatus.COMPLETED);
-            application9.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
-            sellerApplicationRepository.save(application9);
+        Event followerEvent = eventRepository.findAll().get(1);
+        // Paid and Complete Application for the day
+        SellerApplication application9 = new SellerApplication();
+        application9.setBusinessPartner(bp);
+        application9.setEvent(secondEvent);
+        application9.setDescription(lorem.getWords(5, 20));
+        application9.setComments(lorem.getWords(5, 20));
+        application9.setBoothQuantity(rand.nextInt(300));
+        application9.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+        application9.setPaymentStatus(PaymentStatus.COMPLETED);
+        LocalDateTime applicationStart9 = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
+        application4.setApplicationDate(applicationStart9);
+        LocalDateTime paymentDate9 = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
+        application9.setPaymentDate(paymentDate9);
+        application9.setPaymentStatus(PaymentStatus.COMPLETED);
+        application9.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+        sellerApplicationRepository.save(application9);
 
     }
 
@@ -1269,10 +1265,10 @@ public class DataInitRunner implements ApplicationRunner {
                     }
 
                 }
-                   LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.MARCH, 18, 8, 0);
-                        savedApplication.setPaymentDate(paymentDate4);
-                        savedApplication.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
-                        sellerApplicationRepository.save(savedApplication);
+                LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.MARCH, 18, 8, 0);
+                savedApplication.setPaymentDate(paymentDate4);
+                savedApplication.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+                sellerApplicationRepository.save(savedApplication);
 
                 // profile.setBooths(allocatedBooths);
                 // application.setBooths(allocatedBooths);
@@ -1361,10 +1357,10 @@ public class DataInitRunner implements ApplicationRunner {
                         }
 
                     }
-                     LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 17, 8, 0);
-                        savedApplication.setPaymentDate(paymentDate4);
-                        savedApplication.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
-                        sellerApplicationRepository.save(savedApplication);
+                    LocalDateTime paymentDate4 = LocalDateTime.of(2021, Month.APRIL, 17, 8, 0);
+                    savedApplication.setPaymentDate(paymentDate4);
+                    savedApplication.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
+                    sellerApplicationRepository.save(savedApplication);
                     // profile.setBooths(allocatedBooths);
                     // application.setBooths(allocatedBooths);
                 }
@@ -1911,8 +1907,8 @@ public class DataInitRunner implements ApplicationRunner {
         event15.setPublished(true);
         event15.setEventOrganiser(eventOrg);
         eventRepository.save(event15);
-     
-        //Paid and Complete Application for the day
+
+        // Paid and Complete Application for the day
         LocalDateTime applicationStart = LocalDateTime.of(2021, Month.APRIL, 10, 8, 0);
         LocalDateTime paymentDate = LocalDateTime.of(2021, Month.APRIL, 18, 8, 0);
 
@@ -1929,8 +1925,8 @@ public class DataInitRunner implements ApplicationRunner {
         application.setPaymentStatus(PaymentStatus.COMPLETED);
         application.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
         sellerApplicationRepository.save(application);
-     
-        //Paid and Complete Application for the day
+
+        // Paid and Complete Application for the day
         SellerApplication application2 = new SellerApplication();
         application2.setBusinessPartner(bp);
         application2.setEvent(event3);
@@ -1944,8 +1940,8 @@ public class DataInitRunner implements ApplicationRunner {
         application2.setPaymentStatus(PaymentStatus.COMPLETED);
         application2.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
         sellerApplicationRepository.save(application2);
-     
-        //Paid and Complete Application for the day
+
+        // Paid and Complete Application for the day
         SellerApplication application3 = new SellerApplication();
         application3.setBusinessPartner(bp);
         application3.setEvent(event4);
@@ -1959,8 +1955,8 @@ public class DataInitRunner implements ApplicationRunner {
         application3.setPaymentStatus(PaymentStatus.COMPLETED);
         application3.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
         sellerApplicationRepository.save(application3);
-     
-        //Paid and Complete Application for the day
+
+        // Paid and Complete Application for the day
         SellerApplication application4 = new SellerApplication();
         application4.setBusinessPartner(bp);
         application4.setEvent(event5);
@@ -1974,8 +1970,8 @@ public class DataInitRunner implements ApplicationRunner {
         application4.setPaymentStatus(PaymentStatus.COMPLETED);
         application4.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
         sellerApplicationRepository.save(application4);
-     
-        //Paid and Complete Application for the day
+
+        // Paid and Complete Application for the day
         SellerApplication application5 = new SellerApplication();
         application5.setBusinessPartner(bp);
         application5.setEvent(event6);
@@ -1989,8 +1985,8 @@ public class DataInitRunner implements ApplicationRunner {
         application5.setPaymentStatus(PaymentStatus.COMPLETED);
         application5.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
         sellerApplicationRepository.save(application5);
-     
-        //Paid and Complete Application for the day
+
+        // Paid and Complete Application for the day
         SellerApplication application6 = new SellerApplication();
         application6.setBusinessPartner(bp);
         application6.setEvent(event7);
@@ -2004,8 +2000,8 @@ public class DataInitRunner implements ApplicationRunner {
         application6.setPaymentStatus(PaymentStatus.COMPLETED);
         application6.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
         sellerApplicationRepository.save(application6);
-     
-        //Paid and Complete Application for the day
+
+        // Paid and Complete Application for the day
         SellerApplication application7 = new SellerApplication();
         application7.setBusinessPartner(bp);
         application7.setEvent(event8);
@@ -2019,8 +2015,8 @@ public class DataInitRunner implements ApplicationRunner {
         application7.setPaymentStatus(PaymentStatus.COMPLETED);
         application7.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
         sellerApplicationRepository.save(application7);
-     
-        //Paid and Complete Application for the day
+
+        // Paid and Complete Application for the day
         SellerApplication application8 = new SellerApplication();
         application8.setBusinessPartner(bp);
         application8.setEvent(event9);
@@ -2034,8 +2030,8 @@ public class DataInitRunner implements ApplicationRunner {
         application8.setPaymentStatus(PaymentStatus.COMPLETED);
         application8.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
         sellerApplicationRepository.save(application8);
-     
-        //Paid and Complete Application for the day
+
+        // Paid and Complete Application for the day
         SellerApplication application9 = new SellerApplication();
         application9.setBusinessPartner(bp);
         application9.setEvent(event10);
@@ -2049,8 +2045,8 @@ public class DataInitRunner implements ApplicationRunner {
         application9.setPaymentStatus(PaymentStatus.COMPLETED);
         application9.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
         sellerApplicationRepository.save(application9);
-     
-        //Paid and Complete Application for the day
+
+        // Paid and Complete Application for the day
         SellerApplication application10 = new SellerApplication();
         application10.setBusinessPartner(bp);
         application10.setEvent(event11);
@@ -2064,8 +2060,8 @@ public class DataInitRunner implements ApplicationRunner {
         application10.setPaymentStatus(PaymentStatus.COMPLETED);
         application10.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
         sellerApplicationRepository.save(application10);
-     
-        //Paid and Complete Application for the day
+
+        // Paid and Complete Application for the day
         SellerApplication application11 = new SellerApplication();
         application11.setBusinessPartner(bp);
         application11.setEvent(event12);
@@ -2079,8 +2075,8 @@ public class DataInitRunner implements ApplicationRunner {
         application11.setPaymentStatus(PaymentStatus.COMPLETED);
         application11.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
         sellerApplicationRepository.save(application11);
-     
-        //Paid and Complete Application for the day
+
+        // Paid and Complete Application for the day
         SellerApplication application12 = new SellerApplication();
         application12.setBusinessPartner(bp);
         application12.setEvent(event13);
@@ -2094,8 +2090,8 @@ public class DataInitRunner implements ApplicationRunner {
         application12.setPaymentStatus(PaymentStatus.COMPLETED);
         application12.setStripePaymentId("pi_1IgSlHEwwthOy8X1RjSPvXBo");
         sellerApplicationRepository.save(application12);
-     
-        //Paid and Complete Application for the day
+
+        // Paid and Complete Application for the day
         SellerApplication application13 = new SellerApplication();
         application13.setBusinessPartner(bp);
         application13.setEvent(event14);
