@@ -97,6 +97,7 @@ public class SellerApplicationService {
         String comments = applicationDto.getComments();
         SellerApplication sa = getSellerApplicationById(applicationDto.getId().toString());
         List<Booth> booths = sa.getBooths();
+        String paymentMethodId = applicationDto.getPaymentMethodId();
 
         // check if enough booths available
         if (true) {
@@ -111,39 +112,53 @@ public class SellerApplicationService {
             PaymentIntentCreateParams.Builder createParamsBuilder = new PaymentIntentCreateParams.Builder()
                     .setCurrency("sgd").setAmount(stripePaymentAmount).setCustomer(bp.getStripeCustomerId());
 
-            if (bp.getStripeCustomerId() != null) {
+            if (paymentMethodId == null) {
+                PaymentIntent intent = PaymentIntent.create(createParamsBuilder.build());
+                // Update seller application
+                sa.setStripePaymentId(intent.getId());
+                // LocalDateTime now = LocalDateTime.now();
+                // sa.setPaymentDate(now);
+                // sa.setPaymentStatus(PaymentStatus.COMPLETED);
+                sa.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+                sellerApplicationRepository.save(sa);
+                System.out.println("print out for test");
+                ApplicationResponse applicationResponse = new ApplicationResponse(paymentAmount,
+                        intent.getClientSecret(), sa);
+                return applicationResponse;
+            }
 
+            else {
                 createParamsBuilder.setPaymentMethod(applicationDto.getPaymentMethodId()).setConfirm(true)
                         .setOffSession(true);
+                PaymentIntent intent = PaymentIntent.create(createParamsBuilder.build());
+
+                // Update seller application
+                sa.setStripePaymentId(intent.getId());
+                LocalDateTime now = LocalDateTime.now();
+                sa.setPaymentDate(now);
+                sa.setPaymentStatus(PaymentStatus.COMPLETED);
+                sa.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
+                sellerApplicationRepository.save(sa);
+                System.out.println("Updated application");
+
+                // Create new Seller profile
+                SellerProfile newSP = new SellerProfile();
+                // newSP.setBooths(booths);
+                newSP.setBusinessPartner(bp);
+                newSP.setDescription(description);
+                newSP.setEvent(event);
+                sellerProfileRepository.save(newSP);
+                for (Booth b : booths) {
+                    b.setSellerProfile(newSP);
+                    boothRepository.save(b); // ok doned
+                }
+                System.out.println("Created new seller profile");
+
+                ApplicationResponse applicationResponse = new ApplicationResponse(null, null, sa);
+                System.out.println("Response: " + applicationResponse);
+                return applicationResponse;
 
             }
-            PaymentIntent intent = PaymentIntent.create(createParamsBuilder.build());
-
-            // Update seller application
-            sa.setStripePaymentId(intent.getId());
-            LocalDateTime now = LocalDateTime.now();
-            sa.setPaymentDate(now);
-            sa.setPaymentStatus(PaymentStatus.COMPLETED);
-            sa.setSellerApplicationStatus(SellerApplicationStatus.CONFIRMED);
-            sellerApplicationRepository.save(sa);
-            System.out.println("Updated application");
-
-            // Create new Seller profile
-            SellerProfile newSP = new SellerProfile();
-            // newSP.setBooths(booths);
-            newSP.setBusinessPartner(bp);
-            newSP.setDescription(description);
-            newSP.setEvent(event);
-            sellerProfileRepository.save(newSP);
-            for (Booth b : booths) {
-                b.setSellerProfile(newSP);
-                boothRepository.save(b); // ok doned
-            }
-            System.out.println("Created new seller profile");
-
-            ApplicationResponse applicationResponse = new ApplicationResponse(paymentAmount, intent.getClientSecret(),
-                    sa);
-            return applicationResponse;
 
         }
         // PaymentIntentCreateParams createParams = new

@@ -56,7 +56,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 public class BusinessPartnerController {
 
-
     @Autowired
     private BusinessPartnerService bpService;
 
@@ -204,17 +203,17 @@ public class BusinessPartnerController {
     // @PreAuthorize("hasAnyRole('BIZPTNR')")
     // @PostMapping(value = "/update")
     // public ResponseEntity<BusinessPartner> updatePartner(
-    //         @RequestBody @Valid UpdatePartnerRequest updatePartnerRequest) {
-    //     BusinessPartner user = bpService
-    //             .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    // @RequestBody @Valid UpdatePartnerRequest updatePartnerRequest) {
+    // BusinessPartner user = bpService
+    // .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
-    //     // verify user id
-    //     if (updatePartnerRequest.getId() != user.getId()) {
-    //         throw new AuthenticationServiceException("An error has occured");
-    //     }
+    // // verify user id
+    // if (updatePartnerRequest.getId() != user.getId()) {
+    // throw new AuthenticationServiceException("An error has occured");
+    // }
 
-    //     user = bpService.updatePartner(user, updatePartnerRequest);
-    //     return ResponseEntity.ok(user);
+    // user = bpService.updatePartner(user, updatePartnerRequest);
+    // return ResponseEntity.ok(user);
     // @RequestBody @Valid UpdatePartnerRequest updatePartnerRequest) {
     // BusinessPartner user = bpService
     // .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -276,15 +275,12 @@ public class BusinessPartnerController {
         return bpService.getAllEventsByBp(bpId);
     }
 
-
-
     @GetMapping(value = "/events/{bpId}/{role}/{status}")
-    public List<Event> getAllEventByBpIdStatus(@PathVariable Long bpId, @PathVariable String role, @PathVariable String status) {
+    public List<Event> getAllEventByBpIdStatus(@PathVariable Long bpId, @PathVariable String role,
+            @PathVariable String status) {
 
-        return bpService.getAllEventsByBpIdStatus(bpId, role ,status);
+        return bpService.getAllEventsByBpIdStatus(bpId, role, status);
     }
-    
-
 
     @GetMapping(path = "/getEventsByBpFollowers/{id}")
     public List<Event> getEventsByBpFollowers(@PathVariable Long id) {
@@ -305,7 +301,7 @@ public class BusinessPartnerController {
     public List<Event> getEventsByBpBusinessCategory(@PathVariable Long id, @PathVariable Long pageParam) {
         return bpService.getEventsByBpBusinessCategory(id, pageParam);
     }
-    
+
     @GetMapping(value = "/products/{id}")
     public List<Product> getProducts(@PathVariable Long id) {
         return bpService.getProductsByBp(id);
@@ -320,7 +316,7 @@ public class BusinessPartnerController {
 
     @GetMapping(value = "/checkVIP/{eoid}/{bpid}")
     public Boolean checkIfVip(@PathVariable Long eoid, @PathVariable Long bpid) {
-       
+
         return bpService.checkIfBPIsVIP(eoid, bpid);
     }
 
@@ -334,7 +330,5 @@ public class BusinessPartnerController {
             return ResponseEntity.badRequest().body("An error occured");
         }
     }
-
-
 
 }

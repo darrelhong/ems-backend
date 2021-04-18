@@ -192,6 +192,7 @@ public class EventController {
             List<Event> data = null;
             BusinessPartner partner = bpService.getBusinessPartnerById(Long.parseLong(user));
             List<SellerApplication> temp = bpService.getLatestSellerApplicationsbyBp(Long.parseLong(user));
+            LocalDateTime now = LocalDateTime.now();
             if (filter.equals("favourite")) {
                 // System.out.println(data);
                 // Pageable firstPageWithTwoELements = PageRequest.of(0, 2);
@@ -210,6 +211,7 @@ public class EventController {
                 temp = saService.removeCancelledApplications(temp);
                 data = temp.stream().filter(sa -> sa.getSellerApplicationStatus() == SellerApplicationStatus.PENDING)
                         .map(sa -> sa.getEvent()).collect(Collectors.toList());
+                data = this.removePastEvents(data);
                 Page<Event> events = new PageImpl<>(data);
                 return events;
             } else if (filter.equals("pending payment")) {
@@ -217,7 +219,8 @@ public class EventController {
                 temp = saService.removeCancelledApplications(temp);
                 data = temp.stream().filter(sa -> sa.getPaymentStatus() == PaymentStatus.PENDING)
                         .filter(sa -> sa.getSellerApplicationStatus() == SellerApplicationStatus.APPROVED)
-                        .filter(sa -> sa.getBoothQuantity() > 0).map(sa -> sa.getEvent()).collect(Collectors.toList());
+                        .filter(sa -> sa.getBooths().size() > 0).map(sa -> sa.getEvent()).collect(Collectors.toList());
+                data = this.removePastEvents(data);
                 Page<Event> events = new PageImpl<>(data);
                 return events;
             } else if (filter.equals("confirmed")) {
@@ -238,7 +241,6 @@ public class EventController {
             } else if (filter.equals("past")) {
                 // return eventService.getPastPublishedEvents(page, size, sort, sortDir,
                 // keyword);
-                LocalDateTime now = LocalDateTime.now();
                 data = partner.getSellerProfiles().stream().map(sp -> sp.getEvent())
                         .filter(e -> e.getEventEndDate().isBefore(now)).collect(Collectors.toList());
                 Page<Event> events = new PageImpl<>(data);

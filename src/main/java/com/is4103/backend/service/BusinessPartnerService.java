@@ -78,7 +78,6 @@ public class BusinessPartnerService {
     @Autowired
     private EventService eventService;
 
-    
     @Autowired
     private EventOrganiserService eventOrganiserService;
 
@@ -503,15 +502,16 @@ public class BusinessPartnerService {
         pm.detach();
     }
 
-    public Boolean checkIfBPIsVIP(long eoid, long bpid){
+    public Boolean checkIfBPIsVIP(long eoid, long bpid) {
         List<BusinessPartner> vipList = eventOrganiserService.getAllVips(eoid);
         // BusinessPartner partner = getBusinessPartnerById(bpid);
-        for(BusinessPartner vip : vipList){
-            if(vip.getId() == bpid){
+        for (BusinessPartner vip : vipList) {
+            if (vip.getId() == bpid) {
                 return true;
             }
         }
         return false;
 
-    }
+            }
 }
+     

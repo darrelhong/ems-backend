@@ -189,6 +189,7 @@ public class SellerProfileController {
                     .getPartnerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
             ApplicationResponse result = sellerApplicationService.createTransaction(applicationDto, bp);
+            // System.out.println("Print out for test: " + result);
             if (result != null) {
                 return ResponseEntity.ok(result);
             }
