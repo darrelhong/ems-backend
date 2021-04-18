@@ -339,7 +339,7 @@ public class DataInitRunner implements ApplicationRunner {
         event.setDescriptions(
                 "The 14th Annual Academic Success Lecture featuring Dr. Kevin Gumienny is . This year's presentation will be held physically, and will focus on the topics of accessibility and universal design.");
         // event.setCategories(Arrays.asList(eventCategories));
-        event.setCategory(eventCategories[0]);
+        event.setCategory("Home & Garden");
         event.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event.setPhysical(true);
         LocalDateTime eventStart1 = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
@@ -382,7 +382,7 @@ public class DataInitRunner implements ApplicationRunner {
         event2.setName("IT Fair 2021");
         event2.setAddress("Sembwang2");
         event2.setDescriptions("Description 2");
-        event2.setCategory(eventCategories[0]);
+        event2.setCategory("Home & Garden");
         event2.setBoothLayout("https://www.ncwvhba.org/wp-content/uploads/2021-Home-Show-Packet-4.jpg");
         event2.setPhysical(true);
         LocalDateTime eventStart = LocalDateTime.of(2021, Month.MAY, 1, 9, 0).plusDays(2).plusHours(2 % 3);
@@ -1145,6 +1145,10 @@ public class DataInitRunner implements ApplicationRunner {
                 // MAKE 5 APPLICATIONS FOR EACH EVENT
                 BusinessPartner randomBp = businessPartnerRepository.findAll()
                         .get(rand.nextInt(businessPartners.size()));
+                if (e.getEid() == 2 && randomBp.getEmail() == "linlili2319@gmail.com") {
+                    continue;
+                } 
+                
                 if (partnersAppliedId.contains(randomBp.getId())) {
                     continue;
                 }
