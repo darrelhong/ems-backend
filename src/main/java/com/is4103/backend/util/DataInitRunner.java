@@ -858,8 +858,8 @@ public class DataInitRunner implements ApplicationRunner {
                 "https://storage.googleapis.com/ems-images/events/event-2/image-2.jpg",
                 "https://storage.googleapis.com/ems-images/events/event-3/image-3.jpg"));
 
-        EventOrganiser eo = eoRepository.findByEmail("organiser@abc.com");
-        event.setEventOrganiser(eo);
+        // EventOrganiser eo = eoRepository.findByEmail("organiser@abc.com");
+        // event.setEventOrganiser(eo);
         eventRepository.save(event);
 
         // EventBoothTransaction transaction = new EventBoothTransaction();
