@@ -103,10 +103,9 @@ public class TicketingService {
                     tt.setPaymentStatus(PaymentStatus.COMPLETED);
                     ttRepository.save(tt);
                     tickets.add(tt);
-
-                    CheckoutResponse checkoutResponse = new CheckoutResponse(null, null, tickets);
-                    return checkoutResponse;
                 }
+                CheckoutResponse checkoutResponse = new CheckoutResponse(null, null, tickets);
+                return checkoutResponse;
             }
         }
         return null;
