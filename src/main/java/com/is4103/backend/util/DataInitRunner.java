@@ -1059,6 +1059,11 @@ public class DataInitRunner implements ApplicationRunner {
         for (BusinessPartner bp : businessPartners) {
             SellerApplication application = new SellerApplication();
             int count = rand.nextInt(3); // now just make the applications randomly
+
+            if (bp.getEmail() == "linlili2319@gmail.com") {
+                count = 0;
+            }
+
             application.setBusinessPartner(bp);
             application.setEvent(firstEvent);
             application.setDescription(lorem.getWords(5, 20));
@@ -1068,10 +1073,6 @@ public class DataInitRunner implements ApplicationRunner {
             application.setPaymentStatus(paymentStatusArray[count]);
             application.setApplicationDate(firstEvent.getEventStartDate().minusDays(rand.nextInt(20)));
             SellerApplication savedApplication = sellerApplicationRepository.save(application);
-
-            if (bp.getEmail() == "linlili2319@gmail.com") {
-                count = 0;
-            }
 
             if (count == 0) {
                 // WE NEEDA ACCOUNT FOR BOTH TYPES OF THIS SCENARIO, ONE IS WITH BOOTH ONE IS
@@ -1145,7 +1146,7 @@ public class DataInitRunner implements ApplicationRunner {
                 // MAKE 5 APPLICATIONS FOR EACH EVENT
                 BusinessPartner randomBp = businessPartnerRepository.findAll()
                         .get(rand.nextInt(businessPartners.size()));
-                if (e.getEid() == 2 && randomBp.getEmail() == "linlili2319@gmail.com") {
+                if (e.getName() == "IT Fair 2021" && randomBp.getEmail() == "linlili2319@gmail.com") {
                     continue;
                 } 
                 
